@@ -63,17 +63,17 @@ function PdfDetails() {
    setWindowWidth(window.innerWidth);
    window.addEventListener("resize", updateWindowWidth);
 
-    // const container = document.querySelector(".pdf-container");
-    // const handleContextMenu = (event) => {
-    //   event.preventDefault();
-    // };
-    // if (container) {
-    //   container.addEventListener("contextmenu", handleContextMenu);
-    // }
+    const container = document.querySelector(".pdf-container");
+    const handleContextMenu = (event) => {
+      event.preventDefault();
+    };
+    if (container) {
+      container.addEventListener("contextmenu", handleContextMenu);
+    }
     return () => {
-      // if (container) {
-      //   container.removeEventListener("contextmenu", handleContextMenu);
-      // }
+      if (container) {
+        container.removeEventListener("contextmenu", handleContextMenu);
+      }
       window.removeEventListener("resize", updateWindowWidth);
     };
   }, []);
