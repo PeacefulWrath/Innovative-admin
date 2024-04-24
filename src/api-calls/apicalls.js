@@ -38,3 +38,31 @@ export const createTemplates = async (addData) => {
         return tempTemplates;
     }
 };
+export const fetchAllPdfs=async()=>{
+    let tempPdfsData = [];
+    try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/api/pdf`
+        );
+        tempPdfsData = response.data;
+      //   console.log("pdf only",tempPdfsData)
+      } catch (error) {
+        console.log("err", error);
+      } finally {
+       return tempPdfsData
+      }
+}
+export const fetchAllZips=async()=>{
+  let tempZipsData = [];
+  try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/api/zip`
+      );
+      tempZipsData = response.data;
+    //   console.log("pdf only",tempPdfsData)
+    } catch (error) {
+      console.log("err", error);
+    } finally {
+     return tempZipsData
+    }
+}

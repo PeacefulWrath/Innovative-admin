@@ -1,9 +1,9 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap/dist/js/bootstrap.min.js"
 import Nav from '../navbar/navbar';
 import Sidebar from '../sidebar/sidebar';
-import axios from "axios";
 import { Link } from "react-router-dom";
 import CreateIcon from '@mui/icons-material/Create';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -12,12 +12,9 @@ import AddIcon from '@mui/icons-material/Add';
 import {
   Modal,
   Button,
-  ModalHeader,
-  ModalBody,
-  ModalTitle,
 } from "react-bootstrap";
 import { createTemplates, fetchTemplates } from '../../api-calls/apicalls';
-import View from '../view/view';
+
 
 
 function FileUploadTempEditor() {
@@ -151,7 +148,6 @@ function FileUploadTempEditor() {
   }
 
   useEffect(() => {
-    require("bootstrap/dist/js/bootstrap.min.js");
     setWindowWidth(window.innerWidth);
     window.addEventListener("resize", updateWindowWidth);
 
