@@ -35,6 +35,7 @@ function FileUploadTempEditor() {
   const [dbZips, setDbZips] = useState([]);
   const [dbLinks, setDbLinks] = useState([]);
   const [templateId, setTemplateId] = useState("");
+  const [dbImage,setDbImage]=useState("")
 
   const handleClose = () => {
     setShowModal(false);
@@ -185,7 +186,7 @@ function FileUploadTempEditor() {
     tempCreatedData.push(createdData);
     setTemplates([...templates, ...tempCreatedData]);
     handleClose();
-    window.location.reload();
+    window.location.reload()
   };
 
   const handleUpdate = async () => {
@@ -319,7 +320,7 @@ function FileUploadTempEditor() {
 
     if (updatedData) {
       handleClose();
-      window.location.reload();
+      window.location.reload()
     }
   };
 
@@ -544,13 +545,14 @@ function FileUploadTempEditor() {
                         style={{ cursor: "pointer" }}
                         onClick={() => {
                           setUpdate(true);
-                          setShowModal(true);
                           setTemplateName(temp?.template_name);
                           setTemplateDesc(temp?.template_desc);
                           setDbPdfs(temp?.template_pdfs);
                           setDbZips(temp?.template_zips);
                           setTemplateId(temp?._id);
+                          setDbImage(temp?.template_image)
                           setDbLinks(temp?.template_links);
+                          setShowModal(true);
                         }}
                       />
                       <DeleteIcon
@@ -603,6 +605,15 @@ function FileUploadTempEditor() {
                 }}
               />
             </div>
+
+           {dbImage&&<div className="mb-2">
+              <label className="pb-1">Attached Template Image</label>
+              <img
+              src={dbImage}
+              alt="db template image"
+              />
+            </div>}
+
             <div className="mb-2">
               <label className="pb-1">Template Image</label>
               <input
