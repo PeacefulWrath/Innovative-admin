@@ -14,7 +14,9 @@ import {
   createTemplates,
   fetchTemplates,
   updateTemplates,
+  deleteTemplates
 } from "../../api-calls/apicalls";
+
 
 function FileUploadTempEditor() {
   const [windowWidth, setWindowWidth] = useState();
@@ -321,6 +323,21 @@ function FileUploadTempEditor() {
     }
   };
 
+  const handleDelete=async(id)=>{
+ const deleteData={templateId:id}
+    const deletedData=await deleteTemplates(deleteData)
+    if(deletedData){
+       let tempTemplates=templates
+       tempTemplates.forEach((temp,ind)=>{
+          if(temp?._id==id){
+            tempTemplates.splice(ind,1)
+          }
+       })
+      setTemplates([...tempTemplates])
+      alert("template deleted successfully")
+    }
+  }
+
   useEffect(() => {
     setWindowWidth(window.innerWidth);
     window.addEventListener("resize", updateWindowWidth);
@@ -539,7 +556,7 @@ function FileUploadTempEditor() {
                       <DeleteIcon
                         className="text-danger border border-danger cursor-pointer rounded"
                         style={{ cursor: "pointer" }}
-                        onClick={() => {}}
+                        onClick={() => {handleDelete(temp?._id)}}
                       />
                     </th>
                   </tr>

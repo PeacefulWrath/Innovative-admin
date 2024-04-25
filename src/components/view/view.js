@@ -70,7 +70,7 @@ function View() {
 
 
             <div className='mt-4'>
-                <h1>Pdfs</h1>
+                <h3>Pdfs</h3>
                 {templateData && templateData?.template_pdfs?.length!==0 ?
                     templateData.template_pdfs.map((pdf) => (
                         <div className='mt-3 d-flex'>
@@ -88,20 +88,20 @@ function View() {
             </div>
 
             <div className='mt-4'>
-                <h1>Zips</h1>
+                <h3>Zips</h3>
                 {templateData && templateData?.template_zips?.length!==0 ?
                     templateData.template_zips.map((zip) => (
                         <div className='mt-3 d-flex'>
                             {zip?.file_name}
                              <p className='ms-3'>zip downloadable: { zip?.zip_downloadable===true?"on":"off"}</p>
-                             <DownloadIcon className='ms-3' onClick={()=>{handleDownloadZip(zip)}} />
+                             <DownloadIcon className='ms-3' style={{cursor:"pointer"}}onClick={()=>{handleDownloadZip(zip)}} />
                         </div>
                     )):<><p>no data</p> </>
                 }
             </div>
 
             <div className='mt-4'>
-                <h1>Links</h1>
+                <h3>Links</h3>
                 {templateData && templateData?.template_links?.length!==0 ?
                     templateData.template_links.map((link) => (
                         <div className='mt-3 d-flex'>

@@ -62,3 +62,26 @@ export const updateTemplates = async (updateData) => {
         return tempTemplates;
     }
 };
+
+export const deleteTemplates = async (deleteData) => {
+    let tempTemplates = [];
+    try {
+        
+
+        await axios
+            (
+                {
+                    method: "delete",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/template`,
+                    data: deleteData
+                   
+                })
+            .then((res) => {
+                tempTemplates = res.data;
+            });
+    } catch (error) {
+        console.log("can not create templates");
+    } finally {
+        return tempTemplates;
+    }
+};
