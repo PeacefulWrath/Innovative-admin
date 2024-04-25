@@ -6,13 +6,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
 import Nav from '../navbar/navbar';
 import Sidebar from '../sidebar/sidebar';
-import { fetchAllPdfs,fetchAllZips } from '../../api-calls/apicalls';
 import { saveAs } from 'file-saver';
 import DownloadIcon from '@mui/icons-material/Download';
 
 function View() {
-    const [allPdfs,setAllPdfs]=useState([])
-    const [allZips,setAllZips]=useState([])
     const [windowWidth, setWindowWidth] = useState();
     const location = useLocation();
     const { templateData } = location.state;
@@ -21,37 +18,22 @@ function View() {
         setWindowWidth(window.innerWidth);
     };
 
-    const handleDownloadZip=(templateZipId,clickedZip)=>{
-        const tempFilteredPdfsFromAllZips=allZips.filter((all)=> {return all._id===templateZipId})
-        tempFilteredPdfsFromAllZips[0].zips.forEach((zip)=>{
-         if(zip.file_name===clickedZip.file_name){
+    const handleDownloadZip=(clickedZip)=>{
+      templateData?.template_zips?.forEach((zip)=>{
+        if(zip._id===clickedZip._id){
             saveAs(zip?.url,`${zip?.file_name}`)
          }
-        })
+      })
     }
 
     useEffect(() => {
         require("bootstrap/dist/js/bootstrap.min.js");
-        console.log("tdd",templateData)
+        // console.log("tdd",templateData)
         setWindowWidth(window.innerWidth);
         window.addEventListener("resize", updateWindowWidth);
-        const pdfsFetcher=async()=>{
-            let tempPdfsData = await fetchAllPdfs();
-            
-            if(tempPdfsData){
-             setAllPdfs([...tempPdfsData])
-            }
-        }
-        const zipsFetcher=async()=>{
-            let tempZipsData = await fetchAllZips();
-            
-            if(tempZipsData){
-             setAllZips([...tempZipsData])
-            }
-        }
-        zipsFetcher()
-        pdfsFetcher()
+        
 
+     
 
         return () => {
             window.removeEventListener("resize", updateWindowWidth);
@@ -89,44 +71,44 @@ function View() {
 
             <div className='mt-4'>
                 <h1>Pdfs</h1>
-                {templateData && templateData.template_pdfs.pdfs?
-                    templateData.template_pdfs.pdfs.map((pdf) => (
+                {templateData && templateData?.template_pdfs?.length!==0 ?
+                    templateData.template_pdfs.map((pdf) => (
                         <div className='mt-3 d-flex'>
                             {pdf?.file_name}
                              <p className='ms-3'>watermark: { pdf?.watermark===true?"on":"off"}</p>
                              <p className='ms-3'>top left logo: { pdf?.top_left_logo===true?"on":"off"}</p>
                              <p className='ms-3'>bottom right page no: { pdf?.bottom_right_page_no===true?"on":"off"}</p>
                              <p className='ms-3'>pdf downloadable: { pdf?.pdf_downloadable===true?"on":"off"}</p>
-                            <Link className='ms-3' to="/pdfDetails"  state={{allPdfs:allPdfs, templatePdfId:templateData.template_pdfs._id, clickedPdf:pdf  }} >
+                            <Link className='ms-3' to="/pdfDetails"  state={{template:templateData, clickedPdf:pdf  }} >
                                 details
                             </Link>
                         </div>
-                    )):<></>
+                    )):<>no data</>
                 }
             </div>
 
             <div className='mt-4'>
                 <h1>Zips</h1>
-                {templateData && templateData.template_zips.zips ?
-                    templateData.template_zips.zips.map((zip) => (
+                {templateData && templateData?.template_zips?.length!==0 ?
+                    templateData.template_zips.map((zip) => (
                         <div className='mt-3 d-flex'>
                             {zip?.file_name}
                              <p className='ms-3'>zip downloadable: { zip?.zip_downloadable===true?"on":"off"}</p>
-                             <DownloadIcon className='ms-3' onClick={()=>{handleDownloadZip(templateData.template_zips._id,zip)}} />
+                             <DownloadIcon className='ms-3' onClick={()=>{handleDownloadZip(zip)}} />
                         </div>
-                    )):<></>
+                    )):<><p>no data</p> </>
                 }
             </div>
 
             <div className='mt-4'>
                 <h1>Links</h1>
-                {templateData && templateData.template_links.links ?
-                    templateData.template_links.links.map((link) => (
+                {templateData && templateData?.template_links?.length!==0 ?
+                    templateData.template_links.map((link) => (
                         <div className='mt-3 d-flex'>
                            {link?.link_preview_name}
                             <a className='ms-3' style={{cursor:"pointer "}} href={`${link?.link_url}`}> {link?.link_url}</a>
                         </div>
-                    )):<></>
+                    )):<><p>no data</p></>
                 }
             </div>
         </div>

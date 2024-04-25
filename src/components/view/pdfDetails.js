@@ -15,7 +15,7 @@ function PdfDetails() {
   const [windowWidth, setWindowWidth] = useState();
 
   const location = useLocation();
-  const { templatePdfId, clickedPdf, allPdfs } = location.state;
+  const { template, clickedPdf } = location.state;
 
   pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -53,12 +53,11 @@ function PdfDetails() {
 
   useEffect(() => {
     
-   const tempFilteredPdfsFromAllPdfs=allPdfs.filter((all)=> {return all._id===templatePdfId})
-   tempFilteredPdfsFromAllPdfs[0].pdfs.forEach((pdf)=>{
-    if(pdf.file_name===clickedPdf.file_name){
+    template?.template_pdfs?.forEach((pdf)=>{
+      if(pdf._id===clickedPdf._id){
         setPdfUrl(pdf?.url)
-    }
-   })
+       }
+    })
     
    setWindowWidth(window.innerWidth);
    window.addEventListener("resize", updateWindowWidth);
