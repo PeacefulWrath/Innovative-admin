@@ -626,9 +626,10 @@ function FileUploadTempEditor() {
             </div>
 
             {dbPdfs.length !== 0 &&
-              dbPdfs.map((dp, ind) => (
+              
                 <div className="mb-2">
                   <label className="pb-1">Already Attached Pdfs</label>
+                 {dbPdfs.map((dp, ind) => (
                   <div className="d-flex">
                     {dp?.file_name}
                     <div class="form-check form-switch ms-2">
@@ -700,8 +701,9 @@ function FileUploadTempEditor() {
                       </label>
                     </div>
                   </div>
+                  ))}
                 </div>
-              ))}
+              }
 
             <div className="mb-2">
               <div className="d-flex justify-content-between">
@@ -820,9 +822,11 @@ function FileUploadTempEditor() {
             </div>
 
             {dbZips.length !== 0 &&
+             <div className="mb-2">
+             <label className="pb-1">Already Attached Zips</label>
+             {
               dbZips.map((dz, ind) => (
-                <div className="mb-2">
-                  <label className="pb-1">Already Attached Zips</label>
+               
                   <div className="d-flex">
                     {dz?.file_name}
 
@@ -843,9 +847,9 @@ function FileUploadTempEditor() {
                         Download Option
                       </label>
                     </div>
-                  </div>
+                  </div>))}
                 </div>
-              ))}
+              }
 
             <div className="mb-2">
               <div className="d-flex justify-content-between">
@@ -914,9 +918,10 @@ function FileUploadTempEditor() {
             </div>
 
             {dbLinks.length !== 0 &&
-              dbLinks.map((dl, ind) => (
-                <div className="mb-2">
-                  <label className="pb-1">Already Attached Links</label>
+            <div className="mb-2">
+            <label className="pb-1">Already Attached Links</label>
+             { dbLinks.map((dl, ind) => (
+                
                   <div className="d-flex">
                     <input
                       placeholder="db link preview name"
@@ -927,9 +932,9 @@ function FileUploadTempEditor() {
                       placeholder="db link url"
                       id={`db-link-url-${ind}`}
                     />
-                  </div>
+                  </div>))}
                 </div>
-              ))}
+              }
 
             <div className="mb-2">
               <div className="d-flex justify-content-between">
