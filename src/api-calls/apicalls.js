@@ -14,6 +14,7 @@ export const fetchTemplates=async()=>{
      return templatesData;
     }
 }
+
 export const createTemplates = async (addData) => {
     let tempTemplates = [];
     try {
@@ -38,6 +39,7 @@ export const createTemplates = async (addData) => {
         return tempTemplates;
     }
 };
+
 export const updateTemplates = async (updateData) => {
     let tempTemplates = [];
     try {
@@ -75,6 +77,46 @@ export const deleteTemplates = async (deleteData) => {
                     url: `${process.env.REACT_APP_BASE_URL}/api/template`,
                     data: deleteData
                    
+                })
+            .then((res) => {
+                tempTemplates = res.data;
+            });
+    } catch (error) {
+        console.log("can not create templates");
+    } finally {
+        return tempTemplates;
+    }
+};
+
+export const fetchMcqTemplates=async()=>{
+    let templatesData = [];
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/api/mcq-template`
+      );
+      templatesData = response.data;
+      // console.log(templatesData)
+    } catch (error) {
+      console.log("err", error);
+    } finally {
+     return templatesData;
+    }
+}
+
+export const createMcqTemplates = async (addData) => {
+    let tempTemplates = [];
+    try {
+        console.log("template data", addData);
+
+        await axios
+            (
+                {
+                    method: "post",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/mcq-template`,
+                    data: addData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
                 })
             .then((res) => {
                 tempTemplates = res.data;

@@ -30,7 +30,7 @@ const Sidebar = (props)=>{
         </div>
       </a>
 
-      <a style={{textDecoration: "none"}} href="/pages/mcq-template-editor">
+      <a style={{textDecoration: "none"}} href="/mcq-temp-editor">
         <div className="row fw-bold text-white" style={activeOption==='mcq-template-editor'?{backgroundColor: '#575655'}:{backgroundColor:"transparent"}}>
           <p className='px-3 pt-2 ms-4 me-2 '>MCQ Template Editor</p>
         </div>
