@@ -1,0 +1,31 @@
+.View_mcq_template_pagination_mainWrapper{
+    background: #f1f1f1;
+    border-radius: 15em;
+}
+
+.View_mcq_template_page_no{
+    border-radius: 50%;
+    border: 2px solid #2A91DD;
+    width: 2rem;
+    color: #2A91DD;
+    font-weight: 800;
+    display: flex;
+    justify-content: center;
+    
+}
+
+.View_mcq_template_line{
+    margin-top: 1.7rem;
+}
+
+.View_mcq_template_mcq{
+    border-radius: 16px;
+    background: #FFF;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.10)
+}
+
+.View_mcq_template_right{
+    width: 2rem;
+    height: 1.9rem;
+
+}

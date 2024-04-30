@@ -2,9 +2,11 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import FileUploadTempEditor from "./components/fileUploadTempEditor/fileUploadTempEditor";
 import Dashboard from "./components/dashboard/dashboard";
-import View from "./components/view/view";
-import PdfDetails from "./components/view/pdfDetails";
+import ViewFileTemplate from "./components/viewFileTemplate/viewFileTemplate";
+import PdfDetails from "./components/viewFileTemplate/pdfDetails";
 import McqTemplateEditor from "./components/mcqTemplateEditor/mcqTemplateEditor";
+import ViewMcqTemplate from "./components/viewMcqTemplate/viewMcqTemplate";
+
 
 function App() {
   return (
@@ -14,7 +16,8 @@ function App() {
       <Route exact path="/dashboard" element={<Dashboard />} />
       <Route exact path="/file-upload-temp-editor" element={< FileUploadTempEditor/>} />
       <Route exact path="/mcq-temp-editor" element={< McqTemplateEditor/>} />
-      <Route exact path="/view" element={<View />} />
+      <Route exact path="/view-file-template" element={<ViewFileTemplate />} />
+      <Route exact path="/view-mcq-template" element={<ViewMcqTemplate />} />
       <Route path="/pdfDetails" element={<PdfDetails />} />
     </Routes>
   </Router>

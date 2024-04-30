@@ -12,12 +12,12 @@
     src: url(../../assets/fonts/times\ new\ roman.ttf);
 }
 
-.View_exam_name_main {
+.View_file_template_exam_name_main {
     width: 100%;
 
 }
 
-.View_exam_name_text {
+.View_file_template_exam_name_text {
     color: #FFF;
     font-family: "Exo 2";
     font-size: 50px;
@@ -27,12 +27,12 @@
     margin-top: 15%;
 }
 
-.View_exam_desc_main {
+.View_file_template_exam_desc_main {
     width: 100%;
 
 }
 
-.View_exam_desc_text {
+.View_file_template_exam_desc_text {
     color: #FFF;
     font-family: Hind;
     font-size: 20px;
@@ -43,7 +43,7 @@
     margin-left: 2rem;
 }
 
-.View_pdf_watermark {
+.View_file_template_pdf_watermark {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -54,7 +54,7 @@
     font-family: "halvetica"
 }
 
-.View_pdf_page_no {
+.View_file_template_pdf_page_no {
     position: absolute;
     top: 97%;
     left: 85%;
@@ -64,17 +64,17 @@
      white-space: nowrap;
 }
 
-.View_pdf_prev_btn{
+.View_file_template_pdf_prev_btn{
     background-color: #fa0505;
     
 }
 
-.View_pdf_next_btn{
+.View_file_template_pdf_next_btn{
     background-color: greenyellow;
     
 }
 
-.View_pdf_logo{
+.View_file_template_pdf_logo{
     position: absolute;
     top: 0;
     left: 0;

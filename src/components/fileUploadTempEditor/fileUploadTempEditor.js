@@ -535,7 +535,7 @@ function FileUploadTempEditor() {
                     <th scope="col">{index + 1}.</th>
                     <th scope="col"> {temp?.template_name}</th>
                     <th scope="col">
-                      <Link to="/view" state={{ templateData: temp }}>
+                      <Link to="/view-file-template" state={{ templateData: temp }}>
                         view
                       </Link>
                     </th>

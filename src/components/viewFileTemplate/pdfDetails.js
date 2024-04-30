@@ -8,6 +8,7 @@ import { useLocation } from "react-router-dom";
 import Nav from '../navbar/navbar';
 import Sidebar from '../sidebar/sidebar';
 import logo from "../../assets/logo.png"
+
 function PdfDetails() {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
@@ -88,15 +89,15 @@ function PdfDetails() {
       <div className="pdf-container mt-5">
         <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
           <Page  pageNumber={pageNumber} onLoadSuccess={removeTextLayerOffset}>
-            <img  className="View_pdf_logo" src={logo} alt="logo"/>
+            <img  className="View_file_template_pdf_logo" src={logo} alt="logo"/>
             <Watermark />
-            <p className="View_pdf_page_no">Page {pageNumber} of {numPages}</p>
+            <p className="View_file_template_pdf_page_no">Page {pageNumber} of {numPages}</p>
           </Page>
         </Document>
 
         <div className="mt-5 d-flex justify-content-center align-items-center">
           <button
-            className="btn View_pdf_prev_btn"
+            className="btn View_file_template_pdf_prev_btn"
             onClick={() => {
               if (pageNumber > 1) {
                 setPageNumber(pageNumber - 1);
@@ -111,7 +112,7 @@ function PdfDetails() {
             Page {pageNumber} of {numPages}
           </p>
           <button
-            className="btn View_pdf_next_btn"
+            className="btn View_file_template_pdf_next_btn"
             onClick={() => {
               if (pageNumber === numPages) {
                 return;

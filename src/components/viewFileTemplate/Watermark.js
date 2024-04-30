@@ -6,7 +6,7 @@ const Watermark = () => {
   return (
     <Fragment>
       <div
-       className="View_pdf_watermark"
+       className="View_file_template_pdf_watermark"
       >
         {watermark}
       </div>

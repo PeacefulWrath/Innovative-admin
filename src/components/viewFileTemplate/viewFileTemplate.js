@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from "react-router-dom";
 import banner from "../../assets/banner.png"
-import "./view.css"
+import "./viewFileTemplate.css"
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
 import Nav from '../navbar/navbar';
@@ -9,7 +9,7 @@ import Sidebar from '../sidebar/sidebar';
 import { saveAs } from 'file-saver';
 import DownloadIcon from '@mui/icons-material/Download';
 
-function View() {
+function ViewFileTemplate() {
     const [windowWidth, setWindowWidth] = useState();
     const location = useLocation();
     const { templateData } = location.state;
@@ -55,14 +55,14 @@ function View() {
                     width: '100%',
                     backgroundImage: `url(${banner})`
                 }}>
-                <div className='d-flex justify-content-center View_exam_name_main'>
-                    <div className='View_exam_name_text'>
+                <div className='d-flex justify-content-center View_file_template_exam_name_main'>
+                    <div className='View_file_template_exam_name_text'>
                         {templateData?.template_name}
                     </div>
                 </div>
 
-                <div className='d-flex justify-content-center View_exam_desc_main'>
-                    <div className='d-flex justify-content-center View_exam_desc_text'>
+                <div className='d-flex justify-content-center View_file_template_exam_desc_main'>
+                    <div className='d-flex justify-content-center View_file_template_exam_desc_text'>
                         {templateData?.template_desc}
                     </div>
                 </div>
@@ -120,4 +120,4 @@ function View() {
     )
 }
 
-export default View
+export default ViewFileTemplate

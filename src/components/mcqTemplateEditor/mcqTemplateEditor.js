@@ -10,18 +10,24 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import AddIcon from "@mui/icons-material/Add";
 import { Modal, Button } from "react-bootstrap";
-import { createMcqTemplates, fetchMcqTemplates } from "../../api-calls/apicalls";
+import {
+  createMcqTemplates,
+  fetchMcqTemplates,
+} from "../../api-calls/apicalls";
 
 function McqTemplateEditor() {
   const [windowWidth, setWindowWidth] = useState();
-  const [mcqTemplates, setMcqTemplates] = useState([])
-  const [paperName, setPaperName] = useState("")
-  const [update, setUpdate] = useState(false)
+  const [mcqTemplates, setMcqTemplates] = useState([]);
+  const [paperName, setPaperName] = useState("");
+  const [update, setUpdate] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [mcqsCnt, setMcqsCnt] = useState([]);
-  const [optionsType, setOptionsType] = useState([])
-  const [templateOptImages,setTemplateOptImages]=useState([])
-  const [answerImages,setAnswerImages]=useState([])
+  const [optionsType, setOptionsType] = useState([]);
+  const [templateOptImages, setTemplateOptImages] = useState([]);
+  const [templateOptTexts, setTemplateOptTexts] = useState([]);
+  const [answerImages, setAnswerImages] = useState([]);
+  const[explainations,setExplainations]=useState([])
+  const[marks,setMarks]=useState([])
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
@@ -39,78 +45,91 @@ function McqTemplateEditor() {
 
   const handleSubBtns = (id, index) => {
     if (document.getElementById(`${id}`).value == "off") {
-
       document.getElementById(`${id}`).value = "on";
-      let oppositeId = id
+      let oppositeId = id;
 
       id.split("-").forEach((ele, index) => {
         if (index === 3) {
-          id.split("-")[index] == "image" ? oppositeId.replace("image", "text") : oppositeId.replace("text", "image")
+          id.split("-")[index] == "image"
+            ? oppositeId.replace("image", "text")
+            : oppositeId.replace("text", "image");
         }
       });
 
-
       document.getElementById(`${oppositeId}`).value = "off";
 
-
-      let tempOptionsType = optionsType
+      let tempOptionsType = optionsType;
       if (id.includes("image")) {
-
-        tempOptionsType[index] = "image"
-
+        tempOptionsType[index] = "image";
       } else if (id.includes("text")) {
-        tempOptionsType[index] = "text"
-
+        tempOptionsType[index] = "text";
       }
 
-      setOptionsType([...tempOptionsType])
-    }
-    else if (document.getElementById(`${id}`).value == "on") {
-
+      setOptionsType([...tempOptionsType]);
+    } else if (document.getElementById(`${id}`).value == "on") {
       document.getElementById(`${id}`).value = "off";
-      let oppositeId = id
+      let oppositeId = id;
 
       id.split("-").forEach((ele, index) => {
         if (index === 3) {
-          id.split("-")[index] == "image" ? oppositeId.replace("image", "text") : oppositeId.replace("text", "image")
+          id.split("-")[index] == "image"
+            ? oppositeId.replace("image", "text")
+            : oppositeId.replace("text", "image");
         }
       });
 
       document.getElementById(`${oppositeId}`).value = "on";
-      let tempOptionsType = optionsType
+      let tempOptionsType = optionsType;
       if (oppositeId.includes("image")) {
-
-        tempOptionsType[index] = "image"
-
+        tempOptionsType[index] = "image";
       } else if (oppositeId.includes("text")) {
-        tempOptionsType[index] = "text"
-
+        tempOptionsType[index] = "text";
       }
 
-      setOptionsType([...tempOptionsType])
+      setOptionsType([...tempOptionsType]);
     }
   };
 
-
-  const imageFilesHandler = (e, ind) => {
+  const imageFilesHandler = (e, cntInd, optInd) => {
     let selectedImage = e.target.files[0];
     let tempTemplateImages = templateOptImages;
-    // console.log(selectedImage.type)
+
     if (selectedImage.type !== "image/png") {
       alert("please select images");
-      document.getElementById(`add-opt-image-${ind}`).value = "";
-      tempTemplateImages.splice(1, ind);
+      document.getElementById(`add-opt-image-${cntInd}-${optInd}`).value = "";
+      tempTemplateImages[cntInd].splice(1, optInd);
       return;
+    } else if (
+      Array.isArray(tempTemplateImages[cntInd]) &&
+      tempTemplateImages[cntInd]?.length !== 0
+    ) {
+      tempTemplateImages[cntInd][optInd] = selectedImage;
+      setTemplateOptImages([...tempTemplateImages]);
     } else {
-      tempTemplateImages[ind] = selectedImage;
+      tempTemplateImages[cntInd] = [];
+      tempTemplateImages[cntInd][optInd] = selectedImage;
+      setTemplateOptImages([...tempTemplateImages]);
     }
+  };
 
-    // console.log("temppdfs",tempTemplatePdfs)
-    setTemplateOptImages([...tempTemplateImages]);
+  const textOptHandler = (e, cntInd, optInd) => {
+    let selectedText = e.target.value;
+    let tempTemplateTexts = templateOptTexts;
+
+    if (
+      Array.isArray(tempTemplateTexts[cntInd]) &&
+      tempTemplateTexts[cntInd]?.length !== 0
+    ) {
+      tempTemplateTexts[cntInd][optInd] = selectedText;
+      setTemplateOptTexts([...tempTemplateTexts]);
+    } else {
+      tempTemplateTexts[cntInd] = [];
+      tempTemplateTexts[cntInd][optInd] = selectedText;
+      setTemplateOptTexts([...tempTemplateTexts]);
+    }
   };
 
   const answerImageFilesHandler = (e, ind) => {
-    console.log("kkk")
     let selectedImage = e.target.files[0];
     let tempAnswerImages = answerImages;
     // console.log(selectedImage.type)
@@ -123,59 +142,91 @@ function McqTemplateEditor() {
       tempAnswerImages[ind] = selectedImage;
     }
 
-    // console.log("temppdfs",tempTemplatePdfs)
-    console.log("yyy",tempAnswerImages)
     setAnswerImages([...tempAnswerImages]);
   };
 
-
-  const handleCreate=async()=>{
+  const handleCreate = async () => {
     let addData = new FormData();
 
+    addData.append("paper_name", paperName);
 
-    addData.append("paper_name",paperName)
+    optionsType.forEach((ot) => {
+      addData.append("options_type", ot);
+    });
+    templateOptImages &&
+      templateOptImages.length !== 0 &&
+      templateOptImages.forEach((temp) => {
+        if (temp) {
+          temp.forEach((tTemp) => {
+            addData.append("options", tTemp);
+          });
+        }
+      });
+    answerImages.forEach((ai) => {
+      addData.append("answers", ai);
+    });
 
-    optionsType.forEach((ot)=>{
-      addData.append("options_type",ot)
-    })
-    templateOptImages&&templateOptImages.length!==0&&templateOptImages.forEach((temp)=>{
-      addData.append("files",temp)
-    })
-    answerImages.forEach((ai)=>{
-      addData.append("answers",ai)
-    })
+    templateOptTexts &&
+      templateOptTexts.length !== 0 &&
+      templateOptTexts.forEach((temp) => {
+        if (temp) {
+          temp.forEach((tTemp) => {
+            addData.append("text_options", tTemp);
+          });
+        }
+      });
 
-    optionsType.includes("text")&&[...Array(4)].forEach((_,ind)=>{
-      addData.append("text_options",document.getElementById(`add-opt-text-${ind}`).value)
-    })
-
-    mcqsCnt.forEach((mc,ind)=>{
-      addData.append("question",document.getElementById(`add-question-${ind}`).value)
-      if(optionsType[ind]=="text"){
-      addData.append("answer_text",document.getElementById(`add-text-answer-${ind}`).value)
+    let tempAnswerText = [];
+    mcqsCnt.forEach((mc, ind) => {
+      addData.append(
+        "question",
+        document.getElementById(`add-question-${ind}`).value
+      );
+      if (optionsType[ind] == "text") {
+        tempAnswerText[ind] = document.getElementById(
+          `add-text-answer-${ind}`
+        ).value;
       }
-      
-    })
-    
+    });
 
-   
+    if (tempAnswerText.length !== 0) {
+      addData.append("answer_text", JSON.stringify(tempAnswerText));
+    }
+
+
+    explainations&&explainations.length!==0&&explainations.forEach((exp)=>{
+      addData.append("explaination",exp)
+    })
+
+    marks&&marks.length!==0&&marks.forEach((mark)=>{
+      addData.append("mark",mark)
+    })
 
     let createdData = await createMcqTemplates(addData);
-
     let tempCreatedData = [];
     tempCreatedData.push(createdData);
     setMcqTemplates([...mcqTemplates, ...tempCreatedData]);
-    // handleClose();
-    // window.location.reload()
-    
+    handleClose();
+    window.location.reload();
+  };
 
+  const handleMarks=async(e,ind)=>{
+    let tempMarks=marks
+    tempMarks[ind]=e.target.value
+    setMarks([...tempMarks])
+  }
+
+  const handleExplainations=async(e,ind)=>{
+    let tempExplainations=explainations
+    tempExplainations[ind]=e.target.value
+    setExplainations([...tempExplainations])
   }
 
   useEffect(() => {
     if (mcqsCnt.length !== 0) {
       const index = mcqsCnt.length - 1;
-      document.getElementById(`add-option-type-text-${index}`).value = "off"
-      document.getElementById(`add-option-type-image-${index}`).value = "off"
+      document.getElementById(`add-option-type-text-${index}`).value = "off";
+      document.getElementById(`add-option-type-image-${index}`).value = "off";
     }
   }, [mcqsCnt]);
 
@@ -190,7 +241,6 @@ function McqTemplateEditor() {
 
     fetcher();
 
-
     return () => {
       window.removeEventListener("resize", updateWindowWidth);
     };
@@ -199,7 +249,7 @@ function McqTemplateEditor() {
   return (
     <div>
       <Nav />
-      <hr style={{ color: "black", margin: '0' }} />
+      <hr style={{ color: "black", margin: "0" }} />
 
       <div className="row">
         {windowWidth > 768 && <Sidebar activeOption="mcq-temp-editor" />}
@@ -213,7 +263,7 @@ function McqTemplateEditor() {
                 whiteSpace: "nowrap",
               }}
               onClick={() => {
-                setUpdate(false)
+                setUpdate(false);
                 setShowModal(true);
               }}
             >
@@ -256,29 +306,23 @@ function McqTemplateEditor() {
               mcqTemplates.map((temp, index) => (
                 <tbody>
                   <tr>
+                    <th scope="col">{index + 1}.</th>
+                    <th scope="col">{temp?.paper_name}</th>
                     <th scope="col">
-                      {index + 1}.
-                    </th>
-                    <th scope="col">
-                      {temp?.paper_name}
-                    </th>
-                    <th scope="col">
-                      {/* <Link to="/view" state={{ templateData: temp }}> */}
+                      <Link to="/view-mcq-template" state={{ templateData: temp }}>
                       view
-                      {/* </Link> */}
+                      </Link>
                     </th>
                     <th scope="col ">
                       <CreateIcon
                         className="text-primary border border-primary rounded me-2"
                         style={{ cursor: "pointer" }}
-                        onClick={() => {
-
-                        }}
+                        onClick={() => {}}
                       />
                       <DeleteIcon
                         className="text-danger border border-danger cursor-pointer rounded"
                         style={{ cursor: "pointer" }}
-                      // onClick={() => {console.log("del")}}
+                        // onClick={() => {console.log("del")}}
                       />
                     </th>
                   </tr>
@@ -292,7 +336,6 @@ function McqTemplateEditor() {
           </table>
         </div>
       </div>
-
 
       <Modal show={showModal} onHide={handleClose} size="lg" centered>
         <Modal.Header closeButton>
@@ -325,7 +368,7 @@ function McqTemplateEditor() {
                     whiteSpace: "nowrap",
                   }}
                   onClick={() => {
-                    handleMcqsInputCnt()
+                    handleMcqsInputCnt();
                   }}
                 >
                   add mcqs <AddIcon />
@@ -341,122 +384,118 @@ function McqTemplateEditor() {
                         className="form-control"
                         placeholder="question"
                       />
-
                     </div>
 
                     <div className="d-flex mt-2 justify-content-center">
                       options type
                       <div class="ms-4 form-check">
-                        <input class="form-check-input" type="radio" name={`flexRadioDefault-${ind}`} id={`add-option-type-text-${ind}`}
-
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name={`flexRadioDefault-${ind}`}
+                          id={`add-option-type-text-${ind}`}
                           onChange={() => {
                             handleSubBtns(`add-option-type-text-${ind}`, ind);
                           }}
                         />
-                        <label class="form-check-label" for={`add-option-type-text-${ind}`}>
+                        <label
+                          class="form-check-label"
+                          for={`add-option-type-text-${ind}`}
+                        >
                           text
                         </label>
                       </div>
                       <div class="ms-2 form-check">
-                        <input class="form-check-input" type="radio" name={`flexRadioDefault-${ind}`} id={`add-option-type-image-${ind}`}
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name={`flexRadioDefault-${ind}`}
+                          id={`add-option-type-image-${ind}`}
                           onChange={() => {
                             handleSubBtns(`add-option-type-image-${ind}`, ind);
                           }}
                         />
-                        <label class="form-check-label" for={`add-option-type-image-${ind}`}>
+                        <label
+                          class="form-check-label"
+                          for={`add-option-type-image-${ind}`}
+                        >
                           Image
                         </label>
                       </div>
-
-
-
-
-
-
                     </div>
 
-
-
-                    {
-                      optionsType[ind] == "image" && [...Array(4)].map((_, index) => (<>
-
-                        <input
-                          type="file"
-                          id={`add-opt-image-${index}`}
-                          className="form-control mt-2"
-                          placeholder="options images"
-                          onChange={(e) => {
-                           imageFilesHandler(e,index)
-                          }}
-                        />
-                      </>))
-                    }
-
-                    {
-                      optionsType[ind] == "text" && [...Array(4)].map((_, index) => (
-
+                    {optionsType[ind] == "image" &&
+                      [...Array(4)].map((_, index) => (
                         <>
+                          <input
+                            type="file"
+                            id={`add-opt-image-${ind}-${index}`}
+                            className="form-control mt-2"
+                            placeholder="options images"
+                            onChange={(e) => {
+                              imageFilesHandler(e, ind, index);
+                            }}
+                          />
+                        </>
+                      ))}
 
+                    {optionsType[ind] == "text" &&
+                      [...Array(4)].map((_, index) => (
+                        <>
                           <input
                             type="text"
-                            id={`add-opt-text-${index}`}
+                            id={`add-opt-text-${ind}-${index}`}
                             className="form-control mt-2"
                             placeholder="options text"
-                            
+                            onChange={(e) => {
+                              textOptHandler(e, ind, index);
+                            }}
                           />
-
                         </>
-                      ))
+                      ))}
 
-                    }
+                    {optionsType[ind] == "text" && (
+                      <div className="d-flex mt-2">
+                        <p>answer:</p>
+                        <input
+                          type="text"
+                          id={`add-text-answer-${ind}`}
+                          className="form-control ms-2"
+                          placeholder="answer"
+                        />
+                      </div>
+                    )}
 
-{
-                      optionsType[ind] == "text" &&  <div className="d-flex mt-2">
-                      <input
-                        type="text"
-                        id={`add-text-answer-${ind}`}
-                        className="form-control"
-                        placeholder="answer"
-                      />
+                    {optionsType[ind] == "image" && (
+                      <div className="d-flex mt-2">
+                        <p>answer:</p>
+                        <input
+                          type="file"
+                          id={`add-img-answer-${ind}`}
+                          className="form-control ms-2"
+                          placeholder="answer"
+                          onChange={(e) => {
+                            answerImageFilesHandler(e, ind);
+                          }}
+                        />
+                      </div>
+                    )}
 
-                    </div>
+<div className="d-flex mt-2">
+<input  placeholder="marks" onChange={(e)=>{
+  handleMarks(e,ind)
+}} type="number"/>
 
-}
+  </div>
+<div className="d-flex mt-2">
+<textarea className="w-100" placeholder="explaination" onChange={(e)=>{
+  handleExplainations(e,ind)
+}} />
 
-
-{ 
-                      optionsType[ind] == "image" &&  <div className="d-flex mt-2">
-                       
-                      <input
-                        type="file"
-                        id={`add-img-answer-${ind}`}
-                        className="form-control"
-                        placeholder="answer"
-                        onChange={(e)=>{
-                          answerImageFilesHandler(e,ind)
-                        }}
-                      />
-
-                    </div>
-
-}
-
-
-
-
-
-
+  </div>
                   </>
                 ))}
             </div>
-
-
-
-
-
-
-
-
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -470,7 +509,7 @@ function McqTemplateEditor() {
           <Button
             variant="primary"
             onClick={() => {
-              handleCreate()
+              handleCreate();
               // update ? handleUpdate() : handleCreate();
             }}
           >
@@ -479,7 +518,7 @@ function McqTemplateEditor() {
         </Modal.Footer>
       </Modal>
     </div>
-  )
+  );
 }
 
-export default McqTemplateEditor
+export default McqTemplateEditor;
