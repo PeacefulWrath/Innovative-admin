@@ -211,8 +211,8 @@ function McqTemplateEditor() {
     let tempCreatedData = [];
     tempCreatedData.push(createdData);
     setMcqTemplates([...mcqTemplates, ...tempCreatedData]);
-    // handleClose();
-    // window.location.reload();
+    handleClose();
+    window.location.reload();
   };
 
   const handleMarks=async(e,ind)=>{
