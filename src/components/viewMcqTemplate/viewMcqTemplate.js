@@ -8,7 +8,7 @@ import "./viewMcqTemplate.css";
 import dotted from "../../assets/Dotted.png";
 import line from "../../assets/Line.png";
 import rightPng from "../../assets/Right.png";
-import { setRef } from "@mui/material";
+
 
 function ViewMcqTemplate() {
   const location = useLocation();
@@ -18,13 +18,24 @@ function ViewMcqTemplate() {
   const [prevInd, setPrevInd] = useState(null);
   const [explaination, setExplaination] = useState("");
   const [explainationColor, setExplainationColor] = useState("");
-  const [marks,setMarks]=useState(0)
+  const [marks,setMarks]=useState([])
   const [showMarks,setShowMarks]=useState(false)
   const [right,setRight]=useState([])
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
   };
+
+  const getTotalMarks=()=>{
+  
+let sum = 0;
+for (let i = 0; i < marks.length; i++) {
+  if(marks[i]!==undefined&&isNaN(marks[i])==false){
+  sum += marks[i];
+  }
+}
+return sum
+  }
 
   useEffect(() => {
     console.log(templateData);
@@ -79,14 +90,11 @@ function ViewMcqTemplate() {
         if (opInd == ind) {
           if (op === templateData.mcqs[pageNumber - 1].answer) {
             let tempMarks=marks
-            tempMarks=marks+templateData.mcqs[pageNumber - 1].mark
-            setMarks(tempMarks)
+            tempMarks[ind]=(marks[ind]!==undefined?marks[ind]:0)+templateData.mcqs[pageNumber - 1].mark
+            setMarks([...tempMarks])
             setExplaination(templateData.mcqs[pageNumber - 1].explaination);
             setExplainationColor("green");
           } else {
-            let tempMarks=marks
-            tempMarks=marks+0
-            setMarks(tempMarks)
             setExplaination(templateData.mcqs[pageNumber - 1].explaination);
             setExplainationColor("red");
           }
@@ -102,7 +110,7 @@ function ViewMcqTemplate() {
       <div className="row">
         {windowWidth > 768 && <Sidebar activeOption="mcq-temp-editor" />}
         <div className="col-md-10  p-4">
-{showMarks?<><h1 className="d-flex justify-content-center">Total Marks: {marks}</h1></>:
+{showMarks?<><h1 className="d-flex justify-content-center">Total Marks: {getTotalMarks()}</h1></>:
           <>
           {templateData && <h1 className="">{templateData.paper_name}</h1>}
           {templateData && templateData?.mcqs?.length !== 0 && (

@@ -130,6 +130,7 @@ function McqTemplateEditor() {
   };
 
   const answerImageFilesHandler = (e, ind) => {
+    // console.log(";;;",ind)
     let selectedImage = e.target.files[0];
     let tempAnswerImages = answerImages;
     // console.log(selectedImage.type)
@@ -162,8 +163,12 @@ function McqTemplateEditor() {
           });
         }
       });
-    answerImages.forEach((ai) => {
+      answerImages &&
+      answerImages.length !== 0 &&  answerImages.forEach((ai) => {
+        // console.log(answerImages)
+        // if(ai){
       addData.append("answers", ai);
+        // }
     });
 
     templateOptTexts &&
@@ -206,8 +211,8 @@ function McqTemplateEditor() {
     let tempCreatedData = [];
     tempCreatedData.push(createdData);
     setMcqTemplates([...mcqTemplates, ...tempCreatedData]);
-    handleClose();
-    window.location.reload();
+    // handleClose();
+    // window.location.reload();
   };
 
   const handleMarks=async(e,ind)=>{
