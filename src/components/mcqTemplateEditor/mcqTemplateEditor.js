@@ -13,7 +13,9 @@ import { Modal, Button } from "react-bootstrap";
 import {
   createMcqTemplates,
   fetchMcqTemplates,
+  updateMcqTemplates
 } from "../../api-calls/apicalls";
+
 
 function McqTemplateEditor() {
   const [windowWidth, setWindowWidth] = useState();
@@ -24,16 +26,29 @@ function McqTemplateEditor() {
   const [mcqsCnt, setMcqsCnt] = useState([]);
   const [optionsType, setOptionsType] = useState([]);
   const [templateOptImages, setTemplateOptImages] = useState([]);
+  const [dbTemplateOptImages, setDbTemplateOptImages] = useState([]);
   const [templateOptTexts, setTemplateOptTexts] = useState([]);
+  const [dbTemplateOptTexts, setDbTemplateOptTexts] = useState([]);
   const [answerImages, setAnswerImages] = useState([]);
-  const[explainations,setExplainations]=useState([])
-  const[marks,setMarks]=useState([])
+  const [explainations, setExplainations] = useState([])
+  const [marks, setMarks] = useState([])
+  const [dbMcqs, setDbMcqs] = useState([])
+  const [dbOptionsType, setDbOptionsType] = useState([]);
+  const [editMcqDocId, setEditMcqDocId] = useState("")
+  const [editMcqId, setEditMcqId] = useState("")
+  const [dbMarks, setDbMarks] = useState([])
+  const [dbAnswerImages, setDbAnswerImages] = useState([]);
+  const [dbExplainations, setDbExplainations] = useState([])
+  const [dbTextAnswers, setDbTextAnswers] = useState([])
+
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
   };
 
   const handleClose = () => {
+    setUpdate(false)
+    setDbMcqs([])
     setShowModal(false);
   };
 
@@ -90,13 +105,14 @@ function McqTemplateEditor() {
     }
   };
 
-  const imageFilesHandler = (e, cntInd, optInd) => {
-    let selectedImage = e.target.files[0];
-    let tempTemplateImages = templateOptImages;
 
+  const imageFilesHandler = (e, operation, cntInd, optInd) => {
+    let selectedImage = e.target.files[0];
+    let tempTemplateImages = operation === "add" ? templateOptImages : dbTemplateOptImages;
+    console.log("114", tempTemplateImages)
     if (selectedImage.type !== "image/png") {
       alert("please select images");
-      document.getElementById(`add-opt-image-${cntInd}-${optInd}`).value = "";
+      document.getElementById(`${operation}-opt-image-${cntInd}-${optInd}`).value = "";
       tempTemplateImages[cntInd].splice(1, optInd);
       return;
     } else if (
@@ -104,15 +120,15 @@ function McqTemplateEditor() {
       tempTemplateImages[cntInd]?.length !== 0
     ) {
       tempTemplateImages[cntInd][optInd] = selectedImage;
-      setTemplateOptImages([...tempTemplateImages]);
+      operation === "add" ? setTemplateOptImages([...tempTemplateImages]) : setDbTemplateOptImages([...tempTemplateImages]);
     } else {
       tempTemplateImages[cntInd] = [];
       tempTemplateImages[cntInd][optInd] = selectedImage;
-      setTemplateOptImages([...tempTemplateImages]);
+      operation === "add" ? setTemplateOptImages([...tempTemplateImages]) : setDbTemplateOptImages([...tempTemplateImages]);
     }
   };
 
-  const textOptHandler = (e, cntInd, optInd) => {
+  const textOptHandler = (e, operation, cntInd, optInd) => {
     let selectedText = e.target.value;
     let tempTemplateTexts = templateOptTexts;
 
@@ -121,18 +137,20 @@ function McqTemplateEditor() {
       tempTemplateTexts[cntInd]?.length !== 0
     ) {
       tempTemplateTexts[cntInd][optInd] = selectedText;
-      setTemplateOptTexts([...tempTemplateTexts]);
+      document.getElementById(`db-opt-text-${cntInd}-${optInd}`).value = selectedText
+      operation === "add" ? setTemplateOptTexts([...tempTemplateTexts]) : setDbTemplateOptTexts([...tempTemplateTexts]);
     } else {
       tempTemplateTexts[cntInd] = [];
       tempTemplateTexts[cntInd][optInd] = selectedText;
-      setTemplateOptTexts([...tempTemplateTexts]);
+      document.getElementById(`db-opt-text-${cntInd}-${optInd}`).value = selectedText
+      operation === "add" ? setTemplateOptTexts([...tempTemplateTexts]) : setDbTemplateOptTexts([...tempTemplateTexts]);
     }
   };
 
-  const answerImageFilesHandler = (e, ind) => {
+  const answerImageFilesHandler = (e, operation, ind) => {
     // console.log(";;;",ind)
     let selectedImage = e.target.files[0];
-    let tempAnswerImages = answerImages;
+    let tempAnswerImages = operation === "add" ? answerImages : dbAnswerImages;
     // console.log(selectedImage.type)
     if (selectedImage.type !== "image/png") {
       alert("please select images");
@@ -143,7 +161,7 @@ function McqTemplateEditor() {
       tempAnswerImages[ind] = selectedImage;
     }
 
-    setAnswerImages([...tempAnswerImages]);
+    operation === "add" ? setAnswerImages([...tempAnswerImages]) : setDbAnswerImages([...tempAnswerImages]);
   };
 
   const handleCreate = async () => {
@@ -163,13 +181,13 @@ function McqTemplateEditor() {
           });
         }
       });
-      answerImages &&
-      answerImages.length !== 0 &&  answerImages.forEach((ai) => {
+    answerImages &&
+      answerImages.length !== 0 && answerImages.forEach((ai) => {
         // console.log(answerImages)
         // if(ai){
-      addData.append("answers", ai);
+        addData.append("answers", ai);
         // }
-    });
+      });
 
     templateOptTexts &&
       templateOptTexts.length !== 0 &&
@@ -199,12 +217,12 @@ function McqTemplateEditor() {
     }
 
 
-    explainations&&explainations.length!==0&&explainations.forEach((exp)=>{
-      addData.append("explaination",exp)
+    explainations && explainations.length !== 0 && explainations.forEach((exp) => {
+      addData.append("explaination", exp)
     })
 
-    marks&&marks.length!==0&&marks.forEach((mark)=>{
-      addData.append("mark",mark)
+    marks && marks.length !== 0 && marks.forEach((mark) => {
+      addData.append("mark", mark)
     })
 
     let createdData = await createMcqTemplates(addData);
@@ -215,16 +233,141 @@ function McqTemplateEditor() {
     window.location.reload();
   };
 
-  const handleMarks=async(e,ind)=>{
-    let tempMarks=marks
-    tempMarks[ind]=e.target.value
-    setMarks([...tempMarks])
+  const handleMarks = async (e, operation, ind) => {
+    let tempMarks = operation === "add" ? marks : dbMarks
+    tempMarks[ind] = e.target.value
+    operation === "add" ? setMarks([...tempMarks]) : setDbMarks([...tempMarks])
   }
 
-  const handleExplainations=async(e,ind)=>{
-    let tempExplainations=explainations
-    tempExplainations[ind]=e.target.value
-    setExplainations([...tempExplainations])
+  const handleExplainations = async (e, operation, ind) => {
+    let tempExplainations = operation === "add" ? explainations : dbExplainations
+    tempExplainations[ind] = e.target.value
+    operation === "add" ? setExplainations([...tempExplainations]) : setDbExplainations([...tempExplainations])
+  }
+
+  const handleUpdate = async () => {
+
+    let updateData = new FormData()
+
+    console.log("253", dbTemplateOptImages)
+
+    updateData.append("mcqDocId", editMcqDocId)
+    updateData.append("paper_name", paperName)
+
+    let updatedDataToBackend = []
+
+    dbTemplateOptImages && dbTemplateOptImages.length !== 0 && dbTemplateOptImages.forEach((di, ind) => {
+      if (di) {
+        di.forEach((ele, eleInd) => {
+          if (ele !== undefined) {
+            updatedDataToBackend.push({
+              "mcq_id": editMcqId,
+              "replacable_option_type": "image",
+              "replacable_question_no": ind,
+              "replacable_option_index": eleInd
+
+            })
+            updateData.append(`db_options`, ele)
+          }
+        })
+      }
+    })
+
+    dbTemplateOptTexts && dbTemplateOptTexts.length !== 0 && dbTemplateOptTexts.forEach((di, ind) => {
+      if (di) {
+        di.forEach((ele, eleInd) => {
+          if (ele !== undefined) {
+            updatedDataToBackend.push({
+              "mcq_id": editMcqId,
+              "replacable_option_type": "text",
+              "replacable_question_no": ind,
+              "replacable_option_index": eleInd,
+              "db_options_text": ele
+            })
+
+          }
+        })
+      }
+    })
+
+    dbAnswerImages && dbAnswerImages.length !== 0 && dbAnswerImages.forEach((di, ind) => {
+      if (di) {
+        di.forEach((ele, eleInd) => {
+          if (ele !== undefined) {
+            updatedDataToBackend.push({
+              "mcq_id": editMcqId,
+              "replacable_question_no": ind,
+
+
+            })
+            updateData.append(`db_answers`, ele)
+          }
+        })
+      }
+    })
+
+    dbTextAnswers && dbTextAnswers.length !== 0 && dbTextAnswers.forEach((dta, ind) => {
+      if (dta) {
+
+
+        updatedDataToBackend.push({
+          "mcq_id": editMcqId,
+          "replacable_question_no": ind,
+          "replacable_option_type": "text",
+          "db_text_answer": dta
+        })
+
+
+      }
+
+    })
+
+    dbExplainations && dbExplainations.length !== 0 && dbExplainations.forEach((dta, ind) => {
+      if (dta) {
+
+
+        updatedDataToBackend.push({
+          "mcq_id": editMcqId,
+          "replacable_question_no": ind,
+          "replacable_option_type": "text",
+          "db_explaination": dta
+        })
+
+
+      }
+
+    })
+
+    dbMarks && dbMarks.length !== 0 && dbMarks.forEach((dta, ind) => {
+      if (dta) {
+
+
+        updatedDataToBackend.push({
+          "mcq_id": editMcqId,
+          "replacable_question_no": ind,
+          "replacable_option_type": "text",
+          "db_marks": dta
+        })
+
+
+      }
+
+    })
+
+
+    updateData.append("updated_data", JSON.stringify(updatedDataToBackend))
+
+
+    await updateMcqTemplates(updateData)
+
+
+
+  }
+
+  const handleDbTextAnswers = (e, ind) => {
+    let tempDbTextAnswers = dbTextAnswers
+
+    tempDbTextAnswers[ind] = e.target.value
   }
 
   useEffect(() => {
@@ -250,6 +393,41 @@ function McqTemplateEditor() {
       window.removeEventListener("resize", updateWindowWidth);
     };
   }, []);
+
+  useEffect(() => {
+    if (dbMcqs && dbMcqs.length !== 0) {
+      let tempDbOptionsType = dbOptionsType
+      dbMcqs.forEach((dm, ind) => {
+        if (dm?.options_type == "image") {
+          console.log(document.getElementById(`db-option-type-image-${ind}`))
+          document.getElementById(`db-option-type-image-${ind}`).checked = true
+          tempDbOptionsType[ind] = "image"
+
+        } else if (dm?.options_type == "text") {
+          document.getElementById(`db-option-type-text-${ind}`).checked = true
+          tempDbOptionsType[ind] = "text"
+        }
+      })
+      setDbOptionsType([...tempDbOptionsType])
+      dbMcqs.forEach((dm, ind) => {
+        if (dm?.options_type == "text") {
+          dm.options.forEach((op, mInd) => {
+            document.getElementById(`db-opt-text-${ind}-${mInd}`).value = op
+
+          })
+          document.getElementById(`db-text-answer-${ind}`).value = dm?.answer
+        }
+
+        else if (dm?.options_type == "image") {
+
+          document.getElementById(`db-attached-img-answer-${ind}`).src = dm?.answer
+        }
+
+        document.getElementById(`db-marks-${ind}`).value = dm?.mark
+        document.getElementById(`db-explaination-${ind}`).value = dm?.explaination
+      })
+    }
+  }, [dbMcqs])
 
   return (
     <div>
@@ -315,19 +493,26 @@ function McqTemplateEditor() {
                     <th scope="col">{temp?.paper_name}</th>
                     <th scope="col">
                       <Link to="/view-mcq-template" state={{ templateData: temp }}>
-                      view
+                        view
                       </Link>
                     </th>
                     <th scope="col ">
                       <CreateIcon
                         className="text-primary border border-primary rounded me-2"
                         style={{ cursor: "pointer" }}
-                        onClick={() => {}}
+                        onClick={() => {
+                          setUpdate(true)
+                          setShowModal(true)
+                          setPaperName(temp?.paper_name)
+                          console.log(temp.mcqs)
+                          setDbMcqs(temp.mcqs)
+                          setEditMcqDocId(temp?._id)
+                        }}
                       />
                       <DeleteIcon
                         className="text-danger border border-danger cursor-pointer rounded"
                         style={{ cursor: "pointer" }}
-                        // onClick={() => {console.log("del")}}
+                      // onClick={() => {console.log("del")}}
                       />
                     </th>
                   </tr>
@@ -363,6 +548,160 @@ function McqTemplateEditor() {
               />
             </div>
             <div className="mb-2">
+              {dbMcqs && dbMcqs.length !== 0 && (<>
+                <label className="pb-1">Attached Mcqs</label>
+                {
+                  dbMcqs.map((dm, ind) => (
+                    <>
+                      <div className="d-flex mt-2">
+                        <input
+                          type="text"
+                          id={`db-question-${ind}`}
+                          className="form-control"
+                          placeholder="question"
+                          value={dm.question}
+                        />
+                      </div>
+
+                      <div className="d-flex mt-2 justify-content-center">
+                        options type
+                        {dm?.options_type == "text" && <div class="ms-4 form-check">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name={`db-flexRadioDefault-${ind}`}
+                            id={`db-option-type-text-${ind}`}
+
+                          />
+                          <label
+                            class="form-check-label"
+                            for={`db-option-type-text-${ind}`}
+                          >
+                            text
+                          </label>
+                        </div>}
+                        {dm?.options_type == "image" && <div class="ms-2 form-check">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name={`db-flexRadioDefault-${ind}`}
+                            id={`db-option-type-image-${ind}`}
+
+                          />
+                          <label
+                            class="form-check-label"
+                            for={`db-option-type-image-${ind}`}
+                          >
+                            Image
+                          </label>
+                        </div>}
+                      </div>
+
+
+                      {dm?.options_type == "image" &&
+                        dm.options.map((op, index) => (
+                          <>
+
+                            <p className="mt-3">already attached :<img src={op} alt="already attached image" className="h-50 w-50" /></p>
+                            <p>changed already attached image:
+                              <input
+                                type="file"
+                                id={`db-opt-image-${ind}-${index}`}
+                                className="form-control mt-2"
+                                placeholder="options images"
+                                onChange={(e) => {
+                                  setEditMcqId(dm?._id)
+                                  imageFilesHandler(e, "update", ind, index);
+                                }}
+                              /></p>
+                          </>
+                        ))}
+
+
+
+                      {dm?.options_type == "text" &&
+                        dm.options.map((op, index) => (
+                          <>
+                            <input
+                              type="text"
+                              id={`db-opt-text-${ind}-${index}`}
+                              className="form-control mt-2"
+                              placeholder="options text"
+                              onChange={(e) => {
+                                setEditMcqId(dm?._id)
+                                textOptHandler(e, "update", ind, index);
+                              }}
+                            />
+                          </>
+                        ))}
+
+
+                      {dm?.options_type == "text" && (
+                        <div className="d-flex mt-2">
+                          <p>answer:</p>
+                          <input
+                            type="text"
+                            id={`db-text-answer-${ind}`}
+                            className="form-control ms-2"
+                            placeholder="answer"
+                            onChange={(e) => {
+                              setEditMcqId(dm?._id)
+                              handleDbTextAnswers(e, ind)
+                            }}
+                          />
+                        </div>
+                      )}
+
+                      {dm?.options_type == "image" && (
+                        <>
+                          <div className="d-flex mt-2">
+                            <p>attached answer:</p>
+                            <img
+
+                              id={`db-attached-img-answer-${ind}`}
+                              className="ms-2 h-50 w-50"
+                              alt="answer"
+
+                            />
+                          </div>
+                          <div className="d-flex mt-2">
+                            <p>answer:</p>
+                            <input
+                              type="file"
+                              id={`db-img-answer-${ind}`}
+                              className="form-control ms-2"
+                              placeholder="answer"
+                              onChange={(e) => {
+                                setEditMcqId(dm?._id)
+                                answerImageFilesHandler(e, "update", ind);
+                              }}
+                            />
+
+                          </div>
+                        </>
+                      )}
+
+                      <div className="d-flex mt-2">
+                        <input placeholder="marks" id={`db-marks-${ind}`} onChange={(e) => {
+                          setEditMcqId(dm?._id)
+                          handleMarks(e, "update", ind)
+                        }} type="number" />
+                      </div>
+
+                      <div className="d-flex mt-2">
+                        <textarea className="w-100" placeholder="explaination" id={`db-explaination-${ind}`} onChange={(e) => {
+                          setEditMcqId(dm?._id)
+                          handleExplainations(e, "update", ind)
+                        }} />
+                      </div>
+
+
+                    </>
+                  ))
+                }
+              </>)}
+            </div>
+            <div className="mb-2">
               <div className="d-flex justify-content-between">
                 <label className="pb-1">Template Mcqs</label>
                 <button
@@ -379,6 +718,7 @@ function McqTemplateEditor() {
                   add mcqs <AddIcon />
                 </button>
               </div>
+
               {mcqsCnt.length !== 0 &&
                 mcqsCnt.map((data, ind) => (
                   <>
@@ -438,7 +778,7 @@ function McqTemplateEditor() {
                             className="form-control mt-2"
                             placeholder="options images"
                             onChange={(e) => {
-                              imageFilesHandler(e, ind, index);
+                              imageFilesHandler(e, "add", ind, index);
                             }}
                           />
                         </>
@@ -453,7 +793,7 @@ function McqTemplateEditor() {
                             className="form-control mt-2"
                             placeholder="options text"
                             onChange={(e) => {
-                              textOptHandler(e, ind, index);
+                              textOptHandler(e, "add", ind, index);
                             }}
                           />
                         </>
@@ -480,24 +820,23 @@ function McqTemplateEditor() {
                           className="form-control ms-2"
                           placeholder="answer"
                           onChange={(e) => {
-                            answerImageFilesHandler(e, ind);
+                            answerImageFilesHandler(e, "add", ind);
                           }}
                         />
                       </div>
                     )}
 
-<div className="d-flex mt-2">
-<input  placeholder="marks" onChange={(e)=>{
-  handleMarks(e,ind)
-}} type="number"/>
+                    <div className="d-flex mt-2">
+                      <input placeholder="marks" onChange={(e) => {
+                        handleMarks(e, "add", ind)
+                      }} type="number" />
+                    </div>
 
-  </div>
-<div className="d-flex mt-2">
-<textarea className="w-100" placeholder="explaination" onChange={(e)=>{
-  handleExplainations(e,ind)
-}} />
-
-  </div>
+                    <div className="d-flex mt-2">
+                      <textarea className="w-100" placeholder="explaination" onChange={(e) => {
+                        handleExplainations(e, "add", ind)
+                      }} />
+                    </div>
                   </>
                 ))}
             </div>
@@ -514,8 +853,8 @@ function McqTemplateEditor() {
           <Button
             variant="primary"
             onClick={() => {
-              handleCreate();
-              // update ? handleUpdate() : handleCreate();
+
+              update ? handleUpdate() : handleCreate();
             }}
           >
             {update ? "update" : "Create"}

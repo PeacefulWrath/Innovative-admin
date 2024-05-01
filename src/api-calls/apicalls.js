@@ -127,3 +127,29 @@ export const createMcqTemplates = async (addData) => {
         return tempTemplates;
     }
 };
+
+export const updateMcqTemplates = async (updateData) => {
+    let tempTemplates = [];
+    try {
+        
+
+        await axios
+            (
+                {
+                    method: "put",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/mcq-template`,
+                    data: updateData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+            .then((res) => {
+                tempTemplates = res.data;
+            });
+    } catch (error) {
+        console.log("can not create templates");
+    } finally {
+        return tempTemplates;
+    }
+};
+
