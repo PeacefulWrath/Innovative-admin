@@ -55,7 +55,7 @@ function InvoiceManagement() {
          
         
 
-        // pdf.save('download.pdf');
+        pdf.save('download.pdf');
 
         // console.log("dlll",pdf)
         const pdfDataUrl = canvas.toDataURL('image/png');
@@ -63,7 +63,7 @@ function InvoiceManagement() {
    
         // document.getElementById("embed").src=pdfDataUrl
 
-        await  handleSend(pdfDataUrl)
+        // await  handleSend(pdfDataUrl)
       });
   };
 
