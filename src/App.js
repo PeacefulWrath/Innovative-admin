@@ -6,6 +6,7 @@ import ViewFileTemplate from "./components/viewFileTemplate/viewFileTemplate";
 import PdfDetails from "./components/viewFileTemplate/pdfDetails";
 import McqTemplateEditor from "./components/mcqTemplateEditor/mcqTemplateEditor";
 import ViewMcqTemplate from "./components/viewMcqTemplate/viewMcqTemplate";
+import InvoiceManagement from "./components/invoiceManagement/invoiceManagement";
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
       <Route exact path="/dashboard" element={<Dashboard />} />
       <Route exact path="/file-upload-temp-editor" element={< FileUploadTempEditor/>} />
       <Route exact path="/mcq-temp-editor" element={< McqTemplateEditor/>} />
+      <Route exact path="/invoice-management" element={< InvoiceManagement/>} />
       <Route exact path="/view-file-template" element={<ViewFileTemplate />} />
       <Route exact path="/view-mcq-template" element={<ViewMcqTemplate />} />
       <Route path="/pdfDetails" element={<PdfDetails />} />

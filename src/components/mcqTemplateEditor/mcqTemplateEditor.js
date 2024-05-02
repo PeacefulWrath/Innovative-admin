@@ -13,8 +13,10 @@ import { Modal, Button } from "react-bootstrap";
 import {
   createMcqTemplates,
   fetchMcqTemplates,
-  updateMcqTemplates
+  updateMcqTemplates,
+  deleteMcqTemplates
 } from "../../api-calls/apicalls";
+
 
 
 function McqTemplateEditor() {
@@ -35,12 +37,11 @@ function McqTemplateEditor() {
   const [dbMcqs, setDbMcqs] = useState([])
   const [dbOptionsType, setDbOptionsType] = useState([]);
   const [editMcqDocId, setEditMcqDocId] = useState("")
-  const [editMcqId, setEditMcqId] = useState("")
   const [dbMarks, setDbMarks] = useState([])
   const [dbAnswerImages, setDbAnswerImages] = useState([]);
   const [dbExplainations, setDbExplainations] = useState([])
   const [dbTextAnswers, setDbTextAnswers] = useState([])
-
+  const [dbQuestions, setDbQuestions] = useState([])
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
@@ -59,7 +60,7 @@ function McqTemplateEditor() {
   };
 
   const handleSubBtns = (id, index) => {
-    if (document.getElementById(`${id}`).value == "off") {
+    if (document.getElementById(`${id}`).value === "off") {
       document.getElementById(`${id}`).value = "on";
       let oppositeId = id;
 
@@ -109,7 +110,6 @@ function McqTemplateEditor() {
   const imageFilesHandler = (e, operation, cntInd, optInd) => {
     let selectedImage = e.target.files[0];
     let tempTemplateImages = operation === "add" ? templateOptImages : dbTemplateOptImages;
-    console.log("114", tempTemplateImages)
     if (selectedImage.type !== "image/png") {
       alert("please select images");
       document.getElementById(`${operation}-opt-image-${cntInd}-${optInd}`).value = "";
@@ -120,6 +120,7 @@ function McqTemplateEditor() {
       tempTemplateImages[cntInd]?.length !== 0
     ) {
       tempTemplateImages[cntInd][optInd] = selectedImage;
+
       operation === "add" ? setTemplateOptImages([...tempTemplateImages]) : setDbTemplateOptImages([...tempTemplateImages]);
     } else {
       tempTemplateImages[cntInd] = [];
@@ -239,6 +240,24 @@ function McqTemplateEditor() {
     operation === "add" ? setMarks([...tempMarks]) : setDbMarks([...tempMarks])
   }
 
+  const handleDbQuestions = async (e, ind) => {
+    let tempQuestions = dbQuestions
+    tempQuestions[ind] = e.target.value
+    setDbQuestions([...tempQuestions])
+  }
+
+  const handleDelete=async(id)=>{
+    const deleteData={mcqDocId:id}
+       const deletedData=await deleteMcqTemplates(deleteData)
+       if(deletedData){
+          
+      
+         alert("template deleted successfully")
+
+         window.location.reload()
+       }
+     }
+
   const handleExplainations = async (e, operation, ind) => {
     let tempExplainations = operation === "add" ? explainations : dbExplainations
     tempExplainations[ind] = e.target.value
@@ -249,7 +268,7 @@ function McqTemplateEditor() {
 
     let updateData = new FormData()
 
-    console.log("253", dbTemplateOptImages)
+
 
     updateData.append("mcqDocId", editMcqDocId)
     updateData.append("paper_name", paperName)
@@ -261,10 +280,10 @@ function McqTemplateEditor() {
         di.forEach((ele, eleInd) => {
           if (ele !== undefined) {
             updatedDataToBackend.push({
-              "mcq_id": editMcqId,
-              "replacable_option_type": "image",
-              "replacable_question_no": ind,
-              "replacable_option_index": eleInd
+
+              "db_options_replacable_option_type": "image",
+              "db_options_replacable_question_no": ind,
+              "db_options_replacable_option_index": eleInd
 
             })
             updateData.append(`db_options`, ele)
@@ -278,11 +297,11 @@ function McqTemplateEditor() {
         di.forEach((ele, eleInd) => {
           if (ele !== undefined) {
             updatedDataToBackend.push({
-              "mcq_id": editMcqId,
-              "replacable_option_type": "text",
-              "replacable_question_no": ind,
-              "replacable_option_index": eleInd,
-              "db_options_text": ele
+
+              "db_options_text_replacable_option_type": "text",
+              "db_options_text_replacable_question_no": ind,
+              "db_options_text_replacable_option_index": eleInd,
+              "db_options_text_data": ele
             })
 
           }
@@ -292,17 +311,18 @@ function McqTemplateEditor() {
 
     dbAnswerImages && dbAnswerImages.length !== 0 && dbAnswerImages.forEach((di, ind) => {
       if (di) {
-        di.forEach((ele, eleInd) => {
-          if (ele !== undefined) {
-            updatedDataToBackend.push({
-              "mcq_id": editMcqId,
-              "replacable_question_no": ind,
+        // console.log("294",dbAnswerImages)
+
+        if (di !== undefined) {
+          updatedDataToBackend.push({
+
+            "db_answers_replacable_question_no": ind,
 
 
-            })
-            updateData.append(`db_answers`, ele)
-          }
-        })
+          })
+          updateData.append(`db_answers`, di)
+        }
+
       }
     })
 
@@ -311,10 +331,10 @@ function McqTemplateEditor() {
 
 
         updatedDataToBackend.push({
-          "mcq_id": editMcqId,
-          "replacable_question_no": ind,
-          "replacable_option_type": "text",
-          "db_text_answer": dta
+
+          "db_text_answer_replacable_question_no": ind,
+          "db_text_answer_replacable_option_type": "text",
+          "db_text_answer_data": dta
         })
 
 
@@ -327,10 +347,10 @@ function McqTemplateEditor() {
 
 
         updatedDataToBackend.push({
-          "mcq_id": editMcqId,
-          "replacable_question_no": ind,
-          "replacable_option_type": "text",
-          "db_explaination": dta
+
+          "db_explaination_replacable_question_no": ind,
+          "db_explaination_replacable_option_type": "text",
+          "db_explaination_data": dta
         })
 
 
@@ -343,10 +363,26 @@ function McqTemplateEditor() {
 
 
         updatedDataToBackend.push({
-          "mcq_id": editMcqId,
-          "replacable_question_no": ind,
-          "replacable_option_type": "text",
-          "db_marks": dta
+
+          "db_marks_replacable_question_no": ind,
+          "db_marks_replacable_option_type": "text",
+          "db_marks_data": dta
+        })
+
+
+      }
+
+    })
+
+    dbQuestions && dbQuestions.length !== 0 && dbQuestions.forEach((dta, ind) => {
+      if (dta) {
+
+
+        updatedDataToBackend.push({
+
+          "db_questions_replacable_question_no": ind,
+          "db_questions_replacable_option_type": "text",
+          "db_questions_data": dta
         })
 
 
@@ -355,12 +391,73 @@ function McqTemplateEditor() {
     })
 
 
+    optionsType.forEach((ot) => {
+      updateData.append("options_type", ot);
+    });
+
+    templateOptImages &&
+      templateOptImages.length !== 0 &&
+      templateOptImages.forEach((temp) => {
+        if (temp) {
+          temp.forEach((tTemp) => {
+            updateData.append("options", tTemp);
+          });
+        }
+      });
+    answerImages &&
+      answerImages.length !== 0 && answerImages.forEach((ai) => {
+        // console.log(answerImages)
+        // if(ai){
+        updateData.append("answers", ai);
+        // }
+      });
+
+    templateOptTexts &&
+      templateOptTexts.length !== 0 &&
+      templateOptTexts.forEach((temp) => {
+        if (temp) {
+          temp.forEach((tTemp) => {
+            updateData.append("text_options", tTemp);
+          });
+        }
+      });
+
+    let tempAnswerText = [];
+    mcqsCnt.forEach((mc, ind) => {
+      updateData.append(
+        "question",
+        document.getElementById(`add-question-${ind}`).value
+      );
+      if (optionsType[ind] == "text") {
+        tempAnswerText[ind] = document.getElementById(
+          `add-text-answer-${ind}`
+        ).value;
+      }
+    });
+
+    if (tempAnswerText.length !== 0) {
+      updateData.append("answer_text", JSON.stringify(tempAnswerText));
+    }
+
+
+    explainations && explainations.length !== 0 && explainations.forEach((exp) => {
+      updateData.append("explaination", exp)
+    })
+
+    marks && marks.length !== 0 && marks.forEach((mark) => {
+      updateData.append("mark", mark)
+    })
+
     updateData.append("updated_data", JSON.stringify(updatedDataToBackend))
 
 
-    await updateMcqTemplates(updateData)
-
-
+    const updatedData=await updateMcqTemplates(updateData)
+    if(updatedData){
+      
+    handleClose();
+    setUpdate(false)
+    window.location.reload();
+    }
 
   }
 
@@ -425,6 +522,7 @@ function McqTemplateEditor() {
 
         document.getElementById(`db-marks-${ind}`).value = dm?.mark
         document.getElementById(`db-explaination-${ind}`).value = dm?.explaination
+        document.getElementById(`db-question-${ind}`).value = dm?.question
       })
     }
   }, [dbMcqs])
@@ -504,7 +602,6 @@ function McqTemplateEditor() {
                           setUpdate(true)
                           setShowModal(true)
                           setPaperName(temp?.paper_name)
-                          console.log(temp.mcqs)
                           setDbMcqs(temp.mcqs)
                           setEditMcqDocId(temp?._id)
                         }}
@@ -512,7 +609,10 @@ function McqTemplateEditor() {
                       <DeleteIcon
                         className="text-danger border border-danger cursor-pointer rounded"
                         style={{ cursor: "pointer" }}
-                      // onClick={() => {console.log("del")}}
+
+                        onClick={()=>{
+                          handleDelete(temp?._id)
+                        }}
                       />
                     </th>
                   </tr>
@@ -559,7 +659,9 @@ function McqTemplateEditor() {
                           id={`db-question-${ind}`}
                           className="form-control"
                           placeholder="question"
-                          value={dm.question}
+                          onChange={(e) => {
+                            handleDbQuestions(e, ind)
+                          }}
                         />
                       </div>
 
@@ -610,7 +712,6 @@ function McqTemplateEditor() {
                                 className="form-control mt-2"
                                 placeholder="options images"
                                 onChange={(e) => {
-                                  setEditMcqId(dm?._id)
                                   imageFilesHandler(e, "update", ind, index);
                                 }}
                               /></p>
@@ -628,7 +729,6 @@ function McqTemplateEditor() {
                               className="form-control mt-2"
                               placeholder="options text"
                               onChange={(e) => {
-                                setEditMcqId(dm?._id)
                                 textOptHandler(e, "update", ind, index);
                               }}
                             />
@@ -645,7 +745,6 @@ function McqTemplateEditor() {
                             className="form-control ms-2"
                             placeholder="answer"
                             onChange={(e) => {
-                              setEditMcqId(dm?._id)
                               handleDbTextAnswers(e, ind)
                             }}
                           />
@@ -672,7 +771,6 @@ function McqTemplateEditor() {
                               className="form-control ms-2"
                               placeholder="answer"
                               onChange={(e) => {
-                                setEditMcqId(dm?._id)
                                 answerImageFilesHandler(e, "update", ind);
                               }}
                             />
@@ -683,14 +781,12 @@ function McqTemplateEditor() {
 
                       <div className="d-flex mt-2">
                         <input placeholder="marks" id={`db-marks-${ind}`} onChange={(e) => {
-                          setEditMcqId(dm?._id)
                           handleMarks(e, "update", ind)
                         }} type="number" />
                       </div>
 
                       <div className="d-flex mt-2">
                         <textarea className="w-100" placeholder="explaination" id={`db-explaination-${ind}`} onChange={(e) => {
-                          setEditMcqId(dm?._id)
                           handleExplainations(e, "update", ind)
                         }} />
                       </div>

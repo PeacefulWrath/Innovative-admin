@@ -153,3 +153,26 @@ export const updateMcqTemplates = async (updateData) => {
     }
 };
 
+export const deleteMcqTemplates = async (deleteData) => {
+    let tempMcqTemplates = [];
+    try {
+        
+
+        await axios
+            (
+                {
+                    method: "delete",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/mcq-template`,
+                    data: deleteData
+                   
+                })
+            .then((res) => {
+                tempMcqTemplates = res.data;
+            });
+    } catch (error) {
+        console.log("can not delete mcq templates");
+    } finally {
+        return tempMcqTemplates;
+    }
+};
+
