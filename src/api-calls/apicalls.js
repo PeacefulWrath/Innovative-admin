@@ -176,3 +176,67 @@ export const deleteMcqTemplates = async (deleteData) => {
     }
 };
 
+export const createInvoices = async (addData) => {
+    let tempInvoices = [];
+    try {
+        console.log("invoice data", addData);
+
+        await axios
+            (
+                {
+                    method: "post",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/invoice`,
+                    data: addData,
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
+            .then((res) => {
+                tempInvoices = res.data;
+            });
+    } catch (error) {
+        console.log("can not create templates");
+    } finally {
+        return tempInvoices;
+    }
+};
+
+export const fetchInvoices=async()=>{
+    let invoicesData = [];
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/api/invoice`
+      );
+      invoicesData = response.data;
+      // console.log(templatesData)
+    } catch (error) {
+      console.log("err", error);
+    } finally {
+     return invoicesData;
+    }
+}
+
+export const updateInvoices = async (updateData) => {
+    let invoicesData = [];
+    try {
+        
+
+        await axios
+            (
+                {
+                    method: "put",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/invoice`,
+                    data: updateData,
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
+            .then((res) => {
+                invoicesData = res.data;
+            });
+    } catch (error) {
+        console.log("can not update invoices");
+    } finally {
+        return invoicesData;
+    }
+};

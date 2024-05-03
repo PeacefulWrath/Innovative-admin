@@ -10,6 +10,10 @@ import { Modal, Button } from "react-bootstrap";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import emailjs from "@emailjs/browser";
+import "./invoiceManagement.css"
+import {createInvoices,fetchInvoices,updateInvoices} from "../../api-calls/apicalls"
+import CreateIcon from "@mui/icons-material/Create";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function InvoiceManagement() {
   const [windowWidth, setWindowWidth] = useState();
@@ -26,17 +30,25 @@ function InvoiceManagement() {
   const [details, setDetails] = useState([])
   const [showPdf, setShowPdf] = useState(false)
   const [receiverEmail, setReceiverEmail] = useState("")
-  const [receiverName,setReceiverName]=useState("")
+  const [receiverName, setReceiverName] = useState("")
+  const [tax, setTax] = useState("")
+  const [update,setUpdate]=useState(false)
+ const [invoices,setInvoices]=useState([])
+  const [invoiceId,setInvoiceId]=useState("")
+  const [dbDetails,setDbDetails]=useState([])
+
 
   useEffect(() => emailjs.init("ptuqDG8Zl2iuDoPXR"), []);
 
   const handleGeneratePDF = async () => {
+    // console.log("yesss")
     const input = document.getElementById('content');
 
     await html2canvas(input)
-      .then(async(canvas) => {
+      .then(async (canvas) => {
+        // console.log("then")
         const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF();
+        let pdf = new jsPDF();
         const imgWidth = 210;
         const pageHeight = 297;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
@@ -52,18 +64,27 @@ function InvoiceManagement() {
           pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
           heightLeft -= pageHeight;
         }
-         
-        
 
-        pdf.save('download.pdf');
+        // var pdfData = pdf.output('datauristring');
+        // let pdfSize = pdfData.length;
 
-        // console.log("dlll",pdf)
-        const pdfDataUrl = canvas.toDataURL('image/png');
+        // while (pdfSize > 25000) {
 
-   
-        // document.getElementById("embed").src=pdfDataUrl
+        //   const compression = 0.75; // Adjust compression level as needed
+        //   pdf = new jsPDF({ unit: 'px', format: 'a4' });
+        //   pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, '', 'FAST', compression);
+        //   pdfData = pdf.output('datauristring');
+        //   pdfSize = pdfData.length;
+        // }
 
-        // await  handleSend(pdfDataUrl)
+        console.log(pdf)
+        pdf.save(`Invoice-${receiverName}-${invoiceNo}`)
+        handlePdfModalClose()
+        update?setUpdate(false):setUpdate(true)
+        // window.location.reload()
+        // Save the compressed PDF
+        // const compressedPdf = pdfData;
+        // await handleSend(compressedPdf)
       });
   };
 
@@ -79,53 +100,141 @@ function InvoiceManagement() {
     setShowPdf(false)
   }
 
+  const handleCreate = async () => {
+    
+   
 
 
+    let addData={
+      company_name: companyName,
+      company_address:companyAddress,
+      company_phone_no:companyPhoneNo,
+      company_email:companyEmail,
+      invoice_no:invoiceNo,
+      invoice_date:date,
+      shipping_address:shippingAdd,
+      billing_address:billingAdd,
+      tax:tax,
+      details:details
+    }
 
-  const handleCreate = () => {
+
+   const createdData= await createInvoices(addData)
+
+   if(createdData){
+    alert("invoice created")
     setShowCreate(false)
     setShowPdf(true)
+   }
+
+
   }
 
-  const handleSend=async(pdf)=>{
-    // console.log("pdf",pdf)
+  const handleUpdate = async () => {
+    
+   
+
+
+    let updateData={
+      invoice_id:invoiceId,
+      company_name: companyName,
+      company_address:companyAddress,
+      company_phone_no:companyPhoneNo,
+      company_email:companyEmail,
+      invoice_no:invoiceNo,
+      invoice_date:date,
+      shipping_address:shippingAdd,
+      billing_address:billingAdd,
+      tax:tax,
+      details:details
+    }
+
+
+   const updatedData= await updateInvoices(updateData)
+   
+   if(updatedData){
+    alert("invoice updated")
+    setShowCreate(false)
+    setShowPdf(true)
+   }
+
+
+  }
+
+  const handleSend = async (pdf) => {
+    // console.log("pdf",typeof pdf)
     const serviceId = "service_5rcwcy8";
     const customerTemplateId = "template_fcwwhlj";
     try {
       await emailjs.send(serviceId, customerTemplateId, {
         Name: receiverName,
         Email: receiverEmail,
-        Pdf:` Hello {{Name}},
+        // File:pdf
 
-        You got a new message from Innovative:
-        
-        {{Pdf}}
-        
-        Best wishes,
-        Innovative team <img src=${pdf} width="100%" height="600px" />`
-        
       });
     } catch (error) {
       console.log(error);
     } finally {
       alert("email send successfully")
-      // handlePdfModalClose()
+      handlePdfModalClose()
+      window.location.reload()
     }
   }
 
+  const handleDetails = async (operation, e, ind) => {
+    let tempDetails = details
+
+    if (!tempDetails[ind]) {
+      tempDetails[ind] = {
+        "qty": "",
+        "desc": "",
+        "unitPrice": "",
+        "total": ""
+      }
+    }
+
+    tempDetails[ind][operation] = e.target.value
+
+
+
+    setDetails([...tempDetails])
+
+
+  }
+
+  const getSubTotal = () => {
+    let subTotal = 0
+    details.forEach((d) => {
+      subTotal = subTotal + parseInt(d?.total)
+    })
+    return subTotal
+  }
+
+  const getGrandTotal = () => {
+    return getSubTotal() + parseInt(tax);
+  }
 
   useEffect(() => {
     console.log(process.env.REACT_APP_EMAIL_PUBLIC_KEY)
     setWindowWidth(window.innerWidth);
     window.addEventListener("resize", updateWindowWidth);
+    const fetcher = async () => {
+      let invoicesData = await fetchInvoices();
+      setInvoices([...invoicesData]);
+    };
 
+    fetcher();
 
     return () => {
       window.removeEventListener("resize", updateWindowWidth);
     };
   }, []);
 
- 
+
+  useEffect(()=>{
+
+  },[dbDetails])
+
 
 
   return (
@@ -153,6 +262,65 @@ function InvoiceManagement() {
             </button>
           </div>
 
+
+          <table className="table mt-1 p-4 w-70 text-center">
+            <thead>
+              <tr className="table-primary table-striped">
+                <th scope="col">SN.</th>
+                <th scope="col">Invoice No</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+
+            {invoices && invoices?.length !== 0 ? (
+              invoices.map((invoice, index) => (
+                <tbody>
+                  <tr>
+                    <th scope="col">{index + 1}.</th>
+                    <th scope="col">{invoice?.invoice_no}</th>
+                    
+                    <th scope="col ">
+                      <CreateIcon
+                        className="text-primary border border-primary rounded me-2"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          setUpdate(true)
+                          setShowCreate(true)
+                          setInvoiceId(invoice?._id)
+                          setCompanyName(invoice?.company_name)
+                          setCompanyAddress(invoice?.company_address)
+                          setBillingAdd(invoice?.billing_address)
+                          setShippingAdd(invoice?.shipping_address)
+                          setCompanyEmail(invoice?.company_email)
+                          setTax(invoice?.tax)
+                          setCompanyPhoneNo(invoice?.company_phone_no)
+                          setInvoiceNo(invoice?.invoice_no)
+                          setDbDetails(invoice?.details)
+          
+
+                          
+                        }}
+                      />
+                      <DeleteIcon
+                        className="text-danger border border-danger cursor-pointer rounded"
+                        style={{ cursor: "pointer" }}
+
+                        onClick={()=>{
+                          // handleDelete(temp?._id)
+                        }}
+                      />
+                    </th>
+                  </tr>
+                </tbody>
+              ))
+            ) : (
+              <>
+                <p>no data found</p>
+              </>
+            )}
+          </table>
+
+
         </div>
       </div>
 
@@ -160,23 +328,24 @@ function InvoiceManagement() {
       <Modal show={showCreate} onHide={handleCreateModalClose} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            Add Invoice
+            {update?"Update Invoice":"Add Invoice"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div>
 
-            <div className="d-flex mt-4">
+            <div className="form-group mt-4">
               <label
-                class="form-check-label"
+                class="form-label"
                 for="company-name"
               >
                 Company Name
               </label>
               <input
                 type="text"
-                id="company-name"
-                className="ms-3"
+                id="company-name "
+                value={companyName}
+                className="form-control"
                 onChange={(e) => {
                   setCompanyName(e.target.value)
                 }}
@@ -184,17 +353,18 @@ function InvoiceManagement() {
 
             </div>
 
-            <div className="d-flex mt-4">
+            <div className="form-group mt-4">
               <label
-                class="form-check-label"
+                class="form-label"
                 for="company-address"
               >
                 Company Address
               </label>
               <textarea
                 type="text"
-                id="company-address"
-                className="ms-3"
+                id="company-address  "
+                className="form-control"
+                value={companyAddress}
                 onChange={(e) => {
                   setCompanyAddress(e.target.value)
                 }}
@@ -203,17 +373,18 @@ function InvoiceManagement() {
             </div>
 
 
-            <div className="d-flex mt-4">
+            <div className="form-group    mt-4">
               <label
-                class="form-check-label"
+                class="form-label"
                 for="company-phone-no"
               >
                 Company Phone No
               </label>
               <input
                 type="text"
-                id="company-phone-no"
-                className="ms-3"
+                value={companyPhoneNo}
+                id="company-phone-no  "
+                className="form-control"
                 onChange={(e) => {
                   setCompanyPhoneNo(e.target.value)
                 }}
@@ -222,17 +393,18 @@ function InvoiceManagement() {
             </div>
 
 
-            <div className="d-flex mt-4">
+            <div className="form-group mt-4">
               <label
-                class="form-check-label"
+                class="form-label"
                 for="company-email"
               >
                 Company Email
               </label>
               <input
                 type="text"
-                id="company-email"
-                className="ms-3"
+                id="company-email  "
+                className="form-control"
+                value={companyEmail}
                 onChange={(e) => {
                   setCompanyEmail(e.target.value)
                 }}
@@ -240,17 +412,18 @@ function InvoiceManagement() {
 
             </div>
 
-            <div className="d-flex mt-4">
+            <div className="form-group mt-4">
               <label
-                class="form-check-label"
+                class="form-label"
                 for="invoice-no"
               >
                 Invoice No
               </label>
               <input
                 type="text"
-                id="invoice-no"
-                className="ms-3"
+                id="invoice-no "
+                className=" form-control"
+                value={invoiceNo}
                 onChange={(e) => {
                   setInvoiceNo(e.target.value)
                 }}
@@ -258,17 +431,18 @@ function InvoiceManagement() {
 
             </div>
 
-            <div className="d-flex mt-4">
+            <div className="form-group mt-4">
               <label
-                class="form-check-label"
+                class="form-label"
                 for="invoice-no"
               >
                 Date
               </label>
               <input
                 type="text"
-                id="invoice-date"
-                className="ms-3"
+                id="invoice-date  "
+                className="form-control"
+                value={date}
                 onChange={(e) => {
                   setDate(e.target.value)
                 }}
@@ -277,17 +451,18 @@ function InvoiceManagement() {
             </div>
 
 
-            <div className="d-flex mt-4">
+            <div className="form-group mt-4">
               <label
-                class="form-check-label"
+                class="form-label"
                 for="billing-address"
               >
                 Billing Address
               </label>
               <textarea
                 type="text"
-                id="billing-address"
-                className="ms-3"
+                id="billing-address "
+                className=" form-control"
+                value={billingAdd}
                 onChange={(e) => {
                   setBillingAdd(e.target.value)
                 }}
@@ -295,19 +470,40 @@ function InvoiceManagement() {
 
             </div>
 
-            <div className="d-flex mt-4">
+            <div className="form-group mt-4">
               <label
-                class="form-check-label"
+                class="form-label"
                 for="shipping-address"
               >
                 Shipping Address
               </label>
               <textarea
                 type="text"
-                id="shipping-address"
-                className="ms-3"
+                id="shipping-address  "
+                className="form-control"
+                value={shippingAdd}
                 onChange={(e) => {
                   setShippingAdd(e.target.value)
+                }}
+              />
+
+            </div>
+
+
+            <div className="form-group    mt-4">
+              <label
+                class="form-label"
+                for="tax"
+              >
+                TAX
+              </label>
+              <input
+              value={tax}
+                type="text"
+                id="tax"
+                className="form-control"
+                onChange={(e) => {
+                  setTax(e.target.value)
                 }}
               />
 
@@ -333,7 +529,51 @@ function InvoiceManagement() {
                 </button>
               </div>
             </div>
+            {dbDetails.length !== 0 &&
+              dbDetails.map((_, ind) => (
+                <>
+                  <div className="d-flex mt-2">
+                    <input
+                      type="text"
+                      id={`db_qty-${ind}`}
+                      className="form-control"
+                      placeholder="qty"
+                      onChange={(e) => {
+                        handleDbDetails("qty", e, ind)
+                      }}
+                    />
+                    <input
+                      type="text"
+                      id={`db_desc-${ind}`}
+                      className="ms-2 form-control"
+                      placeholder="description"
+                      onChange={(e) => {
+                        handleDbDetails("desc", e, ind)
+                      }}
+                    />
+                    <input
+                      type="text"
+                      id={`db_unit-price-${ind}`}
+                      className="ms-2 form-control"
+                      placeholder="unit price"
+                      onChange={(e) => {
+                        handleDbDetails("unitPrice", e, ind)
+                      }}
+                    />
+                    <input
+                      type="text"
+                      id={`db_total-${ind}`}
+                      className="ms-2 form-control"
+                      placeholder="total"
+                      onChange={(e) => {
+                        handleDbDetails("total", e, ind)
+                      }}
+                    />
+                  </div>
 
+
+                </>
+              ))}
             {detailsCnt.length !== 0 &&
               detailsCnt.map((_, ind) => (
                 <>
@@ -343,24 +583,36 @@ function InvoiceManagement() {
                       id={`qty-${ind}`}
                       className="form-control"
                       placeholder="qty"
+                      onChange={(e) => {
+                        handleDetails("qty", e, ind)
+                      }}
                     />
                     <input
                       type="text"
                       id={`desc-${ind}`}
                       className="ms-2 form-control"
                       placeholder="description"
+                      onChange={(e) => {
+                        handleDetails("desc", e, ind)
+                      }}
                     />
                     <input
                       type="text"
                       id={`unit-price-${ind}`}
                       className="ms-2 form-control"
                       placeholder="unit price"
+                      onChange={(e) => {
+                        handleDetails("unitPrice", e, ind)
+                      }}
                     />
                     <input
                       type="text"
                       id={`total-${ind}`}
                       className="ms-2 form-control"
                       placeholder="total"
+                      onChange={(e) => {
+                        handleDetails("total", e, ind)
+                      }}
                     />
                   </div>
 
@@ -368,6 +620,7 @@ function InvoiceManagement() {
                 </>
               ))}
           </div>
+
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -381,10 +634,10 @@ function InvoiceManagement() {
             variant="primary"
             onClick={() => {
 
-              handleCreate();
+              {update?handleUpdate():handleCreate()}
             }}
           >
-            Create
+           {update?"Update":"Create"} 
           </Button>
         </Modal.Footer>
       </Modal>
@@ -399,9 +652,9 @@ function InvoiceManagement() {
         <Modal.Body>
           <>
 
-          <div className="d-flex mt-4">
+            <div className="form-group mt-4">
               <label
-                class="form-check-label"
+                class="form-label"
                 for="receiver-name"
               >
                 Receiver Name:
@@ -409,16 +662,16 @@ function InvoiceManagement() {
               <input
                 type="text"
                 id="receiver-name"
-                className="ms-3"
+                className=" form-control"
                 onChange={(e) => {
                   setReceiverName(e.target.value)
                 }}
               />
 
             </div>
-            <div className="d-flex mt-4">
+            <div className="form-group mt-4">
               <label
-                class="form-check-label"
+                class="form-label"
                 for="receiver-email"
               >
                 Receiver Email
@@ -426,7 +679,7 @@ function InvoiceManagement() {
               <input
                 type="text"
                 id="receiver-email"
-                className="ms-3"
+                className=" form-control"
                 onChange={(e) => {
                   setReceiverEmail(e.target.value)
                 }}
@@ -434,27 +687,113 @@ function InvoiceManagement() {
 
             </div>
 
-           
 
-            <div id="content" className="mt-5 border border-success" >
-              <p className="d-flex justify-content-center">{companyName}</p>
-              <p className="d-flex justify-content-center">{companyAddress}</p>
-              <p className="d-flex justify-content-center">{companyPhoneNo}</p>
-              <p className="d-flex justify-content-center">{companyEmail}</p>
-              <p className="d-flex justify-content-center">{invoiceNo}</p>
-              <p className="d-flex justify-content-center">{date}</p>
-              <p className="d-flex justify-content-center">{billingAdd}</p>
-              <p className="d-flex justify-content-center">{shippingAdd}</p>
-              {
-                details.map((d) => {
-                  <p className="d-flex justify-content-center">{d}</p>
-                })
-              }
-              <p></p>
+
+            <div id="content" className="mt-5 border border-secondary" >
+
+
+
+              <div className="d-flex justify-content-between ms-3 me-3">
+                <div className="d-flex flex-column">
+                  <p className="m-0 fw-bold">{companyName}</p>
+                  <p className="m-0" >Address</p>
+                  <p className="m-0">{companyAddress}</p>
+                  <p className="m-0">{companyPhoneNo}</p>
+                  <p className="m-0">{companyEmail}</p>
+                </div>
+                <div className=" w-50 d-flex  justify-content-center"><p className="fw-bold" style={{
+                  zoom: "5",
+                  marginBottom: "0px"
+                }}>INVOICE</p></div>
+              </div>
+              <hr className="me-3 ms-3" style={{ border: '1px solid black', fontWeight: 'bold', opacity: 1 }} />
+              <div className="d-flex justify-content-end ms-3 me-3">
+                <p>Invoice No. <span>{invoiceNo}</span>&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;Date: <span>{date}</span> </p>
+              </div>
+
+
+              <div class="d-flex justify-content-start ms-3 me-3" style={{ background: "#D3D3D3" }}>
+
+                <p className="mb-0">Bill To</p>
+                <p className="mb-0 invoice_ship_to" >Ship To</p>
+              </div>
+
+              <hr className="me-3 ms-3 mt-0" style={{ border: '1px solid black', fontWeight: 'bold', opacity: 1 }} />
+
+              <div class="d-flex justify-content-start mt-2 ms-3 me-3">
+
+                <div className="d-flex flex-column">
+                  <p className="m-0">{companyName}</p>
+                  <p className="m-0" >Address</p>
+
+                  <p className="m-0">{billingAdd}</p>
+                </div>
+                <div className="d-flex flex-column invoice_ship_to_desc" >
+
+                  <p className="m-0">{companyName}</p>
+                  <p className="m-0" >Address</p>
+
+                  <p className="m-0">{shippingAdd}</p>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-center mt-5 ms-3 me-3">
+                <table className="w-100 table-bordered">
+                  <thead>
+                    <tr style={{ background: "#D3D3D3" }}>
+                      <th className="fw-bold">QTY</th>
+                      <th className="fw-bold">DESCRIPTION</th>
+                      <th className="fw-bold">UNIT PRICE</th>
+                      <th className="fw-bold">TOTAL</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+
+                    {details.length !== 0 &&
+                      details.map((d, _) => (
+                        <tr >
+                          <th >{d?.qty}</th>
+                          <th >{d?.desc}</th>
+                          <th>{d?.unitPrice}</th>
+                          <th >{d?.total}</th>
+                        </tr>
+                      ))}
+
+
+                  </tbody>
+                </table>
+              </div>
+
+
+              <div className="d-flex justify-content-between mt-5 ms-3 me-3 mb-3">
+                <p className="invoice_thank_you">Thank You</p>
+
+                <table className="w-50 table table-bordered">
+
+                  <tbody >
+
+
+
+                    <tr >
+                      <th >SUBTOTAL</th>
+                      <th>{getSubTotal()}</th>
+
+                    </tr>
+                    <tr>
+                      <th >TAX</th>
+                      <th>{tax}</th>
+                    </tr>
+                    <tr>
+
+                      <th>GRAND TOTAL</th>
+                      <th>{getGrandTotal()}</th>
+                    </tr>
+
+                  </tbody>
+                </table>
+              </div>
             </div>
-
-
-          
 
 
 
@@ -470,9 +809,8 @@ function InvoiceManagement() {
           </Button>
           <Button
             variant="primary"
-            onClick={() => {
-              handleGeneratePDF()
-              // handleSendPdf();
+            onClick={async () => {
+              await handleGeneratePDF()
             }}
           >
             Download & Send
@@ -481,7 +819,7 @@ function InvoiceManagement() {
       </Modal>
 
 
-     
+
     </div>
   )
 }
