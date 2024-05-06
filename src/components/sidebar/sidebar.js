@@ -24,7 +24,7 @@ const Sidebar = (props)=>{
         </div>
       </a>
 
-      <a style={{textDecoration: "none"}} onClick={()=>{handleClick("user-management")}}>
+      <a style={{textDecoration: "none"}} href="/user-management">
         <div className="row fw-bold text-white" style={activeOption==='user-management'?{backgroundColor: '#575655'}:{backgroundColor:"transparent"}}>
           <p className='px-3 pt-2 ms-4 me-2 '>User Management</p>
         </div>

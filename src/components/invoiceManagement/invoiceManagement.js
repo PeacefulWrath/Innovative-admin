@@ -11,7 +11,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import emailjs from "@emailjs/browser";
 import "./invoiceManagement.css"
-import {createInvoices,fetchInvoices,updateInvoices} from "../../api-calls/apicalls"
+import {createInvoices,fetchInvoices,updateInvoices,deleteInvoices} from "../../api-calls/apicalls"
 import CreateIcon from "@mui/icons-material/Create";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -36,7 +36,6 @@ function InvoiceManagement() {
  const [invoices,setInvoices]=useState([])
   const [invoiceId,setInvoiceId]=useState("")
   const [dbDetails,setDbDetails]=useState([])
-
 
   useEffect(() => emailjs.init("ptuqDG8Zl2iuDoPXR"), []);
 
@@ -131,10 +130,6 @@ function InvoiceManagement() {
   }
 
   const handleUpdate = async () => {
-    
-   
-
-
     let updateData={
       invoice_id:invoiceId,
       company_name: companyName,
@@ -146,20 +141,40 @@ function InvoiceManagement() {
       shipping_address:shippingAdd,
       billing_address:billingAdd,
       tax:tax,
-      details:details
+      details:dbDetails.concat(details)
     }
+
 
 
    const updatedData= await updateInvoices(updateData)
    
    if(updatedData){
     alert("invoice updated")
+    setDetails(dbDetails.concat(details))
     setShowCreate(false)
     setShowPdf(true)
    }
 
 
   }
+
+  const handleDelete = async (id) => {
+    let deleteData={
+      invoiceDocId:id
+    }
+
+
+
+   const deletedData= await deleteInvoices(deleteData)
+   
+   if(deletedData){
+    alert("invoice deleted")
+   window.location.reload()
+   }
+
+
+  }
+
 
   const handleSend = async (pdf) => {
     // console.log("pdf",typeof pdf)
@@ -186,9 +201,9 @@ function InvoiceManagement() {
 
     if (!tempDetails[ind]) {
       tempDetails[ind] = {
-        "qty": "",
-        "desc": "",
-        "unitPrice": "",
+        "quantity": "",
+        "description": "",
+        "unit_price": "",
         "total": ""
       }
     }
@@ -198,6 +213,20 @@ function InvoiceManagement() {
 
 
     setDetails([...tempDetails])
+
+
+  }
+
+  const handleDbDetails = async (operation, operation2, e, ind) => {
+
+    let tempDbDetails = dbDetails
+    
+    document.getElementById(`${operation}-${ind}`).value=e.target.value
+    tempDbDetails[ind][operation2] = e.target.value
+
+
+
+    setDbDetails([...tempDbDetails])
 
 
   }
@@ -232,7 +261,12 @@ function InvoiceManagement() {
 
 
   useEffect(()=>{
-
+       dbDetails.forEach((db,ind)=>{
+     document.getElementById(`db-qty-${ind}`).value=db?.quantity
+     document.getElementById(`db-desc-${ind}`).value=db?.description
+     document.getElementById(`db-unit-price-${ind}`).value=db?.unit_price
+     document.getElementById(`db-total-${ind}`).value=db?.total
+   })
   },[dbDetails])
 
 
@@ -294,11 +328,10 @@ function InvoiceManagement() {
                           setCompanyEmail(invoice?.company_email)
                           setTax(invoice?.tax)
                           setCompanyPhoneNo(invoice?.company_phone_no)
+                          setDate(invoice?.invoice_date)
                           setInvoiceNo(invoice?.invoice_no)
                           setDbDetails(invoice?.details)
-          
-
-                          
+                          setDetailsCnt([])
                         }}
                       />
                       <DeleteIcon
@@ -306,7 +339,7 @@ function InvoiceManagement() {
                         style={{ cursor: "pointer" }}
 
                         onClick={()=>{
-                          // handleDelete(temp?._id)
+                          handleDelete(invoice?._id)
                         }}
                       />
                     </th>
@@ -498,7 +531,7 @@ function InvoiceManagement() {
                 TAX
               </label>
               <input
-              value={tax}
+                value={tax}
                 type="text"
                 id="tax"
                 className="form-control"
@@ -508,6 +541,58 @@ function InvoiceManagement() {
               />
 
             </div>
+
+
+            {dbDetails.length !== 0 &&
+              dbDetails.map((_, ind) => (
+                <>
+                  <div className="mt-4">
+                    <div className="d-flex justify-content-between">
+                      <label className="pb-1">Attached Details</label>
+                    </div>
+                  </div>
+                  <div className="d-flex mt-2">
+                    <input
+                      type="text"
+                      id={`db-qty-${ind}`}
+                      className="form-control"
+                      placeholder="qty"
+                      onChange={(e) => {
+                        handleDbDetails("db-qty","quantity", e, ind)
+                      }}
+                    />
+                    <input
+                      type="text"
+                      id={`db-desc-${ind}`}
+                      className="ms-2 form-control"
+                      placeholder="description"
+                      onChange={(e) => {
+                        handleDbDetails("db-desc","description", e, ind)
+                      }}
+                    />
+                    <input
+                      type="text"
+                      id={`db-unit-price-${ind}`}
+                      className="ms-2 form-control"
+                      placeholder="unit price"
+                      onChange={(e) => {
+                        handleDbDetails("db-unit-price","unit_price", e, ind)
+                      }}
+                    />
+                    <input
+                      type="text"
+                      id={`db-total-${ind}`}
+                      className="ms-2 form-control"
+                      placeholder="total"
+                      onChange={(e) => {
+                        handleDbDetails("db-total","total", e, ind)
+                      }}
+                    />
+                  </div>
+
+
+                </>
+              ))}
 
             <div className="mt-4">
               <div className="d-flex justify-content-between">
@@ -529,51 +614,7 @@ function InvoiceManagement() {
                 </button>
               </div>
             </div>
-            {dbDetails.length !== 0 &&
-              dbDetails.map((_, ind) => (
-                <>
-                  <div className="d-flex mt-2">
-                    <input
-                      type="text"
-                      id={`db_qty-${ind}`}
-                      className="form-control"
-                      placeholder="qty"
-                      onChange={(e) => {
-                        handleDbDetails("qty", e, ind)
-                      }}
-                    />
-                    <input
-                      type="text"
-                      id={`db_desc-${ind}`}
-                      className="ms-2 form-control"
-                      placeholder="description"
-                      onChange={(e) => {
-                        handleDbDetails("desc", e, ind)
-                      }}
-                    />
-                    <input
-                      type="text"
-                      id={`db_unit-price-${ind}`}
-                      className="ms-2 form-control"
-                      placeholder="unit price"
-                      onChange={(e) => {
-                        handleDbDetails("unitPrice", e, ind)
-                      }}
-                    />
-                    <input
-                      type="text"
-                      id={`db_total-${ind}`}
-                      className="ms-2 form-control"
-                      placeholder="total"
-                      onChange={(e) => {
-                        handleDbDetails("total", e, ind)
-                      }}
-                    />
-                  </div>
 
-
-                </>
-              ))}
             {detailsCnt.length !== 0 &&
               detailsCnt.map((_, ind) => (
                 <>
@@ -584,7 +625,7 @@ function InvoiceManagement() {
                       className="form-control"
                       placeholder="qty"
                       onChange={(e) => {
-                        handleDetails("qty", e, ind)
+                        handleDetails("quantity", e, ind)
                       }}
                     />
                     <input
@@ -593,7 +634,7 @@ function InvoiceManagement() {
                       className="ms-2 form-control"
                       placeholder="description"
                       onChange={(e) => {
-                        handleDetails("desc", e, ind)
+                        handleDetails("description", e, ind)
                       }}
                     />
                     <input
@@ -602,7 +643,7 @@ function InvoiceManagement() {
                       className="ms-2 form-control"
                       placeholder="unit price"
                       onChange={(e) => {
-                        handleDetails("unitPrice", e, ind)
+                        handleDetails("unit_price", e, ind)
                       }}
                     />
                     <input
@@ -753,9 +794,9 @@ function InvoiceManagement() {
                     {details.length !== 0 &&
                       details.map((d, _) => (
                         <tr >
-                          <th >{d?.qty}</th>
-                          <th >{d?.desc}</th>
-                          <th>{d?.unitPrice}</th>
+                          <th >{d?.quantity}</th>
+                          <th >{d?.description}</th>
+                          <th>{d?.unit_price}</th>
                           <th >{d?.total}</th>
                         </tr>
                       ))}

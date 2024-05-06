@@ -2,12 +2,8 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import "bootstrap/dist/css/bootstrap.css";
-import CreateIcon from '@mui/icons-material/Create';
-import DeleteIcon from '@mui/icons-material/Delete';
 import Nav from '../navbar/navbar';
 import Sidebar from '../sidebar/sidebar';
-
-
 
 
 function Dashboard() {
@@ -21,6 +17,7 @@ function Dashboard() {
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
   };
+
   useEffect(() => {
     require("bootstrap/dist/js/bootstrap.min.js");
     setWindowWidth(window.innerWidth);

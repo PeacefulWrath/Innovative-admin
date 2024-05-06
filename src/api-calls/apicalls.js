@@ -240,3 +240,114 @@ export const updateInvoices = async (updateData) => {
         return invoicesData;
     }
 };
+
+export const deleteInvoices = async (deleteData) => {
+    let tempInvoice = [];
+    try {
+        
+
+        await axios
+            (
+                {
+                    method: "delete",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/invoice`,
+                    data: deleteData
+                   
+                })
+            .then((res) => {
+                tempInvoice = res.data;
+            });
+    } catch (error) {
+        console.log("can not delete invoice");
+    } finally {
+        return tempInvoice;
+    }
+};
+
+
+export const fetchUsers=async()=>{
+    let usersData = [];
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/api/user`
+      );
+      usersData = response.data.allUserData;
+    } catch (error) {
+      console.log("err", error);
+    } finally {
+     return usersData;
+    }
+}
+
+export const createUsers = async (userData) => {
+    let tempUsers = [];
+    try {
+        // console.log("userData", userData);
+
+        await axios
+            (
+                {
+                    method: "post",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/user/signup`,
+                    data: userData,
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
+            .then((res) => {
+                tempUsers = res.data;
+            });
+    } catch (error) {
+        console.log("can not save users");
+    } finally {
+        return tempUsers;
+    }
+};
+
+export const updateUsers = async (userData) => {
+    let tempUsers = [];
+    try {
+        // console.log("userData", userData);
+
+        await axios
+            (
+                {
+                    method: "put",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/user/`,
+                    data: userData,
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
+            .then((res) => {
+                tempUsers = res.data;
+            });
+    } catch (error) {
+        console.log("can not update users");
+    } finally {
+        return tempUsers;
+    }
+};
+
+export const deleteUsers = async (deleteData) => {
+    let tempUser = [];
+    try {
+        
+
+        await axios
+            (
+                {
+                    method: "delete",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/user`,
+                    data: deleteData
+                   
+                })
+            .then((res) => {
+                tempUser= res.data;
+            });
+    } catch (error) {
+        console.log("can not delete user");
+    } finally {
+        return tempUser;
+    }
+};
