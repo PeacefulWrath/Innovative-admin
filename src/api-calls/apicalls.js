@@ -1,17 +1,17 @@
 import axios from "axios";
 
-export const fetchTemplates=async()=>{
+export const fetchTemplates = async () => {
     let templatesData = [];
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/api/template`
-      );
-      templatesData = response.data;
-      // console.log(templatesData)
+        const response = await axios.get(
+            `${process.env.REACT_APP_BASE_URL}/api/template`
+        );
+        templatesData = response.data;
+        // console.log(templatesData)
     } catch (error) {
-      console.log("err", error);
+        console.log("err", error);
     } finally {
-     return templatesData;
+        return templatesData;
     }
 }
 
@@ -68,7 +68,7 @@ export const updateTemplates = async (updateData) => {
 export const deleteTemplates = async (deleteData) => {
     let tempTemplates = [];
     try {
-        
+
 
         await axios
             (
@@ -76,7 +76,7 @@ export const deleteTemplates = async (deleteData) => {
                     method: "delete",
                     url: `${process.env.REACT_APP_BASE_URL}/api/template`,
                     data: deleteData
-                   
+
                 })
             .then((res) => {
                 tempTemplates = res.data;
@@ -88,18 +88,18 @@ export const deleteTemplates = async (deleteData) => {
     }
 };
 
-export const fetchMcqTemplates=async()=>{
+export const fetchMcqTemplates = async () => {
     let templatesData = [];
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/api/mcq-template`
-      );
-      templatesData = response.data;
-      // console.log(templatesData)
+        const response = await axios.get(
+            `${process.env.REACT_APP_BASE_URL}/api/mcq-template`
+        );
+        templatesData = response.data;
+        // console.log(templatesData)
     } catch (error) {
-      console.log("err", error);
+        console.log("err", error);
     } finally {
-     return templatesData;
+        return templatesData;
     }
 }
 
@@ -131,7 +131,7 @@ export const createMcqTemplates = async (addData) => {
 export const updateMcqTemplates = async (updateData) => {
     let tempTemplates = [];
     try {
-        
+
 
         await axios
             (
@@ -156,7 +156,7 @@ export const updateMcqTemplates = async (updateData) => {
 export const deleteMcqTemplates = async (deleteData) => {
     let tempMcqTemplates = [];
     try {
-        
+
 
         await axios
             (
@@ -164,7 +164,7 @@ export const deleteMcqTemplates = async (deleteData) => {
                     method: "delete",
                     url: `${process.env.REACT_APP_BASE_URL}/api/mcq-template`,
                     data: deleteData
-                   
+
                 })
             .then((res) => {
                 tempMcqTemplates = res.data;
@@ -201,25 +201,25 @@ export const createInvoices = async (addData) => {
     }
 };
 
-export const fetchInvoices=async()=>{
+export const fetchInvoices = async () => {
     let invoicesData = [];
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/api/invoice`
-      );
-      invoicesData = response.data;
-      // console.log(templatesData)
+        const response = await axios.get(
+            `${process.env.REACT_APP_BASE_URL}/api/invoice`
+        );
+        invoicesData = response.data;
+        // console.log(templatesData)
     } catch (error) {
-      console.log("err", error);
+        console.log("err", error);
     } finally {
-     return invoicesData;
+        return invoicesData;
     }
 }
 
 export const updateInvoices = async (updateData) => {
     let invoicesData = [];
     try {
-        
+
 
         await axios
             (
@@ -244,7 +244,7 @@ export const updateInvoices = async (updateData) => {
 export const deleteInvoices = async (deleteData) => {
     let tempInvoice = [];
     try {
-        
+
 
         await axios
             (
@@ -252,7 +252,7 @@ export const deleteInvoices = async (deleteData) => {
                     method: "delete",
                     url: `${process.env.REACT_APP_BASE_URL}/api/invoice`,
                     data: deleteData
-                   
+
                 })
             .then((res) => {
                 tempInvoice = res.data;
@@ -264,18 +264,17 @@ export const deleteInvoices = async (deleteData) => {
     }
 };
 
-
-export const fetchUsers=async()=>{
+export const fetchUsers = async () => {
     let usersData = [];
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/api/user`
-      );
-      usersData = response.data.allUserData;
+        const response = await axios.get(
+            `${process.env.REACT_APP_BASE_URL}/api/user`
+        );
+        usersData = response.data.allUserData;
     } catch (error) {
-      console.log("err", error);
+        console.log("err", error);
     } finally {
-     return usersData;
+        return usersData;
     }
 }
 
@@ -332,7 +331,7 @@ export const updateUsers = async (userData) => {
 export const deleteUsers = async (deleteData) => {
     let tempUser = [];
     try {
-        
+
 
         await axios
             (
@@ -340,14 +339,101 @@ export const deleteUsers = async (deleteData) => {
                     method: "delete",
                     url: `${process.env.REACT_APP_BASE_URL}/api/user`,
                     data: deleteData
-                   
+
                 })
             .then((res) => {
-                tempUser= res.data;
+                tempUser = res.data;
             });
     } catch (error) {
         console.log("can not delete user");
     } finally {
         return tempUser;
+    }
+};
+
+export const createPurchaseOrders = async (addData) => {
+    let tempPurchaseOrders = [];
+    try {
+        console.log("po data", addData);
+
+        await axios
+            (
+                {
+                    method: "post",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/purchase-order`,
+                    data: addData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+            .then((res) => {
+                tempPurchaseOrders = res.data;
+            });
+    } catch (error) {
+        console.log("can not create purchase order");
+    } finally {
+        return tempPurchaseOrders;
+    }
+};
+
+export const fetchPurchaseOrders = async () => {
+    let tempPurchaseOrders = [];
+    try {
+        const response = await axios.get(
+            `${process.env.REACT_APP_BASE_URL}/api/purchase-order`
+        );
+        tempPurchaseOrders = response.data;
+    } catch (error) {
+        console.log("err", error);
+    } finally {
+        return tempPurchaseOrders;
+    }
+}
+
+
+export const updatePurchaseOrders = async (updateData) => {
+    let poData = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "put",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/purchase-order`,
+                    data: updateData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+            .then((res) => {
+                poData = res.data;
+            });
+    } catch (error) {
+        console.log("can not update purchase orders");
+    } finally {
+        return poData;
+    }
+};
+
+
+export const deletePurchaseOrders = async (deleteData) => {
+    let tempPurchaseOrders = [];
+    try {
+        await axios
+            (
+                {
+                    method: "delete",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/purchase-order`,
+                    data: deleteData
+
+                })
+            .then((res) => {
+                tempPurchaseOrders = res.data;
+            });
+    } catch (error) {
+        console.log("can not delete purchase orders");
+    } finally {
+        return tempPurchaseOrders;
     }
 };

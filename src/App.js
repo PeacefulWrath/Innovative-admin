@@ -8,6 +8,7 @@ import McqTemplateEditor from "./components/mcqTemplateEditor/mcqTemplateEditor"
 import ViewMcqTemplate from "./components/viewMcqTemplate/viewMcqTemplate";
 import InvoiceManagement from "./components/invoiceManagement/invoiceManagement";
 import UserManagement from "./components/userManagement/userManagement";
+import PurchaseOrderManagement from "./components/purchaseOrderManagement/purchaseOrderManagement";
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
       <Route exact path="/mcq-temp-editor" element={< McqTemplateEditor/>} />
       <Route exact path="/user-management" element={< UserManagement/>} />
       <Route exact path="/invoice-management" element={< InvoiceManagement/>} />
+      <Route exact path="/purchase-order-management" element={< PurchaseOrderManagement/>} />
       <Route exact path="/view-file-template" element={<ViewFileTemplate />} />
       <Route exact path="/view-mcq-template" element={<ViewMcqTemplate />} />
       <Route path="/pdfDetails" element={<PdfDetails />} />

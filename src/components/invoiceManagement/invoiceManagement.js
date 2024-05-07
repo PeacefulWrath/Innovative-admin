@@ -261,12 +261,12 @@ function InvoiceManagement() {
 
 
   useEffect(()=>{
-       dbDetails.forEach((db,ind)=>{
+   dbDetails.forEach((db,ind)=>{
      document.getElementById(`db-qty-${ind}`).value=db?.quantity
      document.getElementById(`db-desc-${ind}`).value=db?.description
      document.getElementById(`db-unit-price-${ind}`).value=db?.unit_price
      document.getElementById(`db-total-${ind}`).value=db?.total
-   })
+    })
   },[dbDetails])
 
 

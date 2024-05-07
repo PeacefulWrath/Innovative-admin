@@ -54,9 +54,13 @@ function UserManagement() {
       phone_no: phone,
       email: email,
       role: role,
-      password: password,
       user_id: userId
     }
+
+    if(password!==""){
+      userData.password=password
+    }
+    
     const updatedData = await updateUsers(userData)
     if (updatedData) {
       window.location.reload()
