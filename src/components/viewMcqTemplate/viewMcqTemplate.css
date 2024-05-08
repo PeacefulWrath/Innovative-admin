@@ -53,7 +53,7 @@
     background: green;
     height: 13%;
     z-index: 1000;
-    margin-left: -24%;
+    margin-left: -25%;
 }
 
 .View_mcq_template_incorrect_answer{
@@ -61,5 +61,5 @@
     background: rgb(255, 70, 70);
     height: 13%;
     z-index: 1000;
-    margin-left: -24%;
+    margin-left: -25%;
 }
