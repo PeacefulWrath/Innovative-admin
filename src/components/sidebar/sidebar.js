@@ -36,6 +36,13 @@ const Sidebar = (props)=>{
         </div>
       </a>
 
+      <a style={{textDecoration: "none"}} href="/quiz-temp-editor">
+        <div className="row fw-bold text-white" style={activeOption==='quiz-template-editor'?{backgroundColor: '#575655'}:{backgroundColor:"transparent"}}>
+          <p className='px-3 pt-2 ms-4 me-2 '>Quiz Template Editor</p>
+        </div>
+      </a>
+
+
       <a style={{textDecoration: "none"}} onClick={()=>{navigate("/file-upload-temp-editor")}} >
         <div className="row fw-bold text-white" style={activeOption==='file-upload-temp-editor'?{backgroundColor: '#575655'}:{backgroundColor:"transparent"}}>
           <p className='px-3 pt-2 ms-4 me-2 '>File Upload Temp Editor</p>

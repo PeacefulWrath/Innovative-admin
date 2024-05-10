@@ -9,7 +9,8 @@ import ViewMcqTemplate from "./components/viewMcqTemplate/viewMcqTemplate";
 import InvoiceManagement from "./components/invoiceManagement/invoiceManagement";
 import UserManagement from "./components/userManagement/userManagement";
 import PurchaseOrderManagement from "./components/purchaseOrderManagement/purchaseOrderManagement";
-
+import QuizTemplateEditor from "./components/quizTemplateEditor/quizTemplateEditor";
+import ViewQuizTemplate from "./components/viewQuizTemplate/viewQuizTemplate"
 
 function App() {
   return (
@@ -19,11 +20,13 @@ function App() {
       <Route exact path="/dashboard" element={<Dashboard />} />
       <Route exact path="/file-upload-temp-editor" element={< FileUploadTempEditor/>} />
       <Route exact path="/mcq-temp-editor" element={< McqTemplateEditor/>} />
+      <Route exact path="/quiz-temp-editor" element={<QuizTemplateEditor />} />
       <Route exact path="/user-management" element={< UserManagement/>} />
       <Route exact path="/invoice-management" element={< InvoiceManagement/>} />
       <Route exact path="/purchase-order-management" element={< PurchaseOrderManagement/>} />
       <Route exact path="/view-file-template" element={<ViewFileTemplate />} />
       <Route exact path="/view-mcq-template" element={<ViewMcqTemplate />} />
+      <Route exact path="/view-quiz-template" element={<ViewQuizTemplate />} />
       <Route path="/pdfDetails" element={<PdfDetails />} />
     </Routes>
   </Router>

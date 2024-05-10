@@ -11,21 +11,21 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import AddIcon from "@mui/icons-material/Add";
 import { Modal, Button } from "react-bootstrap";
 import {
-  createMcqTemplates,
-  fetchMcqTemplates,
-  updateMcqTemplates,
-  deleteMcqTemplates
+  fetchQuizTemplates,
+  createQuizTemplates,
+  deleteQuizTemplates,
+  updateQuizTemplates
 } from "../../api-calls/apicalls";
 
 
 
-function McqTemplateEditor() {
+function QuizTemplateEditor() {
   const [windowWidth, setWindowWidth] = useState();
-  const [mcqTemplates, setMcqTemplates] = useState([]);
+  const [quizTemplates, setQuizTemplates] = useState([]);
   const [paperName, setPaperName] = useState("");
   const [update, setUpdate] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [mcqsCnt, setMcqsCnt] = useState([]);
+  const [quizzesCnt, setQuizzesCnt] = useState([]);
   const [optionsType, setOptionsType] = useState([]);
   const [templateOptImages, setTemplateOptImages] = useState([]);
   const [dbTemplateOptImages, setDbTemplateOptImages] = useState([]);
@@ -33,11 +33,11 @@ function McqTemplateEditor() {
   const [dbTemplateOptTexts, setDbTemplateOptTexts] = useState([]);
   const [answerImages, setAnswerImages] = useState([]);
   const [explainations, setExplainations] = useState([])
-  const [marks, setMarks] = useState([])
-  const [dbMcqs, setDbMcqs] = useState([])
+  // const [marks, setMarks] = useState([])
+  const [dbQuizzes, setDbQuizzes] = useState([])
   const [dbOptionsType, setDbOptionsType] = useState([]);
-  const [editMcqDocId, setEditMcqDocId] = useState("")
-  const [dbMarks, setDbMarks] = useState([])
+  const [editQuizDocId, setEditQuizDocId] = useState("")
+  // const [dbMarks, setDbMarks] = useState([])
   const [dbAnswerImages, setDbAnswerImages] = useState([]);
   const [dbExplainations, setDbExplainations] = useState([])
   const [dbTextAnswers, setDbTextAnswers] = useState([])
@@ -49,14 +49,14 @@ function McqTemplateEditor() {
 
   const handleClose = () => {
     setUpdate(false)
-    setDbMcqs([])
+    setDbQuizzes([])
     setShowModal(false);
   };
 
-  const handleMcqsInputCnt = () => {
-    const tempMcqs = mcqsCnt;
-    tempMcqs.push(mcqsCnt.length + 1);
-    setMcqsCnt([...tempMcqs]);
+  const handleQuizzesInputCnt = () => {
+    const tempQuizzes = quizzesCnt;
+    tempQuizzes.push(quizzesCnt.length + 1);
+    setQuizzesCnt([...tempQuizzes]);
   };
 
   const handleSubBtns = (id, index) => {
@@ -137,16 +137,14 @@ function McqTemplateEditor() {
       tempTemplateTexts[cntInd]?.length !== 0
     ) {
       tempTemplateTexts[cntInd][optInd] = selectedText;
-      if(update){
-      document.getElementById(`db-opt-text-${cntInd}-${optInd}`).value = selectedText
-      }
+      if(update)
+      {document.getElementById(`db-opt-text-${cntInd}-${optInd}`).value = selectedText}
       operation === "add" ? setTemplateOptTexts([...tempTemplateTexts]) : setDbTemplateOptTexts([...tempTemplateTexts]);
     } else {
       tempTemplateTexts[cntInd] = [];
       tempTemplateTexts[cntInd][optInd] = selectedText;
-      if(update){
-      document.getElementById(`db-opt-text-${cntInd}-${optInd}`).value = selectedText
-      }
+      if(update)
+   {   document.getElementById(`db-opt-text-${cntInd}-${optInd}`).value = selectedText}
       operation === "add" ? setTemplateOptTexts([...tempTemplateTexts]) : setDbTemplateOptTexts([...tempTemplateTexts]);
     }
   };
@@ -204,7 +202,7 @@ function McqTemplateEditor() {
       });
 
     let tempAnswerText = [];
-    mcqsCnt.forEach((mc, ind) => {
+    quizzesCnt.forEach((mc, ind) => {
       addData.append(
         "question",
         document.getElementById(`add-question-${ind}`).value
@@ -225,33 +223,33 @@ function McqTemplateEditor() {
       addData.append("explaination", exp)
     })
 
-    marks && marks.length !== 0 && marks.forEach((mark) => {
-      addData.append("mark", mark)
-    })
+    // marks && marks.length !== 0 && marks.forEach((mark) => {
+    //   addData.append("mark", mark)
+    // })
 
-    let createdData = await createMcqTemplates(addData);
+    let createdData = await createQuizTemplates(addData);
     let tempCreatedData = [];
     tempCreatedData.push(createdData);
-    setMcqTemplates([...mcqTemplates, ...tempCreatedData]);
+    setQuizTemplates([...quizTemplates, ...tempCreatedData]);
     handleClose();
     window.location.reload();
   };
 
-  const handleMarks = async (e, operation, ind) => {
-    let tempMarks = operation === "add" ? marks : dbMarks
-    tempMarks[ind] = e.target.value
-    operation === "add" ? setMarks([...tempMarks]) : setDbMarks([...tempMarks])
-  }
+  // const handleMarks = async (e, operation, ind) => {
+  //   let tempMarks = operation === "add" ? marks : dbMarks
+  //   tempMarks[ind] = e.target.value
+  //   operation === "add" ? setMarks([...tempMarks]) : setDbMarks([...tempMarks])
+  // }
 
-  const handleDbQuestions = async (e, ind) => {
-    let tempQuestions = dbQuestions
-    tempQuestions[ind] = e.target.value
-    setDbQuestions([...tempQuestions])
-  }
+  // const handleDbQuestions = async (e, ind) => {
+  //   let tempQuestions = dbQuestions
+  //   tempQuestions[ind] = e.target.value
+  //   setDbQuestions([...tempQuestions])
+  // }
 
   const handleDelete=async(id)=>{
-    const deleteData={mcqDocId:id}
-       const deletedData=await deleteMcqTemplates(deleteData)
+    const deleteData={quizDocId:id}
+       const deletedData=await deleteQuizTemplates(deleteData)
        if(deletedData){
           
       
@@ -259,7 +257,7 @@ function McqTemplateEditor() {
 
          window.location.reload()
        }
-  }
+     }
 
   const handleExplainations = async (e, operation, ind) => {
     let tempExplainations = operation === "add" ? explainations : dbExplainations
@@ -273,7 +271,7 @@ function McqTemplateEditor() {
 
 
 
-    updateData.append("mcqDocId", editMcqDocId)
+    updateData.append("quizDocId", editQuizDocId)
     updateData.append("paper_name", paperName)
 
     let updatedDataToBackend = []
@@ -361,21 +359,21 @@ function McqTemplateEditor() {
 
     })
 
-    dbMarks && dbMarks.length !== 0 && dbMarks.forEach((dta, ind) => {
-      if (dta) {
+    // dbMarks && dbMarks.length !== 0 && dbMarks.forEach((dta, ind) => {
+    //   if (dta) {
 
 
-        updatedDataToBackend.push({
+    //     updatedDataToBackend.push({
 
-          "db_marks_replacable_question_no": ind,
-          "db_marks_replacable_option_type": "text",
-          "db_marks_data": dta
-        })
+    //       "db_marks_replacable_question_no": ind,
+    //       "db_marks_replacable_option_type": "text",
+    //       "db_marks_data": dta
+    //     })
 
 
-      }
+    //   }
 
-    })
+    // })
 
     dbQuestions && dbQuestions.length !== 0 && dbQuestions.forEach((dta, ind) => {
       if (dta) {
@@ -426,7 +424,7 @@ function McqTemplateEditor() {
       });
 
     let tempAnswerText = [];
-    mcqsCnt.forEach((mc, ind) => {
+    quizzesCnt.forEach((_, ind) => {
       updateData.append(
         "question",
         document.getElementById(`add-question-${ind}`).value
@@ -447,18 +445,19 @@ function McqTemplateEditor() {
       updateData.append("explaination", exp)
     })
 
-    marks && marks.length !== 0 && marks.forEach((mark) => {
-      updateData.append("mark", mark)
-    })
+    // marks && marks.length !== 0 && marks.forEach((mark) => {
+    //   updateData.append("mark", mark)
+    // })
 
     updateData.append("updated_data", JSON.stringify(updatedDataToBackend))
 
 
-    const updatedData=await updateMcqTemplates(updateData)
+    const updatedData=await updateQuizTemplates(updateData)
+
     if(updatedData){
     handleClose();
-    setMcqsCnt([])
     setUpdate(false)
+    setQuizzesCnt([])
     window.location.reload();
     }
 
@@ -470,21 +469,27 @@ function McqTemplateEditor() {
     tempDbTextAnswers[ind] = e.target.value
   }
 
+  const handleDbQuestions = async (e, ind) => {
+    let tempQuestions = dbQuestions
+    tempQuestions[ind] = e.target.value
+    setDbQuestions([...tempQuestions])
+  }
+
   useEffect(() => {
-    if (mcqsCnt.length !== 0) {
-      const index = mcqsCnt.length - 1;
+    if (quizzesCnt.length !== 0) {
+      const index = quizzesCnt.length - 1;
       document.getElementById(`add-option-type-text-${index}`).value = "off";
       document.getElementById(`add-option-type-image-${index}`).value = "off";
     }
-  }, [mcqsCnt]);
+  }, [quizzesCnt]);
 
   useEffect(() => {
     setWindowWidth(window.innerWidth);
     window.addEventListener("resize", updateWindowWidth);
 
     const fetcher = async () => {
-      let mcqTemplatesData = await fetchMcqTemplates();
-      setMcqTemplates([...mcqTemplatesData]);
+      let quizTemplatesData = await fetchQuizTemplates();
+      setQuizTemplates([...quizTemplatesData]);
     };
 
     fetcher();
@@ -495,9 +500,10 @@ function McqTemplateEditor() {
   }, []);
 
   useEffect(() => {
-    if (dbMcqs && dbMcqs.length !== 0) {
+    if (dbQuizzes && dbQuizzes.length !== 0) {
+
       let tempDbOptionsType = dbOptionsType
-      dbMcqs.forEach((dm, ind) => {
+      dbQuizzes.forEach((dm, ind) => {
         if (dm?.options_type == "image") {
           console.log(document.getElementById(`db-option-type-image-${ind}`))
           document.getElementById(`db-option-type-image-${ind}`).checked = true
@@ -508,11 +514,13 @@ function McqTemplateEditor() {
           tempDbOptionsType[ind] = "text"
         }
       })
+
       setDbOptionsType([...tempDbOptionsType])
-      dbMcqs.forEach((dm, ind) => {
+      dbQuizzes.forEach((dm, ind) => {
         if (dm?.options_type == "text") {
           dm.options.forEach((op, mInd) => {
             document.getElementById(`db-opt-text-${ind}-${mInd}`).value = op
+
           })
           document.getElementById(`db-text-answer-${ind}`).value = dm?.answer
         }
@@ -522,12 +530,12 @@ function McqTemplateEditor() {
           document.getElementById(`db-attached-img-answer-${ind}`).src = dm?.answer
         }
 
-        document.getElementById(`db-marks-${ind}`).value = dm?.mark
+        // document.getElementById(`db-marks-${ind}`).value = dm?.mark
         document.getElementById(`db-explaination-${ind}`).value = dm?.explaination
         document.getElementById(`db-question-${ind}`).value = dm?.question
       })
     }
-  }, [dbMcqs])
+  }, [dbQuizzes])
 
   return (
     <div>
@@ -535,7 +543,7 @@ function McqTemplateEditor() {
       <hr style={{ color: "black", margin: "0" }} />
 
       <div className="row">
-        {windowWidth > 768 && <Sidebar activeOption="mcq-temp-editor" />}
+        {windowWidth > 768 && <Sidebar activeOption="quiz-temp-editor" />}
         <div className="col-md-10 p-4">
           <div className="d-flex justify-content-end mb-5">
             <button
@@ -556,7 +564,7 @@ function McqTemplateEditor() {
           </div>
           <div className="d-flex row">
             <div className="col fw-bold">
-              {`Mcq Templates(${mcqTemplates?.length || 0})`}
+              {`Quiz Templates(${quizTemplates?.length || 0})`}
             </div>
             <div className="col d-flex">
               <div className="input-group mb-3">
@@ -579,20 +587,20 @@ function McqTemplateEditor() {
             <thead>
               <tr className="table-primary table-striped">
                 <th scope="col">SN.</th>
-                <th scope="col">Mcq Template Name</th>
+                <th scope="col">Quiz Template Name</th>
                 <th scope="col">View</th>
                 <th scope="col">Action</th>
               </tr>
             </thead>
 
-            {mcqTemplates && mcqTemplates?.length !== 0 ? (
-              mcqTemplates.map((temp, index) => (
+            {quizTemplates && quizTemplates?.length !== 0 ? (
+              quizTemplates.map((temp, index) => (
                 <tbody>
                   <tr>
                     <th scope="col">{index + 1}.</th>
                     <th scope="col">{temp?.paper_name}</th>
                     <th scope="col">
-                      <Link to="/view-mcq-template" state={{ templateData: temp }}>
+                      <Link to="/view-quiz-template" state={{ templateData: temp }}>
                         view
                       </Link>
                     </th>
@@ -604,8 +612,8 @@ function McqTemplateEditor() {
                           setUpdate(true)
                           setShowModal(true)
                           setPaperName(temp?.paper_name)
-                          setDbMcqs(temp.mcqs)
-                          setEditMcqDocId(temp?._id)
+                          setDbQuizzes(temp.quizzes)
+                          setEditQuizDocId(temp?._id)
                         }}
                       />
                       <DeleteIcon
@@ -650,10 +658,10 @@ function McqTemplateEditor() {
               />
             </div>
             <div className="mb-2">
-              {dbMcqs && dbMcqs.length !== 0 && (<>
-                <label className="pb-1">Attached Mcqs</label>
+              {dbQuizzes && dbQuizzes.length !== 0 && (<>
+                <label className="pb-1">Attached Quizzes</label>
                 {
-                  dbMcqs.map((dm, ind) => (
+                  dbQuizzes.map((dm, ind) => (
                     <>
                       <div className="d-flex mt-2">
                         <input
@@ -781,11 +789,11 @@ function McqTemplateEditor() {
                         </>
                       )}
 
-                      <div className="d-flex mt-2">
+                      {/* <div className="d-flex mt-2">
                         <input placeholder="marks" id={`db-marks-${ind}`} onChange={(e) => {
                           handleMarks(e, "update", ind)
                         }} type="number" />
-                      </div>
+                      </div> */}
 
                       <div className="d-flex mt-2">
                         <textarea className="w-100" placeholder="explaination" id={`db-explaination-${ind}`} onChange={(e) => {
@@ -801,7 +809,7 @@ function McqTemplateEditor() {
             </div>
             <div className="mb-2">
               <div className="d-flex justify-content-between">
-                <label className="pb-1">Template Mcqs</label>
+                <label className="pb-1">Template Quizzes</label>
                 <button
                   className="btn"
                   style={{
@@ -810,15 +818,15 @@ function McqTemplateEditor() {
                     whiteSpace: "nowrap",
                   }}
                   onClick={() => {
-                    handleMcqsInputCnt();
+                    handleQuizzesInputCnt();
                   }}
                 >
-                  add mcqs <AddIcon />
+                  add quiz <AddIcon />
                 </button>
               </div>
 
-              {mcqsCnt.length !== 0 &&
-                mcqsCnt.map((data, ind) => (
+              {quizzesCnt.length !== 0 &&
+                quizzesCnt.map((data, ind) => (
                   <>
                     <div className="d-flex mt-2">
                       <input
@@ -924,11 +932,11 @@ function McqTemplateEditor() {
                       </div>
                     )}
 
-                    <div className="d-flex mt-2">
+                    {/* <div className="d-flex mt-2">
                       <input placeholder="marks" onChange={(e) => {
                         handleMarks(e, "add", ind)
                       }} type="number" />
-                    </div>
+                    </div> */}
 
                     <div className="d-flex mt-2">
                       <textarea className="w-100" placeholder="explaination" onChange={(e) => {
@@ -951,8 +959,8 @@ function McqTemplateEditor() {
           <Button
             variant="primary"
             onClick={() => {
-
               update ? handleUpdate() : handleCreate();
+              
             }}
           >
             {update ? "update" : "Create"}
@@ -963,4 +971,4 @@ function McqTemplateEditor() {
   );
 }
 
-export default McqTemplateEditor;
+export default QuizTemplateEditor;

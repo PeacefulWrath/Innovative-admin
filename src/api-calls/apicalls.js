@@ -153,6 +153,31 @@ export const updateMcqTemplates = async (updateData) => {
     }
 };
 
+export const updateMcqTemplatesAttempts = async (updateData) => {
+    let tempTemplates = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "put",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/mcq-template`,
+                    data: updateData,
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
+            .then((res) => {
+                tempTemplates = res.data;
+            });
+    } catch (error) {
+        console.log("can not create templates");
+    } finally {
+        return tempTemplates;
+    }
+};
+
 export const deleteMcqTemplates = async (deleteData) => {
     let tempMcqTemplates = [];
     try {
@@ -390,7 +415,6 @@ export const fetchPurchaseOrders = async () => {
     }
 }
 
-
 export const updatePurchaseOrders = async (updateData) => {
     let poData = [];
     try {
@@ -416,7 +440,6 @@ export const updatePurchaseOrders = async (updateData) => {
     }
 };
 
-
 export const deletePurchaseOrders = async (deleteData) => {
     let tempPurchaseOrders = [];
     try {
@@ -437,3 +460,91 @@ export const deletePurchaseOrders = async (deleteData) => {
         return tempPurchaseOrders;
     }
 };
+
+export const createQuizTemplates = async (addData) => {
+    let tempTemplates = [];
+    try {
+        // console.log("template data", addData);
+
+        await axios
+            (
+                {
+                    method: "post",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/quiz-template`,
+                    data: addData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+            .then((res) => {
+                tempTemplates = res.data;
+            });
+    } catch (error) {
+        console.log("can not create templates");
+    } finally {
+        return tempTemplates;
+    }
+};
+
+export const updateQuizTemplates = async (updateData) => {
+    let tempQuizTemplates = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "put",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/quiz-template`,
+                    data: updateData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+            .then((res) => {
+                tempQuizTemplates = res.data;
+            });
+    } catch (error) {
+        console.log("can not create templates");
+    } finally {
+        return tempQuizTemplates;
+    }
+};
+
+export const deleteQuizTemplates = async (deleteData) => {
+    let tempQuizTemplates = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "delete",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/quiz-template`,
+                    data: deleteData
+
+                })
+            .then((res) => {
+                tempQuizTemplates = res.data;
+            });
+    } catch (error) {
+        console.log("can not delete quiz templates");
+    } finally {
+        return tempQuizTemplates;
+    }
+};
+
+export const fetchQuizTemplates = async () => {
+    let templatesData = [];
+    try {
+        const response = await axios.get(
+            `${process.env.REACT_APP_BASE_URL}/api/quiz-template`
+        );
+        templatesData = response.data;
+        // console.log(templatesData)
+    } catch (error) {
+        console.log("err", error);
+    } finally {
+        return templatesData;
+    }
+}
