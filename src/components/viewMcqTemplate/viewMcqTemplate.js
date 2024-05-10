@@ -162,12 +162,13 @@ const handleNext=async()=>{
     // console.log("gaaa",gaIndex)
 
     if (tat?.given_answers[ga]!=="unattempted") {
+      console.log("unnn",ga+"}}}"+tat?.given_answers[ga])
      if (templateData?.mcqs[ga]?.options[parseInt(tat?.given_answers[ga])] === templateData?.mcqs[ga]?.answer) {
      
     
       const type=templateData?.mcqs[ga]?.options_type=="image"?"img":"text"
 
-      // console.log("hhh",ga)
+      console.log("hhh",ga)
 
       document.getElementById(`${type}-option-${parseInt(tat?.given_answers[ga])}`).style.border = "6px solid #D4FFD6";
 
@@ -178,9 +179,9 @@ const handleNext=async()=>{
       })
 
     }else if (templateData?.mcqs[ga]?.options[parseInt(tat?.given_answers[ga])] !== templateData?.mcqs[ga]?.answer) {
-
+      
       const type=templateData?.mcqs[ga]?.options_type=="image"?"img":"text"
-
+      console.log("hhh2",`${type}-option-${parseInt(tat?.given_answers[ga])}`)
       document.getElementById(`${type}-option-${parseInt(tat?.given_answers[ga])}`).style.border = "6px solid #FFD4D4";
 
       templateData.mcqs[pageNumber - 1].options.forEach((op, opInd) => {
@@ -196,8 +197,9 @@ const handleNext=async()=>{
       })
     }
 
-     let tempGetIndex=gaIndex;
-     setGaIndex(tempGetIndex++)
+    console.log("pree")
+     let tempGaIndex=gaIndex;
+     setGaIndex(tempGaIndex+1)
      setExplaination("")
 
      setPageNumber(pageNumber + 1);
@@ -335,8 +337,6 @@ useEffect(() => {
              
               document.getElementById("save_next").disabled=true
               document.getElementById("next").disabled=false
-            }else{
-              setGaIndex(0)
             }
           }
 
