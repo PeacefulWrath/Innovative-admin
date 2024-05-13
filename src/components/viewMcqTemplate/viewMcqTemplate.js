@@ -13,7 +13,7 @@ import { updateMcqTemplatesAttempts } from "../../api-calls/apicalls";
 
 function ViewMcqTemplate() {
   const location = useLocation();
-  const ADMIN_EMAIL="admin@gmail.com" //temporary
+  const ADMIN_EMAIL = "admin@gmail.com" //temporary
   const { templateData } = location.state;
   const [windowWidth, setWindowWidth] = useState();
   const [pageNumber, setPageNumber] = useState(1);
@@ -23,197 +23,73 @@ function ViewMcqTemplate() {
   const [showAns, setShowAns] = useState(false)
   const [sign, setSign] = useState([])
   const [answered, setAnswered] = useState(false)
-  const[gaIndex,setGaIndex]=useState(1)
   
-const updateWindowWidth = () => {
+
+  const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
-};
+  };
 
-const handleSaveAndNext = async() => {
-    
-    if (pageNumber === templateData?.mcqs?.length) {
-      setShowAns(true)
-      return;
-    }
-   
-      let ga=gaIndex
-      let tat=""
-      templateData?.attempted.forEach((td,ind)=>{
-        if (td?.user_email === ADMIN_EMAIL) {
-           tat=td
-      }})
+  const handleSaveAndNext = async () => {
 
-      // console.log("gaaa",gaIndex)
-      if (tat?.given_answers[gaIndex]!=="unattempted") {
-       if (templateData?.mcqs[ga]?.options[parseInt(tat?.given_answers[ga])] === templateData?.mcqs[ga]?.answer) {
-       
-      
-        const type=templateData?.mcqs[ga]?.options_type=="image"?"img":"text"
+      let tempSign = sign
+      let tempAns = ans
+      let tempPageNo = pageNumber;
 
-        // console.log("hhh",ga)
+      // console.log("temppp",tempPageNo)
 
-        document.getElementById(`${type}-option-${parseInt(tat?.given_answers[ga])}`).style.border = "6px solid #D4FFD6";
+      if (answered == false) {
 
-        templateData.mcqs[pageNumber - 1].options.forEach((_, opInd) => {
-          document.getElementById(`${type}-option-${opInd}`).addEventListener("click", function (event) {
-            event.stopPropagation();
-          });
-        })
-
-      }else if (templateData?.mcqs[ga]?.options[parseInt(tat?.given_answers[ga])] !== templateData?.mcqs[ga]?.answer) {
-
-        const type=templateData?.mcqs[ga]?.options_type=="image"?"img":"text"
-
-        document.getElementById(`${type}-option-${parseInt(tat?.given_answers[ga])}`).style.border = "6px solid #FFD4D4";
-
-        templateData.mcqs[pageNumber - 1].options.forEach((op, opInd) => {
-          if (op === templateData.mcqs[pageNumber - 1].answer) {
-            document.getElementById(`${type}-option-${opInd}`).style.border = "6px solid #D4FFD6";
-          }
-        })
-
-        templateData.mcqs[pageNumber - 1].options.forEach((_, opInd) => {
-          document.getElementById(`${type}-option-${opInd}`).addEventListener("click", function (event) {
-            event.stopPropagation();
-          });
-        })
-      }
-       let tempGetIndex=gaIndex;
-       setGaIndex(tempGetIndex++)
-       setExplaination("")
-       setPageNumber(pageNumber + 1);
-       document.getElementById("save_next").style.disable=true
-       document.getElementById("next").style.disable=false
-       return;
+        tempAns[tempPageNo - 1] = "unattempted"
+        setAns([...tempAns])
+      } else if (answered == true) {
+        setAnswered(false)
       }
 
-
-    // console.log("ans",ans)
-    let tempSign = sign
-    let tempAns = ans
-    let tempPageNo = pageNumber;
-
-    if (answered == false) {
-    
-      tempAns[tempPageNo - 1]="unattempted"
-      setAns([...tempAns])
-    } else if (answered == true) {
-      setAnswered(false)
-    }
-
-    let dbAns=[]
-    tempAns.forEach((t)=>{
-      if(t!=="unattempted"){
-        dbAns.push(t.toString())
-      }else{
-        dbAns.push("unattempted")
-      }
-    })
-
-    // console.log("dbbb",dbAns)
-    let updateData={update_attempt:"yes",mcqDocId:templateData?._id,user_email:ADMIN_EMAIL,last_visited_question:pageNumber,given_answers:dbAns}
-
-    await updateMcqTemplatesAttempts(updateData)
-
-
-    // if (tempPageNo === templateData?.mcqs?.length) {
-    //   setShowAns(true)
-    //   return;
-    // }
-
-
-    document.getElementById(`dotted-${pageNumber - 1}`).style.display = "none";
-    document.getElementById(`line-${pageNumber - 1}`).style.display = "flex";
-
-  
-
-    templateData.mcqs[pageNumber - 1].options.forEach((_, opInd) => {
-      if (ans[pageNumber - 1] === "unattempted") {
-        tempSign[pageNumber - 1] = "unsigned"
-        setSign([...tempSign])
-      } else if (templateData.mcqs[pageNumber - 1].answer === templateData.mcqs[pageNumber - 1].options[ans[pageNumber - 1]]) {
-        tempSign[pageNumber - 1] = "right"
-        setSign([...tempSign])
-      } else if (templateData.mcqs[pageNumber - 1].answer !== templateData.mcqs[pageNumber - 1].options[ans[pageNumber - 1]]) {
-        tempSign[pageNumber - 1] = "wrong"
-        setSign([...tempSign])
-      }
-    })
-
- 
-    setExplaination("")
-    setPageNumber(tempPageNo + 1);
-};
-
-const handleNext=async()=>{
-    if (pageNumber === templateData?.mcqs?.length) {
-      setShowAns(true)
-      return;
-    }
-    
-
-    let ga=gaIndex
-    let tat=""
-    templateData?.attempted.forEach((td,ind)=>{
-      if (td?.user_email === ADMIN_EMAIL) {
-         tat=td
-    }})
-
-    // console.log("gaaa",gaIndex)
-
-    if (tat?.given_answers[ga]!=="unattempted") {
-      console.log("unnn",ga+"}}}"+tat?.given_answers[ga])
-     if (templateData?.mcqs[ga]?.options[parseInt(tat?.given_answers[ga])] === templateData?.mcqs[ga]?.answer) {
-     
-    
-      const type=templateData?.mcqs[ga]?.options_type=="image"?"img":"text"
-
-      console.log("hhh",ga)
-
-      document.getElementById(`${type}-option-${parseInt(tat?.given_answers[ga])}`).style.border = "6px solid #D4FFD6";
-
-      templateData.mcqs[pageNumber - 1].options.forEach((_, opInd) => {
-        document.getElementById(`${type}-option-${opInd}`).addEventListener("click", function (event) {
-          event.stopPropagation();
-        });
-      })
-
-    }else if (templateData?.mcqs[ga]?.options[parseInt(tat?.given_answers[ga])] !== templateData?.mcqs[ga]?.answer) {
-      
-      const type=templateData?.mcqs[ga]?.options_type=="image"?"img":"text"
-      console.log("hhh2",`${type}-option-${parseInt(tat?.given_answers[ga])}`)
-      document.getElementById(`${type}-option-${parseInt(tat?.given_answers[ga])}`).style.border = "6px solid #FFD4D4";
-
-      templateData.mcqs[pageNumber - 1].options.forEach((op, opInd) => {
-        if (op === templateData.mcqs[pageNumber - 1].answer) {
-          document.getElementById(`${type}-option-${opInd}`).style.border = "6px solid #D4FFD6";
+      let dbAns = []
+      tempAns.forEach((t) => {
+        if (t !== "unattempted") {
+          dbAns.push(t.toString())
+        } else {
+          dbAns.push("unattempted")
         }
       })
 
+      // console.log("dbbb",dbAns)
+      let updateData = { update_attempt: "yes", mcqDocId: templateData?._id, user_email: ADMIN_EMAIL, last_visited_question: pageNumber, given_answers: dbAns }
+
+      await updateMcqTemplatesAttempts(updateData)
+
+
+      if (tempPageNo == templateData?.mcqs?.length) {
+        setShowAns(true)
+        return;
+      }
+
+
+      document.getElementById(`dotted-${pageNumber - 1}`).style.display = "none";
+      document.getElementById(`line-${pageNumber - 1}`).style.display = "flex";
+
+
+
       templateData.mcqs[pageNumber - 1].options.forEach((_, opInd) => {
-        document.getElementById(`${type}-option-${opInd}`).addEventListener("click", function (event) {
-          event.stopPropagation();
-        });
+        if (ans[pageNumber - 1] === "unattempted") {
+          tempSign[pageNumber - 1] = "unsigned"
+          setSign([...tempSign])
+        } else if (templateData.mcqs[pageNumber - 1].answer === templateData.mcqs[pageNumber - 1].options[ans[pageNumber - 1]]) {
+          tempSign[pageNumber - 1] = "right"
+          setSign([...tempSign])
+        } else if (templateData.mcqs[pageNumber - 1].answer !== templateData.mcqs[pageNumber - 1].options[ans[pageNumber - 1]]) {
+          tempSign[pageNumber - 1] = "wrong"
+          setSign([...tempSign])
+        }
       })
-    }
 
-    console.log("pree")
-     let tempGaIndex=gaIndex;
-     setGaIndex(tempGaIndex+1)
-     setExplaination("")
 
-     setPageNumber(pageNumber + 1);
+      setExplaination("")
+      setPageNumber(tempPageNo + 1);
+  };
 
-     document.getElementById("save_next").style.disable=true
-     document.getElementById("next").style.disable=false
-
-    
-    }
-
-   
-  }
-
-const handleClickedOption = (type, ind) => {
+  const handleClickedOption = (type, ind) => {
     // console.log("click",ind)
     templateData &&
       templateData?.mcqs?.length !== 0 &&
@@ -226,7 +102,7 @@ const handleClickedOption = (type, ind) => {
             setAnswered(true)
 
             let tempAns = ans
-            tempAns[pageNumber - 1]=ind
+            tempAns[pageNumber - 1] = ind
             setAns([...tempAns])
 
             setExplaination(templateData.mcqs[pageNumber - 1].explaination);
@@ -248,7 +124,7 @@ const handleClickedOption = (type, ind) => {
             setAnswered(true)
 
             let tempAns = ans
-            tempAns[pageNumber - 1]=ind
+            tempAns[pageNumber - 1] = ind
             setAns([...tempAns])
 
             setExplaination(templateData.mcqs[pageNumber - 1].explaination);
@@ -271,21 +147,89 @@ const handleClickedOption = (type, ind) => {
 
         }
       });
-};
+  };
 
-useEffect(() => {
+  useEffect(() => {
     setWindowWidth(window.innerWidth);
     window.addEventListener("resize", updateWindowWidth);
 
-      !showAns &&
-      templateData && 
-      Array.isArray(templateData?.attempted)&&
-      templateData?.attempted?.length !== 0 &&
-      templateData?.attempted.forEach((tat,_)=>{
+    (!showAns &&
+      templateData &&
+      Array.isArray(templateData?.attempted) &&
+      templateData?.attempted?.length !== 0) ?
+      templateData?.attempted.forEach((tat, _) => {
         if (tat?.user_email === ADMIN_EMAIL) {
+          let tempAns=[]
 
-          //change lines as previous response which has been answered
-          for (let i = 0; i < tat?.last_visited_question; i++) {
+          // console.log("230")
+
+          //change lines
+          for (let i = 0; i < parseInt(tat?.last_visited_question); i++) {
+            if (i==templateData?.mcqs?.length-1) {
+              document.getElementById(`dotted-${i}`).style.display = "none";
+              document.getElementById(`line-${i}`).style.display = "none";
+            } else{
+              document.getElementById(`dotted-${i}`).style.display = "none";
+              document.getElementById(`line-${i}`).style.display = "flex";
+            }
+          }
+
+          for (let i = parseInt(tat?.last_visited_question); i<templateData?.mcqs?.length; i++) {
+            if (i==templateData?.mcqs?.length-1) {
+              document.getElementById(`dotted-${i}`).style.display = "none";
+              document.getElementById(`line-${i}`).style.display = "none";
+            } else {
+              document.getElementById(`dotted-${i}`).style.display = "none";
+              document.getElementById(`line-${i}`).style.display = "flex";
+            }
+          }
+
+      
+         
+
+          //change signs
+          for (let ga = 0; ga < tat?.given_answers?.length; ga++) {
+            if (tat?.given_answers[ga] == "unattempted") {
+              let tempSign = sign
+              tempSign[ga] = "unsigned"
+              setSign([...tempSign])
+            } else if (templateData?.mcqs[ga]?.options[parseInt(tat?.given_answers[ga])] === templateData?.mcqs[ga]?.answer) {
+
+
+
+
+              let tempSign = sign
+              tempSign[ga] = "right"
+              setSign([...tempSign])
+            } else if (templateData?.mcqs[ga]?.options[parseInt(tat?.given_answers[ga])] !== templateData?.mcqs[ga]?.answer) {
+
+
+              let tempSign = sign
+              tempSign[ga] = "wrong"
+              setSign([...tempSign])
+            }
+
+
+            tempAns[ga]=tat?.given_answers[ga]=="unattempted"?"unattempted":parseInt(tat?.given_answers[ga])
+            
+          }
+
+          for(let sga=tat?.given_answers?.length;sga<templateData?.mcqs?.length;sga++){
+            let tempSign = sign
+            tempSign[sga] = "unsigned"
+            setSign([...tempSign])
+          }
+          
+          tempAns.length!==0&&setAns([...tempAns])
+          parseInt(tat?.last_visited_question)==templateData?.mcqs?.length?setShowAns(true):setPageNumber(parseInt(tat?.last_visited_question)+1)
+
+        }
+
+      }): templateData?.mcqs.forEach((tat, _) => {
+        
+        //  console.log("283")
+        
+          for (let i = 0; i <  templateData?.mcqs?.length; i++) {
             if (i === templateData?.mcqs.length - 1) {
               document.getElementById(`dotted-${i}`).style.display = "none";
               document.getElementById(`line-${i}`).style.display = "none";
@@ -295,111 +239,32 @@ useEffect(() => {
             }
           }
 
-          // console.log("hhh",gaIndex)
+      
+         
 
-
-          //change  first question if it has been answered
-          for (let ga = 0; ga <=0; ga++) {
-           if (tat?.given_answers[ga]!=="unattempted"&&templateData?.mcqs[ga]?.options[parseInt(tat?.given_answers[ga])] === templateData?.mcqs[ga]?.answer) {
-             
-              const type=templateData?.mcqs[ga]?.options_type=="image"?"img":"text"
-
-              document.getElementById(`${type}-option-${parseInt(tat?.given_answers[ga])}`).style.border = "6px solid #D4FFD6";
-
-              templateData.mcqs[pageNumber - 1].options.forEach((_, opInd) => {
-                document.getElementById(`${type}-option-${opInd}`).addEventListener("click", function (event) {
-                  event.stopPropagation();
-                });
-              })
-
-              document.getElementById("save_next").disabled=true
-              document.getElementById("next").disabled=false
-             
-            }else if (tat?.given_answers[ga]!=="unattempted"&&templateData?.mcqs[ga]?.options[parseInt(tat?.given_answers[ga])] !== templateData?.mcqs[ga]?.answer) {
-
-              const type=templateData?.mcqs[ga]?.options_type=="image"?"img":"text"
-
-              // console.log("yyy",tat?.given_answers[ga])
-
-              document.getElementById(`${type}-option-${parseInt(tat?.given_answers[ga])}`).style.border = "6px solid #FFD4D4";
-
-              templateData.mcqs[pageNumber - 1].options.forEach((op, opInd) => {
-                if (op === templateData.mcqs[pageNumber - 1].answer) {
-                  document.getElementById(`${type}-option-${opInd}`).style.border = "6px solid #D4FFD6";
-                }
-              })
-  
-              templateData.mcqs[pageNumber - 1].options.forEach((_, opInd) => {
-                document.getElementById(`${type}-option-${opInd}`).addEventListener("click", function (event) {
-                  event.stopPropagation();
-                });
-              })
-             
-              document.getElementById("save_next").disabled=true
-              document.getElementById("next").disabled=false
-            }
-          }
-
-          //change signs as previous response which has been answered
-          for (let ga = 0; ga <tat?.given_answers?.length; ga++) {
-            // console.log("ccc",templateData?.mcqs[ga]?.answer)
-            // console.log("ccc2",templateData?.mcqs[ga]?.options[parseInt(tat?.given_answers[ga])])
-
-            if (tat?.given_answers[ga] == "unattempted") {
+         
+          for (let ga = 0; ga <  templateData?.mcqs?.length; ga++) {     
               let tempSign = sign
               tempSign[ga] = "unsigned"
               setSign([...tempSign])
-            }else if (templateData?.mcqs[ga]?.options[parseInt(tat?.given_answers[ga])] === templateData?.mcqs[ga]?.answer) {
-             
-            
-             
+           
 
-              let tempSign = sign
-              tempSign[ga] = "right"
-              setSign([...tempSign])
-            }else if (templateData?.mcqs[ga]?.options[parseInt(tat?.given_answers[ga])] !== templateData?.mcqs[ga]?.answer) {
-
-            
-              let tempSign = sign
-              tempSign[ga] = "wrong"
-              setSign([...tempSign])
-            }
-       
           }
 
-          //change lines which has not been response
-          for (let ind = parseInt(tat?.last_visited_question); ind < templateData?.mcqs?.length; ind++) {
-            if (ind === templateData?.mcqs.length - 1) {
-              document.getElementById(`dotted-${ind}`).style.display = "none";
-              document.getElementById(`line-${ind}`).style.display = "none";
-            } else {
-              document.getElementById(`dotted-${ind}`).style.display = "flex";
-              document.getElementById(`line-${ind}`).style.display = "none";
+    
 
-             
-            }
-          }
-
-          //change signs  which has not been answered
-          for (let ind = parseInt(tat?.last_visited_question); ind < templateData?.mcqs?.length; ind++) {
-              let tempSign = sign
-              tempSign[ind] = "unsigned"
-              setSign([...tempSign])
-            
-          }
         
-        }
       })
 
 
 
 
-     
+
 
     return () => {
       window.removeEventListener("resize", updateWindowWidth);
     };
-}, []);
+  }, []);
 
   return (
     <>
@@ -410,7 +275,6 @@ useEffect(() => {
         <div className="col-md-10  p-4">
           {showAns ?
             <>
-              {/* <button className="btn" onClick={()=>{window.location.reload()}}>Back Only For Admin</button> */}
               {templateData.mcqs.map((mcq, index) => (
                 <div className="d-flex justify-content-start View_mcq_template_mcq mt-3">
                   <h5 className="ms-3 mt-3" style={{ whiteSpace: "nowrap" }}>{mcq?.question}</h5>
@@ -567,16 +431,6 @@ useEffect(() => {
                   }}
                 >
                   save and next
-                </button>
-                <button
-                id="next"
-                  className="btn btn-primary rounded ms-5"
-                 
-                  onClick={() => {
-                    handleNext();
-                  }}
-                >
-                  only next
                 </button>
               </div>
             </>}

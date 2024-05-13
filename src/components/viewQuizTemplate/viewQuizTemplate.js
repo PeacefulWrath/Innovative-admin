@@ -259,14 +259,14 @@ function ViewMcqTemplate() {
                     </>
                   ))}
               </div>
-              {explaination && (
+              {/* {explaination && (
                 <div
                   className="d-flex justify-content-center mt-3"
                   style={{ color: `${explainationColor}` }}
                 >
                   {explaination}
                 </div>
-              )}
+              )} */}
               <div className="d-flex justify-content-center mt-5">
                 <button
                   className="btn btn-primary rounded"

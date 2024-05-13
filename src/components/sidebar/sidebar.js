@@ -18,7 +18,8 @@ const Sidebar = (props)=>{
   };
   return(
     <div className='col-md-2 col-12 bg-dark py-4' style={{minHeight:"100vh", zIndex:"100"}}>
-      <a style={{textDecoration: "none"}} onClick={()=>{handleClick("dashboard")}}>
+
+      <a style={{textDecoration: "none"}} href="/dashboard">
         <div className="row fw-bold text-white" style={activeOption==='dashboard'?{backgroundColor: '#575655'}:{backgroundColor:"transparent"}}>
           <p className='px-3 pt-2 ms-4 me-2 '>Dashboard</p>
         </div>
@@ -43,7 +44,7 @@ const Sidebar = (props)=>{
       </a>
 
 
-      <a style={{textDecoration: "none"}} onClick={()=>{navigate("/file-upload-temp-editor")}} >
+      <a style={{textDecoration: "none"}} href="/file-upload-temp-editor" >
         <div className="row fw-bold text-white" style={activeOption==='file-upload-temp-editor'?{backgroundColor: '#575655'}:{backgroundColor:"transparent"}}>
           <p className='px-3 pt-2 ms-4 me-2 '>File Upload Temp Editor</p>
         </div>
@@ -63,7 +64,7 @@ const Sidebar = (props)=>{
       </a>
 
 
-      <a style={{textDecoration: "none"}} href="/pages/document-center">
+      {/* <a style={{textDecoration: "none"}} href="/pages/document-center">
         <div className="row fw-bold text-white" style={activeOption==='document-center'?{backgroundColor: '#575655'}:{backgroundColor:"transparent"}}>
           <p className='px-3 pt-2 ms-4 me-2 '>Document Center</p>
         </div>
@@ -73,14 +74,38 @@ const Sidebar = (props)=>{
         <div className="row fw-bold text-white" style={activeOption==='system-setting'?{backgroundColor: '#575655'}:{backgroundColor:"transparent"}}>
           <p className='px-3 pt-2 ms-4 me-2 '>System Setting</p>
         </div>
+      </a> */}
+
+
+
+
+
+      <a style={{textDecoration: "none"}} href="/faq-management">
+        <div className="row fw-bold text-white" style={activeOption==='faq-management'?{backgroundColor: '#575655'}:{backgroundColor:"transparent"}}>
+          <p className='px-3 pt-2 ms-4 me-2 ' style={{whiteSpace:"nowrap"}}>Faq Management</p>
+        </div>
       </a>
 
 
-      <a style={{textDecoration: "none"}} href="/pages/logout">
+
+
+
+      <a style={{textDecoration: "none"}} href="/gallery-management">
+        <div className="row fw-bold text-white" style={activeOption==='gallery-management'?{backgroundColor: '#575655'}:{backgroundColor:"transparent"}}>
+          <p className='px-3 pt-2 ms-4 me-2 ' style={{whiteSpace:"nowrap"}}>Gallery Management</p>
+        </div>
+      </a>
+
+
+
+
+
+
+      {/* <a style={{textDecoration: "none"}} href="/pages/logout">
         <div className="row fw-bold text-white" style={activeOption==='logout'?{backgroundColor: '#575655'}:{backgroundColor:"transparent"}}>
           <p className='px-3 pt-2 ms-4 me-2 '>Logout</p>
         </div>
-      </a>
+      </a> */}
     </div>
   )
 }

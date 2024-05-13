@@ -548,3 +548,177 @@ export const fetchQuizTemplates = async () => {
         return templatesData;
     }
 }
+
+export const createFaqs = async (faqData) => {
+    let tempFaq = [];
+    try {
+        // console.log("userData", userData);
+
+        await axios
+            (
+                {
+                    method: "post",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/faq`,
+                    data: faqData,
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
+            .then((res) => {
+                tempFaq = res.data;
+            });
+    } catch (error) {
+        console.log("can not save faqs");
+    } finally {
+        return tempFaq;
+    }
+};
+
+export const fetchFaqs = async () => {
+    let faqsData = [];
+    try {
+        const response = await axios.get(
+            `${process.env.REACT_APP_BASE_URL}/api/faq`
+        );
+        faqsData = response.data.allFaqData;
+    } catch (error) {
+        console.log("err", error);
+    } finally {
+        return faqsData;
+    }
+}
+
+export const updateFaqs = async (faqData) => {
+    let tempFaq = [];
+    try {
+        // console.log("userData", userData);
+
+        await axios
+            (
+                {
+                    method: "put",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/faq/`,
+                    data: faqData,
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
+            .then((res) => {
+                tempFaq = res.data;
+            });
+    } catch (error) {
+        console.log("can not update faq");
+    } finally {
+        return tempFaq;
+    }
+};
+
+export const deleteFaqs = async (deleteData) => {
+    let tempFaq = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "delete",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/faq`,
+                    data: deleteData
+
+                })
+            .then((res) => {
+                tempFaq = res.data;
+            });
+    } catch (error) {
+        console.log("can not delete faq");
+    } finally {
+        return tempFaq;
+    }
+};
+
+export const createGallery = async (addData) => {
+    let tempGallery = [];
+    try {
+        // console.log("template data", addData);
+
+        await axios
+            (
+                {
+                    method: "post",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/gallery`,
+                    data: addData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+            .then((res) => {
+                tempGallery = res.data;
+            });
+    } catch (error) {
+        console.log("can not create gallery");
+    } finally {
+        return tempGallery;
+    }
+};
+
+export const fetchGalleries = async () => {
+    let galleriesData = [];
+    try {
+        const response = await axios.get(
+            `${process.env.REACT_APP_BASE_URL}/api/gallery`
+        );
+        galleriesData = response.data.allGalleryData;
+    } catch (error) {
+        console.log("err", error);
+    } finally {
+        return galleriesData;
+    }
+}
+
+export const updateGallery = async (updateData) => {
+    let tempGalleries = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "put",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/gallery`,
+                    data: updateData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+            .then((res) => {
+                tempGalleries = res.data;
+            });
+    } catch (error) {
+        console.log("can not update galleries");
+    } finally {
+        return tempGalleries;
+    }
+};
+
+export const deleteGallery = async (deleteData) => {
+    let tempGallery = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "delete",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/gallery`,
+                    data: deleteData
+
+                })
+            .then((res) => {
+                tempGallery = res.data;
+            });
+    } catch (error) {
+        console.log("can not delete gallery");
+    } finally {
+        return tempGallery;
+    }
+};

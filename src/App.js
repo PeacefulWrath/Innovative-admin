@@ -11,6 +11,8 @@ import UserManagement from "./components/userManagement/userManagement";
 import PurchaseOrderManagement from "./components/purchaseOrderManagement/purchaseOrderManagement";
 import QuizTemplateEditor from "./components/quizTemplateEditor/quizTemplateEditor";
 import ViewQuizTemplate from "./components/viewQuizTemplate/viewQuizTemplate"
+import FaqManagement from "./components/FaqManagement/FaqManagement";
+import GalleryManagement from "./components/GalleryManagement/GalleryManagement";
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
       <Route exact path="/view-file-template" element={<ViewFileTemplate />} />
       <Route exact path="/view-mcq-template" element={<ViewMcqTemplate />} />
       <Route exact path="/view-quiz-template" element={<ViewQuizTemplate />} />
+      <Route exact path="/faq-management" element={<FaqManagement />} />
+      <Route exact path="/gallery-management" element={<GalleryManagement />} />
       <Route path="/pdfDetails" element={<PdfDetails />} />
     </Routes>
   </Router>

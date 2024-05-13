@@ -93,6 +93,7 @@ function InvoiceManagement() {
 
   const handleCreateModalClose = () => {
     setShowCreate(false);
+    window.location.reload()
   };
 
   const handlePdfModalClose = () => {
@@ -249,6 +250,11 @@ function InvoiceManagement() {
     window.addEventListener("resize", updateWindowWidth);
     const fetcher = async () => {
       let invoicesData = await fetchInvoices();
+      invoicesData.forEach((inv,ind)=>{
+           if(ind===invoicesData.length-1){
+            setInvoiceNo(invoicesData[ind]?.invoice_no)
+           }
+      })
       setInvoices([...invoicesData]);
     };
 
@@ -288,7 +294,9 @@ function InvoiceManagement() {
                 whiteSpace: "nowrap",
               }}
               onClick={() => {
+                setUpdate(false)
                 setShowCreate(true)
+                setInvoiceNo(parseInt(invoiceNo)+1)
               }}
             >
               <AddIcon />
@@ -460,6 +468,7 @@ function InvoiceManagement() {
                 onChange={(e) => {
                   setInvoiceNo(e.target.value)
                 }}
+                disabled={true}
               />
 
             </div>

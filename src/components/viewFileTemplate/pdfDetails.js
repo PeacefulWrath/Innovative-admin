@@ -11,8 +11,8 @@ import logo from "../../assets/logo.png"
 
 function PdfDetails() {
   const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
-  const[pdfUrl,setPdfUrl]=useState("")
+  // const [pageNumber, setPageNumber] = useState(1);
+  const [pdfUrl, setPdfUrl] = useState("")
   const [windowWidth, setWindowWidth] = useState();
 
   const location = useLocation();
@@ -24,8 +24,9 @@ function PdfDetails() {
     setNumPages(numPages);
     const tempDoc = document.querySelectorAll(".react-pdf__Document");
     tempDoc.forEach((t) => {
-      t.style.display = "flex";
-      t.style.justifyContent = "center";
+      // t.style.display = "flex";
+      // t.style.justifyContent = "center";
+      t.style.display="500px"
     });
   }
 
@@ -45,57 +46,66 @@ function PdfDetails() {
 
     tempCanvas.forEach((t) => {
       t.style.border = "2px solid #999595";
+      t.style.marginLeft="25%";
     });
   }
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
-};
+  };
 
   useEffect(() => {
-    
-    template?.template_pdfs?.forEach((pdf)=>{
-      if(pdf._id===clickedPdf._id){
-        setPdfUrl(pdf?.url)
-       }
-    })
-    
-   setWindowWidth(window.innerWidth);
-   window.addEventListener("resize", updateWindowWidth);
 
-    const container = document.querySelector(".pdf-container");
-    const handleContextMenu = (event) => {
-      event.preventDefault();
-    };
-    if (container) {
-      container.addEventListener("contextmenu", handleContextMenu);
-    }
-    return () => {
-      if (container) {
-        container.removeEventListener("contextmenu", handleContextMenu);
+    template?.template_pdfs?.forEach((pdf) => {
+      if (pdf._id === clickedPdf._id) {
+        setPdfUrl(pdf?.url)
       }
+    })
+
+    setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", updateWindowWidth);
+
+    // const container = document.querySelector(".pdf-container");
+    // const handleContextMenu = (event) => {
+    //   event.preventDefault();
+    // };
+    // if (container) {
+    //   container.addEventListener("contextmenu", handleContextMenu);
+    // }
+    return () => {
+      // if (container) {
+      //   container.removeEventListener("contextmenu", handleContextMenu);
+      // }
       window.removeEventListener("resize", updateWindowWidth);
     };
   }, []);
 
   return (
     <>
-       <Nav />
+      <Nav />
       <hr style={{ color: "black", margin: '0' }} />
 
       <div className="row">
         {windowWidth > 768 && <Sidebar activeOption="file-upload-temp-editor" />}
         <div className="col-md-10 p-4">
-      <div className="pdf-container mt-5">
-        <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
-          <Page  pageNumber={pageNumber} onLoadSuccess={removeTextLayerOffset}>
-            <img  className="View_file_template_pdf_logo" src={logo} alt="logo"/>
-            <Watermark />
-            <p className="View_file_template_pdf_page_no">Page {pageNumber} of {numPages}</p>
-          </Page>
-        </Document>
+          <div className="pdf-container mt-5" style={{overflowY:"scroll"}}>
+            <Document file={pdfUrl} 
+            onLoadSuccess={onDocumentLoadSuccess}
+            >
+              {Array.from({ length: numPages }, (_, index) => (
+                <Page pageNumber={index+1 } 
+                onLoadSuccess={removeTextLayerOffset}
+                >
+                  <img className="View_file_template_pdf_logo" src={logo} alt="logo" />
+                  <Watermark />
+                  <p className="View_file_template_pdf_page_no">Page {index+1} of {numPages}</p>
+                </Page>
 
-        <div className="mt-5 d-flex justify-content-center align-items-center">
+              ))}
+
+            </Document>
+
+            {/* <div className="mt-5 d-flex justify-content-center align-items-center">
           <button
             className="btn View_file_template_pdf_prev_btn"
             onClick={() => {
@@ -123,9 +133,9 @@ function PdfDetails() {
           >
             Next
           </button>
+            </div> */}
+          </div>
         </div>
-      </div>
-      </div>
       </div>
     </>
   );
