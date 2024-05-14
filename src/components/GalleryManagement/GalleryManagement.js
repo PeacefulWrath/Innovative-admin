@@ -239,7 +239,7 @@ function GalleryManagement() {
             </div>
 
             <div className="mb-2">
-              <label className="pb-1">Image</label>
+              <label className="pb-1">{update?"Change Image":"Image"}</label>
               <input
                 type="file"
                 className="form-control"

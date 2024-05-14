@@ -88,7 +88,7 @@ function PdfDetails() {
       <div className="row">
         {windowWidth > 768 && <Sidebar activeOption="file-upload-temp-editor" />}
         <div className="col-md-10 p-4">
-          <div className="pdf-container mt-5" style={{overflowY:"scroll"}}>
+          <div className="pdf-container mt-5 mb-5" style={{height:"500px",overflowY:"scroll"}}>
             <Document file={pdfUrl} 
             onLoadSuccess={onDocumentLoadSuccess}
             >

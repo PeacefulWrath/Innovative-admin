@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.css";
@@ -11,7 +10,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import emailjs from "@emailjs/browser";
 import "./invoiceManagement.css"
-import {createInvoices,fetchInvoices,updateInvoices,deleteInvoices} from "../../api-calls/apicalls"
+import { createInvoices, fetchInvoices, updateInvoices, deleteInvoices } from "../../api-calls/apicalls"
 import CreateIcon from "@mui/icons-material/Create";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -32,10 +31,10 @@ function InvoiceManagement() {
   const [receiverEmail, setReceiverEmail] = useState("")
   const [receiverName, setReceiverName] = useState("")
   const [tax, setTax] = useState("")
-  const [update,setUpdate]=useState(false)
- const [invoices,setInvoices]=useState([])
-  const [invoiceId,setInvoiceId]=useState("")
-  const [dbDetails,setDbDetails]=useState([])
+  const [update, setUpdate] = useState(false)
+  const [invoices, setInvoices] = useState([])
+  const [invoiceId, setInvoiceId] = useState("")
+  const [dbDetails, setDbDetails] = useState([])
 
   useEffect(() => emailjs.init("ptuqDG8Zl2iuDoPXR"), []);
 
@@ -79,7 +78,7 @@ function InvoiceManagement() {
         console.log(pdf)
         pdf.save(`Invoice-${receiverName}-${invoiceNo}`)
         handlePdfModalClose()
-        update?setUpdate(false):setUpdate(true)
+        update ? setUpdate(false) : setUpdate(true)
         // window.location.reload()
         // Save the compressed PDF
         // const compressedPdf = pdfData;
@@ -101,77 +100,77 @@ function InvoiceManagement() {
   }
 
   const handleCreate = async () => {
-    
-   
 
 
-    let addData={
+
+
+    let addData = {
       company_name: companyName,
-      company_address:companyAddress,
-      company_phone_no:companyPhoneNo,
-      company_email:companyEmail,
-      invoice_no:invoiceNo,
-      invoice_date:date,
-      shipping_address:shippingAdd,
-      billing_address:billingAdd,
-      tax:tax,
-      details:details
+      company_address: companyAddress,
+      company_phone_no: companyPhoneNo,
+      company_email: companyEmail,
+      invoice_no: invoiceNo,
+      invoice_date: date,
+      shipping_address: shippingAdd,
+      billing_address: billingAdd,
+      tax: tax,
+      details: details
     }
 
 
-   const createdData= await createInvoices(addData)
+    const createdData = await createInvoices(addData)
 
-   if(createdData){
-    alert("invoice created")
-    setShowCreate(false)
-    setShowPdf(true)
-   }
+    if (createdData) {
+      alert("invoice created")
+      setShowCreate(false)
+      setShowPdf(true)
+    }
 
 
   }
 
   const handleUpdate = async () => {
-    let updateData={
-      invoice_id:invoiceId,
+    let updateData = {
+      invoice_id: invoiceId,
       company_name: companyName,
-      company_address:companyAddress,
-      company_phone_no:companyPhoneNo,
-      company_email:companyEmail,
-      invoice_no:invoiceNo,
-      invoice_date:date,
-      shipping_address:shippingAdd,
-      billing_address:billingAdd,
-      tax:tax,
-      details:dbDetails.concat(details)
+      company_address: companyAddress,
+      company_phone_no: companyPhoneNo,
+      company_email: companyEmail,
+      invoice_no: invoiceNo,
+      invoice_date: date,
+      shipping_address: shippingAdd,
+      billing_address: billingAdd,
+      tax: tax,
+      details: dbDetails.concat(details)
     }
 
 
 
-   const updatedData= await updateInvoices(updateData)
-   
-   if(updatedData){
-    alert("invoice updated")
-    setDetails(dbDetails.concat(details))
-    setShowCreate(false)
-    setShowPdf(true)
-   }
+    const updatedData = await updateInvoices(updateData)
+
+    if (updatedData) {
+      alert("invoice updated")
+      setDetails(dbDetails.concat(details))
+      setShowCreate(false)
+      setShowPdf(true)
+    }
 
 
   }
 
   const handleDelete = async (id) => {
-    let deleteData={
-      invoiceDocId:id
+    let deleteData = {
+      invoiceDocId: id
     }
 
 
 
-   const deletedData= await deleteInvoices(deleteData)
-   
-   if(deletedData){
-    alert("invoice deleted")
-   window.location.reload()
-   }
+    const deletedData = await deleteInvoices(deleteData)
+
+    if (deletedData) {
+      alert("invoice deleted")
+      window.location.reload()
+    }
 
 
   }
@@ -221,8 +220,8 @@ function InvoiceManagement() {
   const handleDbDetails = async (operation, operation2, e, ind) => {
 
     let tempDbDetails = dbDetails
-    
-    document.getElementById(`${operation}-${ind}`).value=e.target.value
+
+    document.getElementById(`${operation}-${ind}`).value = e.target.value
     tempDbDetails[ind][operation2] = e.target.value
 
 
@@ -250,10 +249,13 @@ function InvoiceManagement() {
     window.addEventListener("resize", updateWindowWidth);
     const fetcher = async () => {
       let invoicesData = await fetchInvoices();
-      invoicesData.forEach((inv,ind)=>{
-           if(ind===invoicesData.length-1){
-            setInvoiceNo(invoicesData[ind]?.invoice_no)
-           }
+      if (invoicesData?.length == 0) {
+        setInvoiceNo("23999")
+      }
+      invoicesData.forEach((inv, ind) => {
+        if (ind === invoicesData.length - 1) {
+          setInvoiceNo(invoicesData[ind]?.invoice_no)
+        }
       })
       setInvoices([...invoicesData]);
     };
@@ -266,14 +268,14 @@ function InvoiceManagement() {
   }, []);
 
 
-  useEffect(()=>{
-   dbDetails.forEach((db,ind)=>{
-     document.getElementById(`db-qty-${ind}`).value=db?.quantity
-     document.getElementById(`db-desc-${ind}`).value=db?.description
-     document.getElementById(`db-unit-price-${ind}`).value=db?.unit_price
-     document.getElementById(`db-total-${ind}`).value=db?.total
+  useEffect(() => {
+    dbDetails.forEach((db, ind) => {
+      document.getElementById(`db-qty-${ind}`).value = db?.quantity
+      document.getElementById(`db-desc-${ind}`).value = db?.description
+      document.getElementById(`db-unit-price-${ind}`).value = db?.unit_price
+      document.getElementById(`db-total-${ind}`).value = db?.total
     })
-  },[dbDetails])
+  }, [dbDetails])
 
 
 
@@ -296,7 +298,7 @@ function InvoiceManagement() {
               onClick={() => {
                 setUpdate(false)
                 setShowCreate(true)
-                setInvoiceNo(parseInt(invoiceNo)+1)
+                setInvoiceNo(parseInt(invoiceNo) + 1)
               }}
             >
               <AddIcon />
@@ -320,7 +322,7 @@ function InvoiceManagement() {
                   <tr>
                     <th scope="col">{index + 1}.</th>
                     <th scope="col">{invoice?.invoice_no}</th>
-                    
+
                     <th scope="col ">
                       <CreateIcon
                         className="text-primary border border-primary rounded me-2"
@@ -346,7 +348,7 @@ function InvoiceManagement() {
                         className="text-danger border border-danger cursor-pointer rounded"
                         style={{ cursor: "pointer" }}
 
-                        onClick={()=>{
+                        onClick={() => {
                           handleDelete(invoice?._id)
                         }}
                       />
@@ -369,7 +371,7 @@ function InvoiceManagement() {
       <Modal show={showCreate} onHide={handleCreateModalClose} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            {update?"Update Invoice":"Add Invoice"}
+            {update ? "Update Invoice" : "Add Invoice"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -567,7 +569,7 @@ function InvoiceManagement() {
                       className="form-control"
                       placeholder="qty"
                       onChange={(e) => {
-                        handleDbDetails("db-qty","quantity", e, ind)
+                        handleDbDetails("db-qty", "quantity", e, ind)
                       }}
                     />
                     <input
@@ -576,7 +578,7 @@ function InvoiceManagement() {
                       className="ms-2 form-control"
                       placeholder="description"
                       onChange={(e) => {
-                        handleDbDetails("db-desc","description", e, ind)
+                        handleDbDetails("db-desc", "description", e, ind)
                       }}
                     />
                     <input
@@ -585,7 +587,7 @@ function InvoiceManagement() {
                       className="ms-2 form-control"
                       placeholder="unit price"
                       onChange={(e) => {
-                        handleDbDetails("db-unit-price","unit_price", e, ind)
+                        handleDbDetails("db-unit-price", "unit_price", e, ind)
                       }}
                     />
                     <input
@@ -594,7 +596,7 @@ function InvoiceManagement() {
                       className="ms-2 form-control"
                       placeholder="total"
                       onChange={(e) => {
-                        handleDbDetails("db-total","total", e, ind)
+                        handleDbDetails("db-total", "total", e, ind)
                       }}
                     />
                   </div>
@@ -684,10 +686,10 @@ function InvoiceManagement() {
             variant="primary"
             onClick={() => {
 
-              {update?handleUpdate():handleCreate()}
+              { update ? handleUpdate() : handleCreate() }
             }}
           >
-           {update?"Update":"Create"} 
+            {update ? "Update" : "Create"}
           </Button>
         </Modal.Footer>
       </Modal>

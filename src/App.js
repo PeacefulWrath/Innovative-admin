@@ -13,6 +13,8 @@ import QuizTemplateEditor from "./components/quizTemplateEditor/quizTemplateEdit
 import ViewQuizTemplate from "./components/viewQuizTemplate/viewQuizTemplate"
 import FaqManagement from "./components/FaqManagement/FaqManagement";
 import GalleryManagement from "./components/GalleryManagement/GalleryManagement";
+import ProductManagement from "./components/productManagement/productManagement";
+import CategoryManagement from "./components/categoryManagement/categoryManagement";
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
       <Route exact path="/view-quiz-template" element={<ViewQuizTemplate />} />
       <Route exact path="/faq-management" element={<FaqManagement />} />
       <Route exact path="/gallery-management" element={<GalleryManagement />} />
+      <Route exact path="/product-management" element={<ProductManagement />} />
+      <Route exact path="/category-management" element={<CategoryManagement/>} />
       <Route path="/pdfDetails" element={<PdfDetails />} />
     </Routes>
   </Router>

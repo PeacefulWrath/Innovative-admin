@@ -23,6 +23,7 @@ function FileUploadTempEditor() {
   const [templates, setTemplates] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [templateName, setTemplateName] = useState("");
+  // const [templateCategory, setTemplateCategory] = useState("");
   const [templateDesc, setTemplateDesc] = useState("");
   const [templateImage, setTemplateImage] = useState();
   const [templatePdfs, setTemplatePdfs] = useState([]);
@@ -35,7 +36,7 @@ function FileUploadTempEditor() {
   const [dbZips, setDbZips] = useState([]);
   const [dbLinks, setDbLinks] = useState([]);
   const [templateId, setTemplateId] = useState("");
-  const [dbImage,setDbImage]=useState("")
+  const [dbImage, setDbImage] = useState("")
 
   const handleClose = () => {
     setShowModal(false);
@@ -182,11 +183,13 @@ function FileUploadTempEditor() {
 
     let createdData = await createTemplates(addData);
 
-    let tempCreatedData = [];
-    tempCreatedData.push(createdData);
-    setTemplates([...templates, ...tempCreatedData]);
-    handleClose();
-    window.location.reload()
+    // let tempCreatedData = [];
+    // tempCreatedData.push(createdData);
+    // setTemplates([...templates, ...tempCreatedData]);
+    if (createdData) {
+      // handleClose();
+      // window.location.reload()
+    }
   };
 
   const handleUpdate = async () => {
@@ -199,6 +202,7 @@ function FileUploadTempEditor() {
     updateData.append("templateId", templateId);
     updateData.append("template_name", templateName);
     updateData.append("template_desc", templateDesc);
+
 
     tempdbPdfs.length > 0 &&
       tempdbPdfs.forEach((temp, tInd) => {
@@ -324,16 +328,16 @@ function FileUploadTempEditor() {
     }
   };
 
-  const handleDelete=async(id)=>{
- const deleteData={templateId:id}
-    const deletedData=await deleteTemplates(deleteData)
-    if(deletedData){
-       let tempTemplates=templates
-       tempTemplates.forEach((temp,ind)=>{
-          if(temp?._id==id){
-            tempTemplates.splice(ind,1)
-          }
-       })
+  const handleDelete = async (id) => {
+    const deleteData = { templateId: id }
+    const deletedData = await deleteTemplates(deleteData)
+    if (deletedData) {
+      let tempTemplates = templates
+      tempTemplates.forEach((temp, ind) => {
+        if (temp?._id == id) {
+          tempTemplates.splice(ind, 1)
+        }
+      })
       setTemplates([...tempTemplates])
       alert("template deleted successfully")
     }
@@ -378,59 +382,59 @@ function FileUploadTempEditor() {
       dbPdfs.forEach((dp, index) => {
         dp?.watermark == false
           ? (document.getElementById(`flexSwitch-db-pdf-wm-${index}`).value =
-              "off")
+            "off")
           : (document.getElementById(`flexSwitch-db-pdf-wm-${index}`).value =
-              "on");
+            "on");
 
         dp?.watermark == false
           ? (document.getElementById(
-              `flexSwitch-db-pdf-wm-${index}`
-            ).checked = false)
+            `flexSwitch-db-pdf-wm-${index}`
+          ).checked = false)
           : (document.getElementById(
-              `flexSwitch-db-pdf-wm-${index}`
-            ).checked = true);
+            `flexSwitch-db-pdf-wm-${index}`
+          ).checked = true);
 
         dp?.top_left_logo == false
           ? (document.getElementById(`flexSwitch-db-pdf-lb-${index}`).value =
-              "off")
+            "off")
           : (document.getElementById(`flexSwitch-db-pdf-lb-${index}`).value =
-              "on");
+            "on");
 
         dp?.top_left_logo == false
           ? (document.getElementById(
-              `flexSwitch-db-pdf-lb-${index}`
-            ).checked = false)
+            `flexSwitch-db-pdf-lb-${index}`
+          ).checked = false)
           : (document.getElementById(
-              `flexSwitch-db-pdf-lb-${index}`
-            ).checked = true);
+            `flexSwitch-db-pdf-lb-${index}`
+          ).checked = true);
 
         dp?.bottom_right_page_no == false
           ? (document.getElementById(`flexSwitch-db-pdf-pn-${index}`).value =
-              "off")
+            "off")
           : (document.getElementById(`flexSwitch-db-pdf-pn-${index}`).value =
-              "on");
+            "on");
 
         dp?.bottom_right_page_no == false
           ? (document.getElementById(
-              `flexSwitch-db-pdf-pn-${index}`
-            ).checked = false)
+            `flexSwitch-db-pdf-pn-${index}`
+          ).checked = false)
           : (document.getElementById(
-              `flexSwitch-db-pdf-pn-${index}`
-            ).checked = true);
+            `flexSwitch-db-pdf-pn-${index}`
+          ).checked = true);
 
         dp?.pdf_downloadable == false
           ? (document.getElementById(`flexSwitch-db-pdf-do-${index}`).value =
-              "off")
+            "off")
           : (document.getElementById(`flexSwitch-db-pdf-do-${index}`).value =
-              "on");
+            "on");
 
         dp?.pdf_downloadable == false
           ? (document.getElementById(
-              `flexSwitch-db-pdf-do-${index}`
-            ).checked = false)
+            `flexSwitch-db-pdf-do-${index}`
+          ).checked = false)
           : (document.getElementById(
-              `flexSwitch-db-pdf-do-${index}`
-            ).checked = true);
+            `flexSwitch-db-pdf-do-${index}`
+          ).checked = true);
       });
     }
   }, [dbPdfs]);
@@ -442,17 +446,17 @@ function FileUploadTempEditor() {
 
         dz?.zip_downloadable == false
           ? (document.getElementById(`flexSwitch-db-zip-do-${index}`).value =
-              "off")
+            "off")
           : (document.getElementById(`flexSwitch-db-zip-do-${index}`).value =
-              "on");
+            "on");
 
         dz?.zip_downloadable == false
           ? (document.getElementById(
-              `flexSwitch-db-zip-do-${index}`
-            ).checked = false)
+            `flexSwitch-db-zip-do-${index}`
+          ).checked = false)
           : (document.getElementById(
-              `flexSwitch-db-zip-do-${index}`
-            ).checked = true);
+            `flexSwitch-db-zip-do-${index}`
+          ).checked = true);
       });
     }
   }, [dbZips]);
@@ -487,6 +491,7 @@ function FileUploadTempEditor() {
               }}
               onClick={() => {
                 setUpdate(false);
+                setDbImage("")
                 setDbLinks([]);
                 setDbPdfs([]);
                 setDbZips([]);
@@ -547,6 +552,7 @@ function FileUploadTempEditor() {
                           setUpdate(true);
                           setTemplateName(temp?.template_name);
                           setTemplateDesc(temp?.template_desc);
+
                           setDbPdfs(temp?.template_pdfs);
                           setDbZips(temp?.template_zips);
                           setTemplateId(temp?._id);
@@ -558,7 +564,7 @@ function FileUploadTempEditor() {
                       <DeleteIcon
                         className="text-danger border border-danger cursor-pointer rounded"
                         style={{ cursor: "pointer" }}
-                        onClick={() => {handleDelete(temp?._id)}}
+                        onClick={() => { handleDelete(temp?._id) }}
                       />
                     </th>
                   </tr>
@@ -593,6 +599,7 @@ function FileUploadTempEditor() {
                 }}
               />
             </div>
+
             <div className="mb-2">
               <label className="pb-1">Template Description</label>
               <input
@@ -606,11 +613,12 @@ function FileUploadTempEditor() {
               />
             </div>
 
-           {dbImage&&<div className="mb-2">
+            {dbImage && <div className="mb-2">
               <label className="pb-1">Attached Template Image</label>
               <img
-              src={dbImage}
-              alt="db template image"
+                src={dbImage}
+                alt="db template image"
+                className="form-control"
               />
             </div>}
 
@@ -626,10 +634,10 @@ function FileUploadTempEditor() {
             </div>
 
             {dbPdfs.length !== 0 &&
-              
-                <div className="mb-2">
-                  <label className="pb-1">Already Attached Pdfs</label>
-                 {dbPdfs.map((dp, ind) => (
+
+              <div className="mb-2">
+                <label className="pb-1">Already Attached Pdfs</label>
+                {dbPdfs.map((dp, ind) => (
                   <div className="d-flex">
                     {dp?.file_name}
                     <div class="form-check form-switch ms-2">
@@ -701,9 +709,9 @@ function FileUploadTempEditor() {
                       </label>
                     </div>
                   </div>
-                  ))}
-                </div>
-              }
+                ))}
+              </div>
+            }
 
             <div className="mb-2">
               <div className="d-flex justify-content-between">
@@ -822,34 +830,34 @@ function FileUploadTempEditor() {
             </div>
 
             {dbZips.length !== 0 &&
-             <div className="mb-2">
-             <label className="pb-1">Already Attached Zips</label>
-             {
-              dbZips.map((dz, ind) => (
-               
-                  <div className="d-flex">
-                    {dz?.file_name}
+              <div className="mb-2">
+                <label className="pb-1">Already Attached Zips</label>
+                {
+                  dbZips.map((dz, ind) => (
 
-                    <div class="form-check form-switch ms-3">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        role="switch"
-                        id={`flexSwitch-db-zip-do-${ind}`}
-                        onChange={() => {
-                          handleSubBtns(`flexSwitch-db-zip-do-${ind}`);
-                        }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for={`flexSwitch-db-zip-do-${ind}`}
-                      >
-                        Download Option
-                      </label>
-                    </div>
-                  </div>))}
-                </div>
-              }
+                    <div className="d-flex">
+                      {dz?.file_name}
+
+                      <div class="form-check form-switch ms-3">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          role="switch"
+                          id={`flexSwitch-db-zip-do-${ind}`}
+                          onChange={() => {
+                            handleSubBtns(`flexSwitch-db-zip-do-${ind}`);
+                          }}
+                        />
+                        <label
+                          class="form-check-label"
+                          for={`flexSwitch-db-zip-do-${ind}`}
+                        >
+                          Download Option
+                        </label>
+                      </div>
+                    </div>))}
+              </div>
+            }
 
             <div className="mb-2">
               <div className="d-flex justify-content-between">
@@ -918,10 +926,10 @@ function FileUploadTempEditor() {
             </div>
 
             {dbLinks.length !== 0 &&
-            <div className="mb-2">
-            <label className="pb-1">Already Attached Links</label>
-             { dbLinks.map((dl, ind) => (
-                
+              <div className="mb-2">
+                <label className="pb-1">Already Attached Links</label>
+                {dbLinks.map((dl, ind) => (
+
                   <div className="d-flex">
                     <input
                       placeholder="db link preview name"
@@ -933,8 +941,8 @@ function FileUploadTempEditor() {
                       id={`db-link-url-${ind}`}
                     />
                   </div>))}
-                </div>
-              }
+              </div>
+            }
 
             <div className="mb-2">
               <div className="d-flex justify-content-between">
