@@ -15,6 +15,9 @@ import FaqManagement from "./components/FaqManagement/FaqManagement";
 import GalleryManagement from "./components/GalleryManagement/GalleryManagement";
 import ProductManagement from "./components/productManagement/productManagement";
 import CategoryManagement from "./components/categoryManagement/categoryManagement";
+import TrainingModule from "./components/trainingModule/trainingModule";
+import ChooseUsManagement from "./components/chooseUs/chooseUs";
+import TestimonialManagement from "./components/testimonial/testimonial";
 
 function App() {
   return (
@@ -36,6 +39,9 @@ function App() {
       <Route exact path="/product-management" element={<ProductManagement />} />
       <Route exact path="/category-management" element={<CategoryManagement/>} />
       <Route path="/pdfDetails" element={<PdfDetails />} />
+      <Route path="/training-module-management" element={<TrainingModule />} />
+      <Route path="/choose-us-management" element={<ChooseUsManagement/>} />
+      <Route path="/testimonial-management" element={<TestimonialManagement/>} />
     </Routes>
   </Router>
   );

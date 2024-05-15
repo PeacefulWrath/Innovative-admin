@@ -894,3 +894,265 @@ export const deleteProducts = async (deleteData) => {
         return tempProd;
     }
 };
+
+
+export const createTrainingModules = async (addData) => {
+    let tempModules = [];
+    try {
+        // console.log("template data", addData);
+
+        await axios
+            (
+                {
+                    method: "post",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/training-module`,
+                    data: addData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+            .then((res) => {
+                tempModules = res.data;
+            });
+    } catch (error) {
+        console.log("can not create training modules");
+    } finally {
+        return tempModules;
+    }
+};
+
+export const fetchTrainingModules = async () => {
+    let moduleData = [];
+    try {
+        const response = await axios.get(
+            `${process.env.REACT_APP_BASE_URL}/api/training-module`
+        );
+        moduleData = response.data.fetchedData;
+    } catch (error) {
+        console.log("err", error);
+    } finally {
+        return moduleData;
+    }
+}
+
+export const updateTrainingModules = async (updateData) => {
+    let tempModules = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "put",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/training-module`,
+                    data: updateData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+            .then((res) => {
+                tempModules = res.data;
+            });
+    } catch (error) {
+        console.log("can not update training modules");
+    } finally {
+        return tempModules;
+    }
+};
+
+export const deleteTrainingModules = async (deleteData) => {
+    let tempModules = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "delete",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/training-module`,
+                    data: deleteData
+
+                })
+            .then((res) => {
+                tempModules = res.data;
+            });
+    } catch (error) {
+        console.log("can not delete training modules");
+    } finally {
+        return tempModules;
+    }
+};
+
+
+export const createCus = async (faqData) => {
+    let tempCus = [];
+    try {
+        // console.log("userData", userData);
+
+        await axios
+            (
+                {
+                    method: "post",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/choose-us`,
+                    data: faqData,
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
+            .then((res) => {
+                tempCus = res.data;
+            });
+    } catch (error) {
+        console.log("can not save cus");
+    } finally {
+        return tempCus;
+    }
+};
+
+export const fetchCus = async () => {
+    let cusData = [];
+    try {
+        const response = await axios.get(
+            `${process.env.REACT_APP_BASE_URL}/api/choose-us`
+        );
+        cusData = response.data.allCusData;
+    } catch (error) {
+        console.log("err", error);
+    } finally {
+        return cusData;
+    }
+}
+
+export const updateCus = async (faqData) => {
+    let tempCus = [];
+    try {
+        // console.log("userData", userData);
+
+        await axios
+            (
+                {
+                    method: "put",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/choose-us`,
+                    data: faqData,
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
+            .then((res) => {
+                tempCus = res.data;
+            });
+    } catch (error) {
+        console.log("can not update cus");
+    } finally {
+        return tempCus;
+    }
+};
+
+export const deleteCus = async (deleteData) => {
+    let tempCus = [];
+    try {
+        await axios
+            (
+                {
+                    method: "delete",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/choose-us`,
+                    data: deleteData
+
+                })
+            .then((res) => {
+                tempCus = res.data;
+            });
+    } catch (error) {
+        console.log("can not delete cus");
+    } finally {
+        return tempCus;
+    }
+};
+
+
+export const createTestimonials = async (addData) => {
+    let tempMons = [];
+    try {
+        // console.log("template data", addData);
+
+        await axios
+            (
+                {
+                    method: "post",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/testimonial`,
+                    data: addData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+            .then((res) => {
+                tempMons = res.data;
+            });
+    } catch (error) {
+        console.log("can not create testimonials");
+    } finally {
+        return tempMons;
+    }
+};
+
+export const fetchTestimonials = async () => {
+    let testimonialData = [];
+    try {
+        const response = await axios.get(
+            `${process.env.REACT_APP_BASE_URL}/api/testimonial`
+        );
+        testimonialData = response.data.fetchedData;
+    } catch (error) {
+        console.log("err", error);
+    } finally {
+        return testimonialData;
+    }
+}
+
+export const updateTestimonials = async (updateData) => {
+    let tempMons = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "put",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/testimonial`,
+                    data: updateData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+            .then((res) => {
+                tempMons = res.data;
+            });
+    } catch (error) {
+        console.log("can not update testimonials");
+    } finally {
+        return tempMons;
+    }
+};
+
+export const deleteTestimonials = async (deleteData) => {
+    let tempMons = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "delete",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/testimonial`,
+                    data: deleteData
+
+                })
+            .then((res) => {
+                tempMons = res.data;
+            });
+    } catch (error) {
+        console.log("can not delete testimonial");
+    } finally {
+        return tempMons;
+    }
+};

@@ -10,25 +10,28 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { Modal, Button } from "react-bootstrap";
 import {
-  createGallery,
-  fetchGalleries,
-  updateGallery,
-  deleteGallery
-
+ createTrainingModules,
+ fetchTrainingModules,
+ updateTrainingModules,
+ deleteTrainingModules
+  
 } from "../../api-calls/apicalls";
 
 
 
-function GalleryManagement() {
+function TrainingModule() {
   const [windowWidth, setWindowWidth] = useState();
-  const [galleries, setGalleries] = useState([])
-  const [image, setImage] = useState("")
-  const [dbImage, setDbImage] = useState("")
-  const [category, setCategory] = useState("")
-  const [name, setName] = useState("")
-  const [update, setUpdate] = useState(false)
-  const [showModal, setShowModal] = useState(false)
-  const [galleryId,setGalleryId]=useState("")
+  const [trainingModules,setTrainingModules]=useState([])
+  const [update,setUpdate]=useState(false)
+  const[showModal,setShowModal]=useState(false)
+  const[name,setName]=useState("")
+  const[title,setTitle]=useState("")
+  const[description,setDescription]=useState("")
+  const[hoverTitle,setHoverTitle]=useState("")
+  const[hoverDescription,setHoverDescription]=useState("")
+  const[image,setImage]=useState("")
+  const[dbImage,setDbImage]=useState("")
+  const[moduleId,setModuleId]=useState("")
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
@@ -39,53 +42,54 @@ function GalleryManagement() {
   };
 
   const handleCreate = async () => {
-    const galleryData = new FormData()
-
-    galleryData.append("name", name)
-    galleryData.append("gallery", image)
-    galleryData.append("category", category)
-
-    const createdData = await createGallery(galleryData)
-    if (createdData) {
+    const addData = new FormData()
+    addData.append("name",name)
+    addData.append("title",title)
+    addData.append("trainingModule",image)
+    addData.append("description",description)
+    addData.append("hover_title",hoverTitle)
+    addData.append("hover_description",hoverDescription)
+    const createdData = await createTrainingModules(addData)
+    if (createdData?.success==="yes") {
+      handleClose()
       window.location.reload()
     }
   }
 
-
   const handleUpdate=async()=>{
-    const galleryData = new FormData()
-
-    galleryData.append("name", name)
-    galleryData.append("gallery", image)
-    galleryData.append("category", category)
-    galleryData.append("gallery_id", galleryId)
-
-    const updatedData = await updateGallery(galleryData)
-
-    if (updatedData) {
+    const updateData = new FormData()
+    updateData.append("name",name)
+    updateData.append("module_id",moduleId)
+    updateData.append("title",title)
+    updateData.append("trainingModule",image)
+    updateData.append("description",description)
+    updateData.append("hover_title",hoverTitle)
+    updateData.append("hover_description",hoverDescription)
+    const updatedData = await updateTrainingModules(updateData)
+    if (updatedData?.success==="yes") {
+      handleClose()
       window.location.reload()
     }
   }
 
   const handleDelete=async(id)=>{
-    const deleteData={gallery_id:id}
-    const deletedData=await deleteGallery(deleteData)
-    if(deletedData){
-       
-   
-      alert("gallery deleted successfully")
+    const deleteData={module_id:id}
+    const deletedData=await deleteTrainingModules(deleteData)
 
+    if(deletedData.success==="yes"){
+      alert("training module deleted successfully")
       window.location.reload()
     }
   }
+
 
   useEffect(() => {
     setWindowWidth(window.innerWidth);
     window.addEventListener("resize", updateWindowWidth);
 
     const fetcher = async () => {
-        let tempGalleriesData = await fetchGalleries();
-        setGalleries([...tempGalleriesData]);
+        let tempData = await fetchTrainingModules();
+        setTrainingModules([...tempData]);
     };
 
     fetcher();
@@ -99,13 +103,14 @@ function GalleryManagement() {
     <>
       <Nav />
       <hr style={{ color: "black", margin: "0" }} />
+
       <div className="row">
         {windowWidth > 768 && (
-          <Sidebar activeOption="gallery-management" />
+          <Sidebar activeOption="training-module-management" />
         )}
         <div className="col-md-10 p-4">
 
-        <div className="d-flex justify-content-end mb-5">
+          <div className="d-flex justify-content-end mb-5">
             <button
               className="btn "
               style={{
@@ -125,7 +130,7 @@ function GalleryManagement() {
 
           <div className="d-flex row">
             <div className="col fw-bold">
-              {`Gallery Files(${galleries.length})`}
+              {`Training Modules(${trainingModules.length})`}
             </div>
             <div className="col d-flex">
               <div className="input-group mb-3">
@@ -157,11 +162,11 @@ function GalleryManagement() {
                 <th scope="col">Action</th>
               </tr>
             </thead>
-            {galleries.length !== 0 && galleries.map((gallery, ind) => (
+            {trainingModules.length !== 0 && trainingModules.map((tm, ind) => (
               <tbody>
                 <tr >
                   <th scope="col">{ind + 1}</th>
-                  <th scope="col"> {gallery?.name}</th>
+                  <th scope="col"> {tm?.name}</th>
 
                   <th scope="col ">
                     <CreateIcon
@@ -169,18 +174,22 @@ function GalleryManagement() {
                       style={{ cursor: "pointer" }}
                       onClick={() => {
                          setUpdate(true)
-                         setName(gallery?.name)
-                         setDbImage(gallery?.image)
-                         setCategory(gallery?.category)
-                         setGalleryId(gallery?._id)
+                         setName(tm?.name)
+                         setDbImage(tm?.image)
+                         setTitle(tm?.title)
+                         setDescription(tm?.description)
+                         setHoverDescription(tm?.hover_description)
+                         setHoverTitle(tm?.hover_title)
                          setShowModal(true)
+                         setModuleId(tm?._id)
+                        
                       }}
                     />
                     <DeleteIcon
                       className="text-danger border border-danger cursor-pointer rounded"
                       style={{ cursor: "pointer" }}
                       onClick={() => {
-                         handleDelete(gallery?._id)
+                         handleDelete(tm?._id)
                       }}
                     />
                   </th>
@@ -198,7 +207,7 @@ function GalleryManagement() {
       <Modal show={showModal} onHide={handleClose} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            {update ? "Update Gallery Files" : "Add Gallery Files"}
+            {update ? "Update Trining Modules" : "Add Training Modules"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -215,28 +224,18 @@ function GalleryManagement() {
                 }}
               />
             </div>
-
-            <div className="mb-2">
-              <label className="pb-1">Category</label>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Category"
-                value={category}
-                onChange={(e) => {
-                  setCategory(e.target.value);
-                }}
-              />
-            </div>
-
-            <div className="mb-2">
-              <label className="pb-1">Attached Image</label>
-              <img
-                className="form-control"
-                alt="attached image"
+            {dbImage&&(
+               <div className="mb-2">
+               <label className="pb-1">Attached Image</label>
+               <img
+                
+                 className="form-control"
+                 alt="db-mage"
+                
                 src={dbImage}
-              />
-            </div>
+               />
+             </div>
+            )}
 
             <div className="mb-2">
               <label className="pb-1">{update?"Change Image":"Image"}</label>
@@ -244,14 +243,65 @@ function GalleryManagement() {
                 type="file"
                 className="form-control"
                 placeholder="Image"
+               
                 onChange={(e) => {
                   setImage(e.target.files[0]);
                 }}
               />
             </div>
-
+           
+            <div className="mb-2">
+              <label className="pb-1">Title</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Title"
+                value={title}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                }}
+              />
+            </div>
      
 
+            <div className="mb-2">
+              <label className="pb-1">Description</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Description"
+                value={description}
+                onChange={(e) => {
+                  setDescription(e.target.value);
+                }}
+              />
+            </div>
+
+            <div className="mb-2">
+              <label className="pb-1">Hover Title</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="hover-title"
+                value={hoverTitle}
+                onChange={(e) => {
+                  setHoverTitle(e.target.value);
+                }}
+              />
+            </div>
+
+            <div className="mb-2">
+              <label className="pb-1">Hover Description</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="hover-description"
+                value={hoverDescription}
+                onChange={(e) => {
+                  setHoverDescription(e.target.value);
+                }}
+              />
+            </div>
          
           </div>
         </Modal.Body>
@@ -274,7 +324,10 @@ function GalleryManagement() {
         </Modal.Footer>
       </Modal>
     </>
+
+
+
   )
 }
 
-export default GalleryManagement
+export default TrainingModule

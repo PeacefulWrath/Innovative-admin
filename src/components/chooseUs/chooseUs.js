@@ -10,25 +10,22 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { Modal, Button } from "react-bootstrap";
 import {
-  createGallery,
-  fetchGalleries,
-  updateGallery,
-  deleteGallery
-
+  createCus,
+  fetchCus,
+  updateCus,
+  deleteCus
 } from "../../api-calls/apicalls";
 
 
-
-function GalleryManagement() {
+function ChooseUsManagement() {
   const [windowWidth, setWindowWidth] = useState();
-  const [galleries, setGalleries] = useState([])
-  const [image, setImage] = useState("")
-  const [dbImage, setDbImage] = useState("")
-  const [category, setCategory] = useState("")
+  const [chooseUsItems, setChooseUsItems] = useState([])
+  const [question, setQuestion] = useState("")
+  const [answer, setAnswer] = useState("")
   const [name, setName] = useState("")
-  const [update, setUpdate] = useState(false)
-  const [showModal, setShowModal] = useState(false)
-  const [galleryId,setGalleryId]=useState("")
+  const [update,setUpdate]=useState(false)
+  const[showModal,setShowModal]=useState(false)
+  const [cusId,setCusId]=useState("")
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
@@ -39,53 +36,53 @@ function GalleryManagement() {
   };
 
   const handleCreate = async () => {
-    const galleryData = new FormData()
+    const cusData = {
+      name:name,
+      question: question,
+      answer: answer,
 
-    galleryData.append("name", name)
-    galleryData.append("gallery", image)
-    galleryData.append("category", category)
-
-    const createdData = await createGallery(galleryData)
-    if (createdData) {
+    }
+    const createdData = await createCus(cusData)
+    if (createdData.success==="yes") {
       window.location.reload()
     }
   }
 
-
   const handleUpdate=async()=>{
-    const galleryData = new FormData()
+    const cusData = {
+      name: name,
+      question: question,
+      answer:answer,
+      cus_id: cusId
+    }
 
-    galleryData.append("name", name)
-    galleryData.append("gallery", image)
-    galleryData.append("category", category)
-    galleryData.append("gallery_id", galleryId)
-
-    const updatedData = await updateGallery(galleryData)
-
-    if (updatedData) {
+       
+    const updatedData = await updateCus(cusData)
+    if (updatedData.success=="yes") {
       window.location.reload()
     }
   }
 
   const handleDelete=async(id)=>{
-    const deleteData={gallery_id:id}
-    const deletedData=await deleteGallery(deleteData)
-    if(deletedData){
+    const deleteData={cus_id:id}
+    const deletedData=await deleteCus(deleteData)
+    if(deletedData?.success==="yes"){
        
    
-      alert("gallery deleted successfully")
+      alert("cus deleted successfully")
 
       window.location.reload()
     }
   }
+
 
   useEffect(() => {
     setWindowWidth(window.innerWidth);
     window.addEventListener("resize", updateWindowWidth);
 
     const fetcher = async () => {
-        let tempGalleriesData = await fetchGalleries();
-        setGalleries([...tempGalleriesData]);
+        let tempCusData = await fetchCus();
+        setChooseUsItems([...tempCusData]);
     };
 
     fetcher();
@@ -99,13 +96,14 @@ function GalleryManagement() {
     <>
       <Nav />
       <hr style={{ color: "black", margin: "0" }} />
+
       <div className="row">
         {windowWidth > 768 && (
-          <Sidebar activeOption="gallery-management" />
+          <Sidebar activeOption="choose-us-management" />
         )}
         <div className="col-md-10 p-4">
 
-        <div className="d-flex justify-content-end mb-5">
+          <div className="d-flex justify-content-end mb-5">
             <button
               className="btn "
               style={{
@@ -125,7 +123,7 @@ function GalleryManagement() {
 
           <div className="d-flex row">
             <div className="col fw-bold">
-              {`Gallery Files(${galleries.length})`}
+              {`Choose Us Items(${chooseUsItems.length})`}
             </div>
             <div className="col d-flex">
               <div className="input-group mb-3">
@@ -157,11 +155,11 @@ function GalleryManagement() {
                 <th scope="col">Action</th>
               </tr>
             </thead>
-            {galleries.length !== 0 && galleries.map((gallery, ind) => (
+            {chooseUsItems.length !== 0 && chooseUsItems.map((cus, ind) => (
               <tbody>
                 <tr >
                   <th scope="col">{ind + 1}</th>
-                  <th scope="col"> {gallery?.name}</th>
+                  <th scope="col"> {cus?.name}</th>
 
                   <th scope="col ">
                     <CreateIcon
@@ -169,18 +167,18 @@ function GalleryManagement() {
                       style={{ cursor: "pointer" }}
                       onClick={() => {
                          setUpdate(true)
-                         setName(gallery?.name)
-                         setDbImage(gallery?.image)
-                         setCategory(gallery?.category)
-                         setGalleryId(gallery?._id)
+                         setName(cus?.name)
+                         setQuestion(cus?.question)
+                         setAnswer(cus?.answer)
                          setShowModal(true)
+                         setCusId(cus?._id)
                       }}
                     />
                     <DeleteIcon
                       className="text-danger border border-danger cursor-pointer rounded"
                       style={{ cursor: "pointer" }}
                       onClick={() => {
-                         handleDelete(gallery?._id)
+                         handleDelete(cus?._id)
                       }}
                     />
                   </th>
@@ -198,7 +196,7 @@ function GalleryManagement() {
       <Modal show={showModal} onHide={handleClose} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            {update ? "Update Gallery Files" : "Add Gallery Files"}
+            {update ? "Update Choose Us" : "Add Choose Us"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -217,35 +215,27 @@ function GalleryManagement() {
             </div>
 
             <div className="mb-2">
-              <label className="pb-1">Category</label>
+              <label className="pb-1">Question</label>
               <input
                 type="text"
                 className="form-control"
-                placeholder="Category"
-                value={category}
+                placeholder="Question"
+                value={question}
                 onChange={(e) => {
-                  setCategory(e.target.value);
+                  setQuestion(e.target.value);
                 }}
               />
             </div>
 
             <div className="mb-2">
-              <label className="pb-1">Attached Image</label>
-              <img
-                className="form-control"
-                alt="attached image"
-                src={dbImage}
-              />
-            </div>
-
-            <div className="mb-2">
-              <label className="pb-1">{update?"Change Image":"Image"}</label>
+              <label className="pb-1">Answer</label>
               <input
-                type="file"
+                type="text"
                 className="form-control"
-                placeholder="Image"
+                placeholder="Answer"
+                value={answer}
                 onChange={(e) => {
-                  setImage(e.target.files[0]);
+                  setAnswer(e.target.value);
                 }}
               />
             </div>
@@ -274,7 +264,10 @@ function GalleryManagement() {
         </Modal.Footer>
       </Modal>
     </>
+
+
+
   )
 }
 
-export default GalleryManagement
+export default ChooseUsManagement
