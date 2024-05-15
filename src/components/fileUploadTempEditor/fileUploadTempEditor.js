@@ -595,6 +595,13 @@ function FileUploadTempEditor() {
                 placeholder="Template Name"
                 value={templateName}
                 onChange={(e) => {
+
+                 for(let temp of templates){
+                  if(e.target.value===temp?.template_name){
+                    alert("template name already taken")
+                    return;
+                  }
+                 }
                   setTemplateName(e.target.value);
                 }}
               />

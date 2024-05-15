@@ -9,19 +9,21 @@ import AddIcon from "@mui/icons-material/Add";
 import { Modal, Button } from "react-bootstrap";
 import CreateIcon from "@mui/icons-material/Create";
 import DeleteIcon from "@mui/icons-material/Delete";
-import "./categoryManagement.css"
 import CloseIcon from '@mui/icons-material/Close';
-import { fetchMcqTemplates, fetchQuizTemplates, fetchTemplates } from "../../api-calls/apicalls";
+import { createCategories, fetchMcqTemplates, fetchQuizTemplates, fetchTemplates, fetchCategories,updateCategories, deleteCategories } from "../../api-calls/apicalls";
 
 
 function CategoryManagement() {
     const [windowWidth, setWindowWidth] = useState();
     const [categoryName, setCategoryName] = useState("");
+    const [categoryId, setCategoryId] = useState("");
+
+    const [categories, setCategories] = useState([]);
 
     const [quizTemplates, setQuizTemplates] = useState([]);
     const [selectedQuizTemplates, setSelectedQuizTemplates] = useState([]);
 
-    
+
     const [mcqTemplates, setMcqTemplates] = useState([]);
     const [selectedMcqTemplates, setSelectedMcqTemplates] = useState([]);
 
@@ -78,12 +80,84 @@ function CategoryManagement() {
     };
 
     const handleCreate = async () => {
+        let fileTemplatesIds = []
+        let mcqTemplatesIds = []
+        let quizTemplatesIds = []
+
+        selectedFileTemplates.forEach((file) => {
+            fileTemplatesIds.push(file?._id)
+        })
+
+        selectedMcqTemplates.forEach((mcq) => {
+            mcqTemplatesIds.push(mcq?._id)
+        })
+
+        selectedQuizTemplates.forEach((quiz) => {
+            quizTemplatesIds.push(quiz?._id)
+        })
+
+
+        const addData = {
+            name: categoryName,
+            file_templates: fileTemplatesIds,
+            mcq_templates: mcqTemplatesIds,
+            quiz_templates: quizTemplatesIds
+        }
+
+        const insertedData = await createCategories(addData)
+
+        if (insertedData) {
+            alert("category created successfully")
+            handleClose()
+            window.location.reload()
+        }
 
     }
 
     const handleUpdate = async () => {
+        let fileTemplatesIds = []
+        let mcqTemplatesIds = []
+        let quizTemplatesIds = []
 
+        selectedFileTemplates.forEach((file) => {
+            fileTemplatesIds.push(file?._id)
+        })
+
+        selectedMcqTemplates.forEach((mcq) => {
+            mcqTemplatesIds.push(mcq?._id)
+        })
+
+        selectedQuizTemplates.forEach((quiz) => {
+            quizTemplatesIds.push(quiz?._id)
+        })
+
+
+        const updateData = {
+            name: categoryName,
+            category_id:categoryId,
+            file_templates: fileTemplatesIds,
+            mcq_templates: mcqTemplatesIds,
+            quiz_templates: quizTemplatesIds
+        }
+
+        const updatedData = await updateCategories(updateData)
+
+        if (updatedData) {
+            alert("category updated successfully")
+            handleClose()
+            window.location.reload()
+        }
     }
+
+    const handleDelete = async (id) => {
+        const deleteData = { cat_id: id }
+        const deletedData = await deleteCategories(deleteData)
+        if (deletedData) {
+          
+          alert("template deleted successfully")
+          window.location.reload()
+        }
+      }
 
     useEffect(() => {
 
@@ -98,7 +172,10 @@ function CategoryManagement() {
 
             let mcqsData = await fetchMcqTemplates();
             setMcqTemplates([...mcqsData]);
-        
+
+            let categories = await fetchCategories();
+            setCategories([...categories]);
+
         };
 
         fetcher();
@@ -111,7 +188,7 @@ function CategoryManagement() {
     }, []);
 
     return (
-        <div>
+        <>
             <Nav />
             <hr style={{ color: "black", margin: "0" }} />
             <div className="row">
@@ -128,6 +205,7 @@ function CategoryManagement() {
                             onClick={() => {
                                 setUpdate(false)
                                 setShowCreate(true)
+
 
                             }}
                         >
@@ -146,11 +224,45 @@ function CategoryManagement() {
                             </tr>
                         </thead>
 
-                        {
+                        {categories && categories?.length !== 0 ? (
+                            categories.map((cat, index) => (
+                                <tbody>
+                                    <tr>
+                                        <th scope="col">{index + 1}.</th>
+                                        <th scope="col"> {cat?.name}</th>
+
+                                        <th scope="col ">
+                                            <CreateIcon
+                                                className="text-primary border border-primary rounded me-2"
+                                                style={{ cursor: "pointer" }}
+                                                onClick={() => {
+                                                    setUpdate(true);
+                                                    setCategoryName(cat?.name)
+                                                    setCategoryId(cat?._id)
+                                                    setSelectedFileTemplates(cat?.file_templates)
+                                                    setSelectedMcqTemplates(cat?.mcq_templates)
+                                                    setSelectedQuizTemplates(cat?.quiz_templates)
+                                                    setShowCreate(true);
 
 
-
-                        }
+                                                }}
+                                            />
+                                            <DeleteIcon
+                                                className="text-danger border border-danger cursor-pointer rounded"
+                                                style={{ cursor: "pointer" }}
+                                                onClick={() => {
+                                                    handleDelete(cat?._id)
+                                                }}
+                                            />
+                                        </th>
+                                    </tr>
+                                </tbody>
+                            ))
+                        ) : (
+                            <>
+                                <p>no data found</p>
+                            </>
+                        )}
                     </table>
 
 
@@ -392,7 +504,7 @@ function CategoryManagement() {
                     </Button>
                 </Modal.Footer>
             </Modal>
-        </div>
+        </>
     )
 }
 

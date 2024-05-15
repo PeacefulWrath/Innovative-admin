@@ -653,6 +653,12 @@ function QuizTemplateEditor() {
                 placeholder="Paper Name"
                 value={paperName}
                 onChange={(e) => {
+                  for(let temp of quizTemplates){
+                    if(e.target.value===temp?.paper_name){
+                      alert("paper name already taken")
+                      return;
+                    }
+                   }
                   setPaperName(e.target.value);
                 }}
               />

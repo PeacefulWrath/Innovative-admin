@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useEffect, useState,useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 import Nav from "../navbar/navbar";
@@ -9,32 +9,35 @@ import AddIcon from "@mui/icons-material/Add";
 import { Modal, Button } from "react-bootstrap";
 import CreateIcon from "@mui/icons-material/Create";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { fetchCategories, createCategories, createProducts, fetchProducts , updateProducts, deleteProducts} from "../../api-calls/apicalls";
 
 function ProductManagement() {
     const [windowWidth, setWindowWidth] = useState();
     const [productName, setProductName] = useState("");
-    const [productCategories, setProductCategories] = useState("");
-    const [productCategory, setProductCategory] = useState("");
     const [productImage, setProductImage] = useState("");
+    const [dbProductImage, setDbProductImage] = useState("");
     const [realPrice, setRealPrice] = useState(0);
     const [discountedPrice, setDiscountedPrice] = useState(0);
-    const [star, setStar] = useState("");
+    const [star, setStar] = useState(0);
     const [update, setUpdate] = useState(false)
     const [showCreate, setShowCreate] = useState(false);
-    const [showProductDropdown, setShowProductDropdown] = useState(false);
+    const [showProductCatDropdown, setShowProductCatDropdown] = useState(false);
+    const [categories, setCategories] = useState([]);
+    const [selectedCat, setSelectedCat] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [productId, setProductId] = useState("")
+    const productCatInputRef = useRef(null);
 
-    const productInputRef = useRef(null);
-  
     const handleInputClick = () => {
-        setShowProductDropdown(!showProductDropdown);
+        setShowProductCatDropdown(!showProductCatDropdown);
     };
-  
+
     const handleOutsideClick = (e) => {
-      if (productInputRef.current && !productInputRef.current.contains(e.target)) {
-        setShowProductDropdown(false);
-      }
+        if (productCatInputRef.current && !productCatInputRef.current.contains(e.target)) {
+            setShowProductCatDropdown(false);
+        }
     };
-  
+
     const updateWindowWidth = () => {
         setWindowWidth(window.innerWidth);
     };
@@ -45,28 +48,82 @@ function ProductManagement() {
     };
 
     const handleCreate = async () => {
-
+        const addData = new FormData()
+        addData.append("name", productName)
+        addData.append("product", productImage)
+        addData.append("category", selectedCat?._id)
+        addData.append("real_price", realPrice)
+        addData.append("discounted_price", discountedPrice)
+        addData.append("star", star)
+        const createdData = await createProducts(addData)
+        if (createdData) {
+            alert("product created")
+            handleClose()
+            window.location.reload()
+        }
     }
 
     const handleUpdate = async () => {
+        const updateData = new FormData()
+        updateData.append("product_id",productId)
+        updateData.append("name", productName)
+        updateData.append("product", productImage)
+        updateData.append("category", selectedCat?._id)
+        updateData.append("real_price", realPrice)
+        updateData.append("discounted_price", discountedPrice)
+        updateData.append("star", star.toString())
 
+        const updatedData = await updateProducts(updateData)
+        if (updatedData) {
+            alert("product updated")
+            handleClose()
+            window.location.reload()
+        }
     }
+
+    const handleDelete = async (id) => {
+        const deleteData = { product_id: id }
+        const deletedData = await deleteProducts(deleteData)
+        if (deletedData) {
+          
+          alert("product deleted successfully")
+          window.location.reload()
+        }
+      }
 
     useEffect(() => {
 
         setWindowWidth(window.innerWidth);
         window.addEventListener("resize", updateWindowWidth);
         const fetcher = async () => {
+            let categories = await fetchCategories();
+            setCategories([...categories]);
+
+            let products = await fetchProducts();
+            console.log("products", products)
+            setProducts([...products]);
 
         };
 
         fetcher();
         document.addEventListener('mousedown', handleOutsideClick);
-        
+
         return () => {
             window.removeEventListener("resize", updateWindowWidth);
-            document.removeEventListener('mousedown', handleOutsideClick);        };
+            document.removeEventListener('mousedown', handleOutsideClick);
+        };
     }, []);
+
+    useEffect(() => {
+        if (update == true && showCreate == true) {
+            const dropDowns = document.querySelectorAll('.dropdown')
+
+            dropDowns.forEach((dd) => {
+                dd.querySelector("#product-category").value = selectedCat?.name
+            })
+
+        }
+    }, [showCreate])
 
     return (
         <div>
@@ -87,7 +144,6 @@ function ProductManagement() {
                             onClick={() => {
                                 setUpdate(false)
                                 setShowCreate(true)
-
                             }}
                         >
                             <AddIcon />
@@ -104,12 +160,45 @@ function ProductManagement() {
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
+                        {(products && products?.length !== 0 )? (
+                            products.map((prod, index) => (
+                                <tbody>
+                                    <tr>
+                                        <th scope="col">{index + 1}.</th>
+                                        <th scope="col"> {prod?.name}</th>
 
-                        {
-
-
-
-                        }
+                                        <th scope="col ">
+                                            <CreateIcon
+                                                className="text-primary border border-primary rounded me-2"
+                                                style={{ cursor: "pointer" }}
+                                                onClick={() => {
+                                                    setUpdate(true);
+                                                    setProductId(prod?._id)
+                                                    setProductName(prod?.name)
+                                                    setDbProductImage(prod?.image)
+                                                    setSelectedCat(prod?.category)
+                                                    setRealPrice(prod?.real_price)
+                                                    setDiscountedPrice(prod?.discounted_price)
+                                                    setStar(prod?.star)
+                                                    setShowCreate(true);
+                                                }}
+                                            />
+                                            <DeleteIcon
+                                                className="text-danger border border-danger cursor-pointer rounded"
+                                                style={{ cursor: "pointer" }}
+                                                onClick={() => {
+                                                    handleDelete(prod?._id)
+                                                }}
+                                            />
+                                        </th>
+                                    </tr>
+                                </tbody>
+                            ))
+                        ) : (
+                            <>
+                                <p>loading...</p>
+                            </>
+                        )}
                     </table>
 
 
@@ -146,59 +235,68 @@ function ProductManagement() {
                         </div>
 
                         <div className="form-group mt-4">
-                        <label
+                            <label
                                 class="form-label"
                                 for="product-category"
                             >
-                                Product Category
+                                select product category
                             </label>
-                            <input
-                                type="text"
-                                id="product-category"
-                                value={productCategory}
-                                className="form-control"
-                                onChange={(e) => {
-                                    setProductCategory(e.target.value)
-                                }}
-                            />
-                        </div>
-
-                        <div className="form-group mt-4">
-                        <label
-                                class="form-label"
-                                for="product"
-                            >
-                                select product
-                            </label>
-                            <div className="dropdown" ref={productInputRef}>
+                            <div className="dropdown" ref={productCatInputRef}>
                                 <input
                                     type="text"
                                     className="form-control"
-                                    placeholder="Select Product"
+                                    placeholder="Select Product Category"
                                     onClick={handleInputClick}
-                                    readOnly
+                                    id="product-category"
+
                                 />
-                                {showProductDropdown && (
+                                {showProductCatDropdown && (
                                     <ul className="dropdown-menu show w-100" aria-labelledby="dropdownMenuButton">
-                                        <li><a className="dropdown-item" href="#">Action</a></li>
-                                        <li><a className="dropdown-item" href="#">Another action</a></li>
-                                        <li><a className="dropdown-item" href="#">Something else here</a></li>
+                                        {categories && categories.map((cat, _) => (
+                                            <li><a className="dropdown-item" href="#" onClick={(e) => {
+                                                setSelectedCat(cat)
+                                                document.getElementById("product-category").value = cat?.name
+                                                setShowProductCatDropdown(false)
+                                            }}>{cat?.name}</a></li>
+                                        ))
+
+                                        }
                                     </ul>
                                 )}
+
                             </div>
                         </div>
+
+                        {
+                            dbProductImage && (
+                                <div className="form-group mt-4">
+                                    <label
+                                        class="form-label"
+                                        for="product-image"
+                                    >
+                                        Attached Product Image
+                                    </label>
+                                    <img
+
+                                        alt="db-product-image"
+                                        className="form-control"
+                                        src={dbProductImage}
+                                    />
+
+                                </div>
+                            )
+                        }
 
                         <div className="form-group mt-4">
                             <label
                                 class="form-label"
                                 for="product-image"
                             >
-                                Product Image
+                                {update ? "Change Product Image" : "Product Image"}
                             </label>
                             <input
                                 type="file"
                                 id="product-image"
-                                value={productImage}
                                 className="form-control"
                                 onChange={(e) => {
                                     setProductImage(e.target.files[0])
@@ -220,6 +318,10 @@ function ProductManagement() {
                                 value={realPrice}
                                 className="form-control"
                                 onChange={(e) => {
+                                    if (e.target.value < 0) {
+                                        alert("you can not set it below 0")
+                                        return;
+                                    }
                                     setRealPrice(e.target.value)
                                 }}
                             />
@@ -239,6 +341,10 @@ function ProductManagement() {
                                 value={discountedPrice}
                                 className="form-control"
                                 onChange={(e) => {
+                                    if (e.target.value < 0) {
+                                        alert("you can not set it below 0")
+                                        return;
+                                    }
                                     setDiscountedPrice(e.target.value)
                                 }}
                             />
@@ -246,18 +352,22 @@ function ProductManagement() {
                         </div>
 
                         <div className="form-group mt-4">
-                        <label
+                            <label
                                 class="form-label"
                                 for="product-star"
                             >
                                 Product Star
                             </label>
                             <input
-                                type="text"
+                                type="number"
                                 id="product-star"
                                 value={star}
                                 className="form-control"
                                 onChange={(e) => {
+                                    if (e.target.value < 0) {
+                                        alert("you can not set it below 0")
+                                        return;
+                                    }
                                     setStar(e.target.value)
                                 }}
                             />

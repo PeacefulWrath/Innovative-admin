@@ -722,3 +722,175 @@ export const deleteGallery = async (deleteData) => {
         return tempGallery;
     }
 };
+
+export const createCategories = async (addData) => {
+    let tempCategory = [];
+    try {
+        await axios
+            (
+                {
+                    method: "post",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/category`,
+                    data: addData,
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
+            .then((res) => {
+                tempCategory = res.data;
+            });
+    } catch (error) {
+        console.log("can not create category");
+    } finally {
+        return tempCategory;
+    }
+};
+
+export const fetchCategories = async () => {
+    let categoriesData = [];
+    try {
+        const response = await axios.get(
+            `${process.env.REACT_APP_BASE_URL}/api/category`
+        );
+        categoriesData = response.data.allCategoryData;
+    } catch (error) {
+        console.log("err", error);
+    } finally {
+        return categoriesData;
+    }
+}
+
+export const updateCategories = async (updateData) => {
+    let tempCats = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "put",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/category`,
+                    data: updateData,
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
+            .then((res) => {
+                tempCats = res.data;
+            });
+    } catch (error) {
+        console.log("can not update categories");
+    } finally {
+        return tempCats;
+    }
+};
+
+export const deleteCategories = async (deleteData) => {
+    let tempCat = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "delete",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/category`,
+                    data: deleteData
+
+                })
+            .then((res) => {
+                tempCat = res.data;
+            });
+    } catch (error) {
+        console.log("can not delete category");
+    } finally {
+        return tempCat;
+    }
+};
+
+export const createProducts = async (addData) => {
+    let tempProducts = [];
+    try {
+        // console.log("template data", addData);
+
+        await axios
+            (
+                {
+                    method: "post",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/product`,
+                    data: addData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+            .then((res) => {
+                tempProducts = res.data;
+            });
+    } catch (error) {
+        console.log("can not create product");
+    } finally {
+        return tempProducts;
+    }
+};
+
+export const fetchProducts = async () => {
+    let productsData = [];
+    try {
+        const response = await axios.get(
+            `${process.env.REACT_APP_BASE_URL}/api/product`
+        );
+        productsData = response.data.fetchedData;
+    } catch (error) {
+        console.log("err", error);
+    } finally {
+        return productsData;
+    }
+}
+
+export const updateProducts = async (updateData) => {
+    let tempProds = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "put",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/product`,
+                    data: updateData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+            .then((res) => {
+                tempProds = res.data;
+            });
+    } catch (error) {
+        console.log("can not update products");
+    } finally {
+        return tempProds;
+    }
+};
+
+export const deleteProducts = async (deleteData) => {
+    let tempProd = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "delete",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/product`,
+                    data: deleteData
+
+                })
+            .then((res) => {
+                tempProd = res.data;
+            });
+    } catch (error) {
+        console.log("can not delete product");
+    } finally {
+        return tempProd;
+    }
+};
