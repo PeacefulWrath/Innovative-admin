@@ -273,8 +273,8 @@ function TestimonialManagement() {
                             >
                                description
                             </label>
-                            <input
-                                type="number"
+                            <textarea
+                                type="text"
                                 id="description"
                                 value={description}
                                 className="form-control"

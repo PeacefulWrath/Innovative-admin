@@ -10,65 +10,67 @@ import { Modal, Button } from "react-bootstrap";
 import CreateIcon from "@mui/icons-material/Create";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from '@mui/icons-material/Close';
-import { createCategories, fetchMcqTemplates, fetchQuizTemplates, fetchTemplates, fetchCategories,updateCategories, deleteCategories } from "../../api-calls/apicalls";
+import { createCategories, fetchMcqTemplates, fetchQuizTemplates, fetchTemplates, fetchCategories, updateCategories, deleteCategories } from "../../api-calls/apicalls";
 
 
 function CategoryManagement() {
     const [windowWidth, setWindowWidth] = useState();
     const [categoryName, setCategoryName] = useState("");
+    const [categoryImage, setCategoryImage] = useState("");
+    const [categoryDbImage, setCategoryDbImage] = useState("");
     const [categoryId, setCategoryId] = useState("");
 
     const [categories, setCategories] = useState([]);
 
-    const [quizTemplates, setQuizTemplates] = useState([]);
-    const [selectedQuizTemplates, setSelectedQuizTemplates] = useState([]);
+    // const [quizTemplates, setQuizTemplates] = useState([]);
+    // const [selectedQuizTemplates, setSelectedQuizTemplates] = useState([]);
 
 
-    const [mcqTemplates, setMcqTemplates] = useState([]);
-    const [selectedMcqTemplates, setSelectedMcqTemplates] = useState([]);
+    // const [mcqTemplates, setMcqTemplates] = useState([]);
+    // const [selectedMcqTemplates, setSelectedMcqTemplates] = useState([]);
 
-    const [fileTemplates, setFileTemplates] = useState([]);
-    const [selectedFileTemplates, setSelectedFileTemplates] = useState([]);
+    // const [fileTemplates, setFileTemplates] = useState([]);
+    // const [selectedFileTemplates, setSelectedFileTemplates] = useState([]);
 
     const [update, setUpdate] = useState(false)
     const [showCreate, setShowCreate] = useState(false);
 
 
-    const [showFileTempDropdown, setShowFileTempDropdown] = useState(false);
-    const [showQuizTempDropdown, setShowQuizTempDropdown] = useState(false);
-    const [showMcqTempDropdown, setShowMcqTempDropdown] = useState(false);
+    // const [showFileTempDropdown, setShowFileTempDropdown] = useState(false);
+    // const [showQuizTempDropdown, setShowQuizTempDropdown] = useState(false);
+    // const [showMcqTempDropdown, setShowMcqTempDropdown] = useState(false);
 
 
-    const fileTempInputRef = useRef(null);
-    const quizTempInputRef = useRef(null);
-    const mcqTempInputRef = useRef(null);
+    // const fileTempInputRef = useRef(null);
+    // const quizTempInputRef = useRef(null);
+    // const mcqTempInputRef = useRef(null);
 
 
-    const handleFileTempInputClick = () => {
-        setShowFileTempDropdown(!showFileTempDropdown);
-    };
+    // const handleFileTempInputClick = () => {
+    //     setShowFileTempDropdown(!showFileTempDropdown);
+    // };
 
-    const handleQuizTempInputClick = () => {
-        setShowQuizTempDropdown(!showQuizTempDropdown);
-    };
+    // const handleQuizTempInputClick = () => {
+    //     setShowQuizTempDropdown(!showQuizTempDropdown);
+    // };
 
-    const handleMcqTempInputClick = () => {
-        setShowMcqTempDropdown(!showMcqTempDropdown);
-    };
+    // const handleMcqTempInputClick = () => {
+    //     setShowMcqTempDropdown(!showMcqTempDropdown);
+    // };
 
-    const handleOutsideClick = (e) => {
-        if (fileTempInputRef.current && !fileTempInputRef.current.contains(e.target)) {
-            setShowFileTempDropdown(false);
-        }
+    // const handleOutsideClick = (e) => {
+    //     if (fileTempInputRef.current && !fileTempInputRef.current.contains(e.target)) {
+    //         setShowFileTempDropdown(false);
+    //     }
 
-        if (quizTempInputRef.current && !quizTempInputRef.current.contains(e.target)) {
-            setShowQuizTempDropdown(false)
-        }
+    //     if (quizTempInputRef.current && !quizTempInputRef.current.contains(e.target)) {
+    //         setShowQuizTempDropdown(false)
+    //     }
 
-        if (mcqTempInputRef.current && !mcqTempInputRef.current.contains(e.target)) {
-            setShowMcqTempDropdown(false)
-        }
-    };
+    //     if (mcqTempInputRef.current && !mcqTempInputRef.current.contains(e.target)) {
+    //         setShowMcqTempDropdown(false)
+    //     }
+    // };
 
     const updateWindowWidth = () => {
         setWindowWidth(window.innerWidth);
@@ -80,29 +82,34 @@ function CategoryManagement() {
     };
 
     const handleCreate = async () => {
-        let fileTemplatesIds = []
-        let mcqTemplatesIds = []
-        let quizTemplatesIds = []
+        // let fileTemplatesIds = []
+        // let mcqTemplatesIds = []
+        // let quizTemplatesIds = []
 
-        selectedFileTemplates.forEach((file) => {
-            fileTemplatesIds.push(file?._id)
-        })
+        // selectedFileTemplates.forEach((file) => {
+        //     fileTemplatesIds.push(file?._id)
+        // })
 
-        selectedMcqTemplates.forEach((mcq) => {
-            mcqTemplatesIds.push(mcq?._id)
-        })
+        // selectedMcqTemplates.forEach((mcq) => {
+        //     mcqTemplatesIds.push(mcq?._id)
+        // })
 
-        selectedQuizTemplates.forEach((quiz) => {
-            quizTemplatesIds.push(quiz?._id)
-        })
+        // selectedQuizTemplates.forEach((quiz) => {
+        //     quizTemplatesIds.push(quiz?._id)
+        // })
 
 
-        const addData = {
-            name: categoryName,
-            file_templates: fileTemplatesIds,
-            mcq_templates: mcqTemplatesIds,
-            quiz_templates: quizTemplatesIds
-        }
+        // const addData = {
+        //     name: categoryName,
+        //     image:categoryImage
+        //     // file_templates: fileTemplatesIds,
+        //     // mcq_templates: mcqTemplatesIds,
+        //     // quiz_templates: quizTemplatesIds
+        // }
+
+        let addData = new FormData()
+        addData.append("name", categoryName)
+        addData.append("category", categoryImage)
 
         const insertedData = await createCategories(addData)
 
@@ -115,30 +122,36 @@ function CategoryManagement() {
     }
 
     const handleUpdate = async () => {
-        let fileTemplatesIds = []
-        let mcqTemplatesIds = []
-        let quizTemplatesIds = []
+        // let fileTemplatesIds = []
+        // let mcqTemplatesIds = []
+        // let quizTemplatesIds = []
 
-        selectedFileTemplates.forEach((file) => {
-            fileTemplatesIds.push(file?._id)
-        })
+        // selectedFileTemplates.forEach((file) => {
+        //     fileTemplatesIds.push(file?._id)
+        // })
 
-        selectedMcqTemplates.forEach((mcq) => {
-            mcqTemplatesIds.push(mcq?._id)
-        })
+        // selectedMcqTemplates.forEach((mcq) => {
+        //     mcqTemplatesIds.push(mcq?._id)
+        // })
 
-        selectedQuizTemplates.forEach((quiz) => {
-            quizTemplatesIds.push(quiz?._id)
-        })
+        // selectedQuizTemplates.forEach((quiz) => {
+        //     quizTemplatesIds.push(quiz?._id)
+        // })
 
 
-        const updateData = {
-            name: categoryName,
-            category_id:categoryId,
-            file_templates: fileTemplatesIds,
-            mcq_templates: mcqTemplatesIds,
-            quiz_templates: quizTemplatesIds
-        }
+        // const updateData = {
+        //     name: categoryName,
+        //     category_id:categoryId,
+        //     image:image
+        // file_templates: fileTemplatesIds,
+        // mcq_templates: mcqTemplatesIds,
+        // quiz_templates: quizTemplatesIds
+        // }
+
+        let updateData = new FormData()
+        updateData.append("name", categoryName)
+        updateData.append("category_id", categoryId)
+        updateData.append("category", categoryImage)
 
         const updatedData = await updateCategories(updateData)
 
@@ -153,25 +166,25 @@ function CategoryManagement() {
         const deleteData = { cat_id: id }
         const deletedData = await deleteCategories(deleteData)
         if (deletedData) {
-          
-          alert("template deleted successfully")
-          window.location.reload()
+
+            alert("template deleted successfully")
+            window.location.reload()
         }
-      }
+    }
 
     useEffect(() => {
 
         setWindowWidth(window.innerWidth);
         window.addEventListener("resize", updateWindowWidth);
         const fetcher = async () => {
-            let templatesData = await fetchTemplates();
-            setFileTemplates([...templatesData]);
+            // let templatesData = await fetchTemplates();
+            // setFileTemplates([...templatesData]);
 
-            let quizzesData = await fetchQuizTemplates();
-            setQuizTemplates([...quizzesData]);
+            // let quizzesData = await fetchQuizTemplates();
+            // setQuizTemplates([...quizzesData]);
 
-            let mcqsData = await fetchMcqTemplates();
-            setMcqTemplates([...mcqsData]);
+            // let mcqsData = await fetchMcqTemplates();
+            // setMcqTemplates([...mcqsData]);
 
             let categories = await fetchCategories();
             setCategories([...categories]);
@@ -179,11 +192,11 @@ function CategoryManagement() {
         };
 
         fetcher();
-        document.addEventListener('mousedown', handleOutsideClick);
+        // document.addEventListener('mousedown', handleOutsideClick);
 
         return () => {
             window.removeEventListener("resize", updateWindowWidth);
-            document.removeEventListener('mousedown', handleOutsideClick);
+            // document.removeEventListener('mousedown', handleOutsideClick);
         };
     }, []);
 
@@ -239,9 +252,10 @@ function CategoryManagement() {
                                                     setUpdate(true);
                                                     setCategoryName(cat?.name)
                                                     setCategoryId(cat?._id)
-                                                    setSelectedFileTemplates(cat?.file_templates)
-                                                    setSelectedMcqTemplates(cat?.mcq_templates)
-                                                    setSelectedQuizTemplates(cat?.quiz_templates)
+                                                    setCategoryDbImage(cat?.image)
+                                                    // setSelectedFileTemplates(cat?.file_templates)
+                                                    // setSelectedMcqTemplates(cat?.mcq_templates)
+                                                    // setSelectedQuizTemplates(cat?.quiz_templates)
                                                     setShowCreate(true);
 
 
@@ -296,7 +310,47 @@ function CategoryManagement() {
 
                         </div>
 
+                        {
+                            categoryDbImage && (
+                                <div className="form-group mt-4">
+                                    <label
+                                        class="form-label"
+                                        for="category-db-image"
+                                    >
+                                        Attached Category Image
+                                    </label>
+                                    <img
+                                        id="category-db-image"
+                                        alt="category-db-image "
+
+                                        className="form-control"
+                                        src={categoryDbImage}
+                                    />
+
+                                </div>
+                            )
+                        }
+
                         <div className="form-group mt-4">
+                            <label
+                                class="form-label"
+                                for="category-image"
+                            >
+                                {update ? "Change Category Image" : "Category Image"}
+                            </label>
+                            <input
+                                type="file"
+                                id="category-image "
+
+                                className="form-control"
+                                onChange={(e) => {
+                                    setCategoryImage(e.target.files[0])
+                                }}
+                            />
+
+                        </div>
+
+                        {/* <div className="form-group mt-4">
                             <label
                                 class="form-label"
                                 for="file-templates"
@@ -479,7 +533,7 @@ function CategoryManagement() {
                                 </div>
                             ))}
 
-                        </div>
+                        </div> */}
 
 
                     </>

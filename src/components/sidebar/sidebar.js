@@ -112,7 +112,7 @@ const Sidebar = (props) => {
 
       <a style={{ textDecoration: "none" }} href="/training-module-management">
         <div className="row fw-bold text-white" style={activeOption === 'training-module-management' ? { backgroundColor: '#575655' } : { backgroundColor: "transparent" }}>
-          <p className='px-3 pt-2 ms-4 me-2 ' style={{ whiteSpace: "nowrap" }}>Training Module Manage...</p>
+          <p className='px-3 pt-2 ms-4 me-2 ' style={{ whiteSpace: "nowrap" }}>Training Module Management</p>
         </div>
       </a>
 
@@ -120,13 +120,19 @@ const Sidebar = (props) => {
 
       <a style={{ textDecoration: "none" }} href="/choose-us-management">
         <div className="row fw-bold text-white" style={activeOption === 'choose-us-management' ? { backgroundColor: '#575655' } : { backgroundColor: "transparent" }}>
-          <p className='px-3 pt-2 ms-4 me-2 ' style={{ whiteSpace: "nowrap" }}>Choose Us Management...</p>
+          <p className='px-3 pt-2 ms-4 me-2 ' style={{ whiteSpace: "nowrap" }}>Choose Us Management.</p>
         </div>
       </a>
 
       <a style={{ textDecoration: "none" }} href="/testimonial-management">
         <div className="row fw-bold text-white" style={activeOption === 'testimonial-management' ? { backgroundColor: '#575655' } : { backgroundColor: "transparent" }}>
-          <p className='px-3 pt-2 ms-4 me-2 ' style={{ whiteSpace: "nowrap" }}>Testimonial Management...</p>
+          <p className='px-3 pt-2 ms-4 me-2 ' style={{ whiteSpace: "nowrap" }}>Testimonial Management</p>
+        </div>
+      </a>
+
+      <a style={{ textDecoration: "none" }} href="/service-management">
+        <div className="row fw-bold text-white" style={activeOption === 'service-management' ? { backgroundColor: '#575655' } : { backgroundColor: "transparent" }}>
+          <p className='px-3 pt-2 ms-4 me-2 ' style={{ whiteSpace: "nowrap" }}>Service Management</p>
         </div>
       </a>
 

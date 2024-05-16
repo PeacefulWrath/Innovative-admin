@@ -18,6 +18,7 @@ import CategoryManagement from "./components/categoryManagement/categoryManageme
 import TrainingModule from "./components/trainingModule/trainingModule";
 import ChooseUsManagement from "./components/chooseUs/chooseUs";
 import TestimonialManagement from "./components/testimonial/testimonial";
+import ServiceManagement from "./components/serviceManagement/serviceManagement";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
       <Route path="/training-module-management" element={<TrainingModule />} />
       <Route path="/choose-us-management" element={<ChooseUsManagement/>} />
       <Route path="/testimonial-management" element={<TestimonialManagement/>} />
+      <Route path="/service-management" element={<ServiceManagement/>} />
     </Routes>
   </Router>
   );

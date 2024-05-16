@@ -9,7 +9,10 @@ import AddIcon from "@mui/icons-material/Add";
 import { Modal, Button } from "react-bootstrap";
 import CreateIcon from "@mui/icons-material/Create";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { fetchCategories, createCategories, createProducts, fetchProducts , updateProducts, deleteProducts} from "../../api-calls/apicalls";
+import { fetchCategories, fetchMcqTemplates, fetchQuizTemplates, fetchTemplates, createProducts, fetchProducts, updateProducts, deleteProducts } from "../../api-calls/apicalls";
+import CloseIcon from '@mui/icons-material/Close';
+
+
 
 function ProductManagement() {
     const [windowWidth, setWindowWidth] = useState();
@@ -26,6 +29,55 @@ function ProductManagement() {
     const [selectedCat, setSelectedCat] = useState([]);
     const [products, setProducts] = useState([]);
     const [productId, setProductId] = useState("")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const [quizTemplates, setQuizTemplates] = useState([]);
+    const [selectedQuizTemplates, setSelectedQuizTemplates] = useState([]);
+
+
+    const [mcqTemplates, setMcqTemplates] = useState([]);
+    const [selectedMcqTemplates, setSelectedMcqTemplates] = useState([]);
+
+    const [fileTemplates, setFileTemplates] = useState([]);
+    const [selectedFileTemplates, setSelectedFileTemplates] = useState([]);
+
+
+    const [showFileTempDropdown, setShowFileTempDropdown] = useState(false);
+    const [showQuizTempDropdown, setShowQuizTempDropdown] = useState(false);
+    const [showMcqTempDropdown, setShowMcqTempDropdown] = useState(false);
+
+
+    const fileTempInputRef = useRef(null);
+    const quizTempInputRef = useRef(null);
+    const mcqTempInputRef = useRef(null);
+
+
+    const handleFileTempInputClick = () => {
+        setShowFileTempDropdown(!showFileTempDropdown);
+    };
+
+    const handleQuizTempInputClick = () => {
+        setShowQuizTempDropdown(!showQuizTempDropdown);
+    };
+
+    const handleMcqTempInputClick = () => {
+        setShowMcqTempDropdown(!showMcqTempDropdown);
+    };
+
     const productCatInputRef = useRef(null);
 
     const handleInputClick = () => {
@@ -35,6 +87,17 @@ function ProductManagement() {
     const handleOutsideClick = (e) => {
         if (productCatInputRef.current && !productCatInputRef.current.contains(e.target)) {
             setShowProductCatDropdown(false);
+        }
+        if (fileTempInputRef.current && !fileTempInputRef.current.contains(e.target)) {
+            setShowFileTempDropdown(false);
+        }
+
+        if (quizTempInputRef.current && !quizTempInputRef.current.contains(e.target)) {
+            setShowQuizTempDropdown(false)
+        }
+
+        if (mcqTempInputRef.current && !mcqTempInputRef.current.contains(e.target)) {
+            setShowMcqTempDropdown(false)
         }
     };
 
@@ -48,6 +111,21 @@ function ProductManagement() {
     };
 
     const handleCreate = async () => {
+        let fileTemplatesIds = []
+        let mcqTemplatesIds = []
+        let quizTemplatesIds = []
+
+        selectedFileTemplates.forEach((file) => {
+            fileTemplatesIds.push(file?._id)
+        })
+
+        selectedMcqTemplates.forEach((mcq) => {
+            mcqTemplatesIds.push(mcq?._id)
+        })
+
+        selectedQuizTemplates.forEach((quiz) => {
+            quizTemplatesIds.push(quiz?._id)
+        })
         const addData = new FormData()
         addData.append("name", productName)
         addData.append("product", productImage)
@@ -55,6 +133,11 @@ function ProductManagement() {
         addData.append("real_price", realPrice)
         addData.append("discounted_price", discountedPrice)
         addData.append("star", star)
+
+        addData.append("file_templates", JSON.stringify(fileTemplatesIds))
+        addData.append("mcq_templates", JSON.stringify(mcqTemplatesIds))
+        addData.append("quiz_templates", JSON.stringify(quizTemplatesIds))
+
         const createdData = await createProducts(addData)
         if (createdData) {
             alert("product created")
@@ -64,14 +147,34 @@ function ProductManagement() {
     }
 
     const handleUpdate = async () => {
+        let fileTemplatesIds = []
+        let mcqTemplatesIds = []
+        let quizTemplatesIds = []
+
+        selectedFileTemplates.forEach((file) => {
+            fileTemplatesIds.push(file?._id)
+        })
+
+        selectedMcqTemplates.forEach((mcq) => {
+            mcqTemplatesIds.push(mcq?._id)
+        })
+
+        selectedQuizTemplates.forEach((quiz) => {
+            quizTemplatesIds.push(quiz?._id)
+        })
+
         const updateData = new FormData()
-        updateData.append("product_id",productId)
+        updateData.append("product_id", productId)
         updateData.append("name", productName)
         updateData.append("product", productImage)
         updateData.append("category", selectedCat?._id)
         updateData.append("real_price", realPrice)
         updateData.append("discounted_price", discountedPrice)
         updateData.append("star", star.toString())
+
+        updateData.append("file_templates", JSON.stringify(fileTemplatesIds))
+        updateData.append("mcq_templates", JSON.stringify(mcqTemplatesIds))
+        updateData.append("quiz_templates", JSON.stringify(quizTemplatesIds))
 
         const updatedData = await updateProducts(updateData)
         if (updatedData) {
@@ -85,11 +188,11 @@ function ProductManagement() {
         const deleteData = { product_id: id }
         const deletedData = await deleteProducts(deleteData)
         if (deletedData) {
-          
-          alert("product deleted successfully")
-          window.location.reload()
+
+            alert("product deleted successfully")
+            window.location.reload()
         }
-      }
+    }
 
     useEffect(() => {
 
@@ -99,8 +202,17 @@ function ProductManagement() {
             let categories = await fetchCategories();
             setCategories([...categories]);
 
+            let templatesData = await fetchTemplates();
+            setFileTemplates([...templatesData]);
+
+            let quizzesData = await fetchQuizTemplates();
+            setQuizTemplates([...quizzesData]);
+
+            let mcqsData = await fetchMcqTemplates();
+            setMcqTemplates([...mcqsData]);
+
             let products = await fetchProducts();
-            console.log("products", products)
+            // console.log("products", products)
             setProducts([...products]);
 
         };
@@ -116,13 +228,9 @@ function ProductManagement() {
 
     useEffect(() => {
         if (update == true && showCreate == true) {
-            const dropDowns = document.querySelectorAll('.dropdown')
-
-            dropDowns.forEach((dd) => {
-                dd.querySelector("#product-category").value = selectedCat?.name
-            })
-
-        }
+            
+                document.getElementById("product-category").value = selectedCat?.name
+            }
     }, [showCreate])
 
     return (
@@ -160,7 +268,7 @@ function ProductManagement() {
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
-                        {(products && products?.length !== 0 )? (
+                        {(products && products?.length !== 0) ? (
                             products.map((prod, index) => (
                                 <tbody>
                                     <tr>
@@ -180,6 +288,9 @@ function ProductManagement() {
                                                     setRealPrice(prod?.real_price)
                                                     setDiscountedPrice(prod?.discounted_price)
                                                     setStar(prod?.star)
+                                                    setSelectedFileTemplates(prod?.file_templates)
+                                                    setSelectedMcqTemplates(prod?.mcq_templates)
+                                                    setSelectedQuizTemplates(prod?.quiz_templates)
                                                     setShowCreate(true);
                                                 }}
                                             />
@@ -308,6 +419,191 @@ function ProductManagement() {
                         <div className="form-group mt-4">
                             <label
                                 class="form-label"
+                                for="file-templates"
+                            >
+                                select file templates
+                            </label>
+                            <div className="dropdown" ref={fileTempInputRef}>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Select File Templates"
+                                    onClick={handleFileTempInputClick}
+                                    readOnly
+                                />
+                                {showFileTempDropdown && (
+                                    <ul className="dropdown-menu show w-100" aria-labelledby="dropdownMenuButton">
+                                        {fileTemplates && fileTemplates.map((file, _) => (
+                                            <li><a className="dropdown-item" href="#" onClick={(e) => {
+
+                                                let tempSelectedFileTemp = selectedFileTemplates
+                                                for (let temp of tempSelectedFileTemp) {
+                                                    if (temp?.template_name == file?.template_name) {
+                                                        alert("already selected")
+                                                        setShowFileTempDropdown(false)
+                                                        return;
+                                                    }
+                                                }
+                                                tempSelectedFileTemp.push(file)
+                                                setSelectedFileTemplates([...tempSelectedFileTemp])
+                                                setShowFileTempDropdown(false)
+                                            }}>{file?.template_name}</a></li>
+                                        ))
+
+                                        }
+
+                                    </ul>
+                                )}
+
+                            </div>
+                        </div>
+
+                        <div className="d-flex mt-3">
+                            {selectedFileTemplates && selectedFileTemplates.map((file, ind) => (
+                                <div className="border border-secondary rounded  ms-3" style={{ width: "15%" }}>
+                                    <div className="d-flex justify-content-end"><CloseIcon style={{ cursor: "pointer", color: "red" }} onClick={() => {
+                                        let tempSelectedFileTemp = selectedFileTemplates
+                                        tempSelectedFileTemp.splice(ind, 1)
+                                        setSelectedFileTemplates([...tempSelectedFileTemp])
+                                    }} /></div>
+                                    <div className="d-flex justify-content-center">
+                                        {file?.template_name}
+                                    </div>
+
+                                </div>
+                            ))}
+
+                        </div>
+
+                        <div className="form-group mt-4">
+                            <label
+                                class="form-label"
+                                for="quiz-templates"
+                            >
+                                select quiz templates
+                            </label>
+                            <div className="dropdown" ref={quizTempInputRef}>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Select Quiz Templates"
+                                    onClick={handleQuizTempInputClick}
+                                    readOnly
+                                />
+                                {showQuizTempDropdown && (
+                                    <ul className="dropdown-menu show w-100" aria-labelledby="dropdownMenuButton">
+                                        {quizTemplates && quizTemplates.map((quiz, _) => (
+                                            <li><a className="dropdown-item" href="#" onClick={(e) => {
+
+                                                let tempSelectedQuizTemp = selectedQuizTemplates
+
+
+                                                for (let temp of tempSelectedQuizTemp) {
+                                                    if (temp?.paper_name == quiz?.paper_name) {
+
+                                                        alert("already selected")
+                                                        setShowQuizTempDropdown(false)
+                                                        return;
+                                                    }
+                                                }
+
+                                                tempSelectedQuizTemp.push(quiz)
+                                                setSelectedQuizTemplates([...tempSelectedQuizTemp])
+                                                setShowQuizTempDropdown(false)
+                                            }}>{quiz?.paper_name}</a></li>
+                                        ))
+
+                                        }
+
+                                    </ul>
+                                )}
+
+                            </div>
+                        </div>
+
+                        <div className="d-flex mt-3">
+                            {selectedQuizTemplates && selectedQuizTemplates.map((quiz, ind) => (
+                                <div className="border border-secondary rounded  ms-3" style={{ width: "15%" }}>
+                                    <div className="d-flex justify-content-end"><CloseIcon style={{ cursor: "pointer", color: "red" }} onClick={() => {
+                                        let tempSelectedQuizTemp = selectedQuizTemplates
+                                        tempSelectedQuizTemp.splice(ind, 1)
+                                        setSelectedQuizTemplates([...tempSelectedQuizTemp])
+                                    }} /></div>
+                                    <div className="d-flex justify-content-center">
+                                        {quiz?.paper_name}
+                                    </div>
+
+                                </div>
+                            ))}
+
+                        </div>
+
+                        <div className="form-group mt-4">
+                            <label
+                                class="form-label"
+                                for="quiz-templates"
+                            >
+                                select mcq templates
+                            </label>
+                            <div className="dropdown" ref={mcqTempInputRef}>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Select Mcq Templates"
+                                    onClick={handleMcqTempInputClick}
+                                    readOnly
+                                />
+                                {showMcqTempDropdown && (
+                                    <ul className="dropdown-menu show w-100" aria-labelledby="dropdownMenuButton">
+                                        {mcqTemplates && mcqTemplates.map((mcq, _) => (
+                                            <li><a className="dropdown-item" href="#" onClick={(e) => {
+
+                                                let tempSelectedMcqTemp = selectedMcqTemplates
+
+
+                                                for (let temp of tempSelectedMcqTemp) {
+                                                    if (temp?.paper_name == mcq?.paper_name) {
+
+                                                        alert("already selected")
+                                                        setShowMcqTempDropdown(false)
+                                                        return;
+                                                    }
+                                                }
+
+                                                tempSelectedMcqTemp.push(mcq)
+                                                setSelectedMcqTemplates([...tempSelectedMcqTemp])
+                                                setShowMcqTempDropdown(false)
+                                            }}>{mcq?.paper_name}</a></li>
+                                        ))
+
+                                        }
+
+                                    </ul>
+                                )}
+
+                            </div>
+                        </div>
+
+                        <div className="d-flex mt-3">
+                            {selectedMcqTemplates && selectedMcqTemplates.map((mcq, ind) => (
+                                <div className="border border-secondary rounded  ms-3" style={{ width: "15%" }}>
+                                    <div className="d-flex justify-content-end"><CloseIcon style={{ cursor: "pointer", color: "red" }} onClick={() => {
+                                        let tempSelectedMcqTemp = selectedMcqTemplates
+                                        tempSelectedMcqTemp.splice(ind, 1)
+                                        setSelectedMcqTemplates([...tempSelectedMcqTemp])
+                                    }} /></div>
+                                    <div className="d-flex justify-content-center">
+                                        {mcq?.paper_name}
+                                    </div>
+
+                                </div>
+                            ))}
+
+                        </div>
+
+                        <div className="form-group mt-4">
+                            <label
+                                class="form-label"
                                 for="real_price"
                             >
                                 Real Price
@@ -372,6 +668,9 @@ function ProductManagement() {
                                 }}
                             />
                         </div>
+
+
+
 
                     </div>
 

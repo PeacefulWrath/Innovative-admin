@@ -733,7 +733,7 @@ export const createCategories = async (addData) => {
                     url: `${process.env.REACT_APP_BASE_URL}/api/category`,
                     data: addData,
                     headers: {
-                        "Content-Type": "application/json",
+                        "Content-Type": "multipart/form-data",
                     }
                 })
             .then((res) => {
@@ -772,7 +772,7 @@ export const updateCategories = async (updateData) => {
                     url: `${process.env.REACT_APP_BASE_URL}/api/category`,
                     data: updateData,
                     headers: {
-                        "Content-Type": "application/json",
+                        "Content-Type": "multipart/form-data",
                     }
                 })
             .then((res) => {
@@ -895,7 +895,6 @@ export const deleteProducts = async (deleteData) => {
     }
 };
 
-
 export const createTrainingModules = async (addData) => {
     let tempModules = [];
     try {
@@ -983,7 +982,6 @@ export const deleteTrainingModules = async (deleteData) => {
     }
 };
 
-
 export const createCus = async (faqData) => {
     let tempCus = [];
     try {
@@ -1069,7 +1067,6 @@ export const deleteCus = async (deleteData) => {
     }
 };
 
-
 export const createTestimonials = async (addData) => {
     let tempMons = [];
     try {
@@ -1154,5 +1151,92 @@ export const deleteTestimonials = async (deleteData) => {
         console.log("can not delete testimonial");
     } finally {
         return tempMons;
+    }
+};
+
+export const createServices = async (addData) => {
+    let tempServices = [];
+    try {
+        // console.log("template data", addData);
+
+        await axios
+            (
+                {
+                    method: "post",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/service`,
+                    data: addData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+            .then((res) => {
+                tempServices = res.data;
+            });
+    } catch (error) {
+        console.log("can not create service");
+    } finally {
+        return tempServices;
+    }
+};
+
+export const fetchServices = async () => {
+    let serviceData = [];
+    try {
+        const response = await axios.get(
+            `${process.env.REACT_APP_BASE_URL}/api/service`
+        );
+        serviceData = response.data.fetchedData;
+    } catch (error) {
+        console.log("err", error);
+    } finally {
+        return serviceData;
+    }
+}
+
+export const updateServices = async (updateData) => {
+    let serviceData = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "put",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/service`,
+                    data: updateData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+            .then((res) => {
+                serviceData = res.data;
+            });
+    } catch (error) {
+        console.log("can not update services");
+    } finally {
+        return serviceData;
+    }
+};
+
+export const deleteServices = async (deleteData) => {
+    let serviceData = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "delete",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/service`,
+                    data: deleteData
+
+                })
+            .then((res) => {
+                serviceData = res.data;
+            });
+    } catch (error) {
+        console.log("can not delete services");
+    } finally {
+        return serviceData;
     }
 };
