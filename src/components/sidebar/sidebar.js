@@ -137,7 +137,11 @@ const Sidebar = (props) => {
       </a>
 
 
-
+      <a style={{ textDecoration: "none" }} href="/partner-management">
+        <div className="row fw-bold text-white" style={activeOption === 'partner-management' ? { backgroundColor: '#575655' } : { backgroundColor: "transparent" }}>
+          <p className='px-3 pt-2 ms-4 me-2 ' style={{ whiteSpace: "nowrap" }}>partner Management</p>
+        </div>
+      </a>
 
 
 

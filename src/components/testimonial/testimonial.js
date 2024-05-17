@@ -9,20 +9,23 @@ import AddIcon from "@mui/icons-material/Add";
 import { Modal, Button } from "react-bootstrap";
 import CreateIcon from "@mui/icons-material/Create";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { fetchTestimonials, createTestimonials, updateTestimonials, deleteTestimonials} from "../../api-calls/apicalls";
+import { fetchTestimonials, createTestimonials, updateTestimonials, deleteTestimonials } from "../../api-calls/apicalls";
+import testi1 from "../../assets/testi1.png";
+import testi2 from "../../assets/testi2.png";
+import testi3 from "../../assets/testi3.png";
 
 function TestimonialManagement() {
     const [windowWidth, setWindowWidth] = useState();
     const [name, setName] = useState("");
-    const [userName, setUserName] = useState("");
-    const [dbImage, setDbImage] = useState("");
-    const [image, setImage] = useState("");
-    const [description, setDescription] = useState("");
-    const [profession, setProfession] = useState("");
+    const [userNames, setUserNames] = useState([]);
+    const [images, setImages] = useState([testi1, testi2, testi3]);
+    // const [image, setImage] = useState("");
+    const [descriptions, setDescriptions] = useState([]);
+    const [professions, setProfessions] = useState([]);
     const [update, setUpdate] = useState(false)
     const [showCreate, setShowCreate] = useState(false);
     const [testimonialId, setTestimonialId] = useState("")
-    const[testimonials,setTestimonials]= useState([])
+    const [testimonials, setTestimonials] = useState([])
 
     const updateWindowWidth = () => {
         setWindowWidth(window.innerWidth);
@@ -34,15 +37,22 @@ function TestimonialManagement() {
     };
 
     const handleCreate = async () => {
-        const addData = new FormData()
-        addData.append("name", name)
-        addData.append("user_name", userName)
-        addData.append("description", description)
-        addData.append("profession", profession)
-        addData.append("testimonial", image)
 
-        const createdData = await createTestimonials(addData)
-        if (createdData.success==="yes") {
+        let addData = []
+
+        if (userNames.length == descriptions.length && descriptions.length == professions.length) {
+            userNames.forEach((_, index) => {
+                addData.push({
+                    user_name: userNames[index],
+                    description: descriptions[index],
+                    profession: professions[index]
+
+                })
+            })
+        }
+        // console.log("rrr",addData)
+        const createdData = await createTestimonials({ name: name, user_details: JSON.stringify(addData) })
+        if (createdData.success === "yes") {
             alert("testimonial created")
             handleClose()
             window.location.reload()
@@ -50,16 +60,22 @@ function TestimonialManagement() {
     }
 
     const handleUpdate = async () => {
-        const updateData = new FormData()
-        updateData.append("testimonial_id",testimonialId)
-        updateData.append("name", name)
-        updateData.append("user_name", userName)
-        updateData.append("description", description)
-        updateData.append("profession", profession)
-        updateData.append("testimonial", image)
 
-        const updatedData = await updateTestimonials(updateData)
-        if (updatedData.success==="yes") {
+        let updateData = []
+
+        if (userNames.length == descriptions.length && descriptions.length == professions.length) {
+            userNames.forEach((_, index) => {
+                updateData.push({
+                    user_name: userNames[index],
+                    description: descriptions[index],
+                    profession: professions[index]
+
+                })
+            })
+        }
+
+        const updatedData = await updateTestimonials({ testimonial_id: testimonialId, name: name, user_details: JSON.stringify(updateData) })
+        if (updatedData.success === "yes") {
             alert("testimonial updated")
             handleClose()
             window.location.reload()
@@ -69,35 +85,35 @@ function TestimonialManagement() {
     const handleDelete = async (id) => {
         const deleteData = { testimonial_id: id }
         const deletedData = await deleteTestimonials(deleteData)
-        if (deletedData.success==="yes") {
-          
-          alert("testimonial deleted successfully")
-          window.location.reload()
+        if (deletedData.success === "yes") {
+
+            alert("testimonial deleted successfully")
+            window.location.reload()
         }
-      }
+    }
 
     useEffect(() => {
 
         setWindowWidth(window.innerWidth);
         window.addEventListener("resize", updateWindowWidth);
         const fetcher = async () => {
-           
+
             let testimonials = await fetchTestimonials();
-           
+
             setTestimonials([...testimonials]);
 
         };
 
         fetcher();
-     
+
 
         return () => {
             window.removeEventListener("resize", updateWindowWidth);
-            
+
         };
     }, []);
 
-  
+
 
     return (
         <div>
@@ -107,7 +123,7 @@ function TestimonialManagement() {
             <div className="row">
                 {windowWidth > 768 && <Sidebar activeOption="testimonial-management" />}
                 <div className="col-md-10 p-4">
-                    <div className="d-flex justify-content-end mb-5">
+                    {/* <div className="d-flex justify-content-end mb-5">
                         <button
                             className="btn "
                             style={{
@@ -123,7 +139,7 @@ function TestimonialManagement() {
                             <AddIcon />
                             <span className="ms-2">create testimonial</span>
                         </button>
-                    </div>
+                    </div> */}
 
 
                     <table className="table mt-1 p-4 w-70 text-center">
@@ -134,7 +150,7 @@ function TestimonialManagement() {
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
-                        {(testimonials && testimonials?.length !== 0 )? (
+                        {(testimonials && testimonials?.length !== 0) ? (
                             testimonials.map((tm, index) => (
                                 <tbody>
                                     <tr>
@@ -149,20 +165,31 @@ function TestimonialManagement() {
                                                     setUpdate(true);
                                                     setTestimonialId(tm?._id)
                                                     setName(tm?.name)
-                                                    setUserName(tm?.user_name)
-                                                    setDbImage(tm?.image)
-                                                    setDescription(tm?.description)
-                                                    setProfession(tm?.profession)
+
+                                                    let tempUserNames = []
+                                                    let tempDescriptions = []
+                                                    let tempProfessions = []
+
+                                                    tm?.user_details?.forEach((ud) => {
+                                                        tempUserNames.push(ud?.user_name)
+                                                        tempDescriptions.push(ud?.description)
+                                                        tempProfessions.push(ud?.profession)
+                                                    })
+
+                                                    setUserNames([...tempUserNames])
+                                                    setDescriptions([...tempDescriptions])
+                                                    setProfessions([...tempProfessions])
+
                                                     setShowCreate(true);
                                                 }}
                                             />
-                                            <DeleteIcon
+                                            {/* <DeleteIcon
                                                 className="text-danger border border-danger cursor-pointer rounded"
                                                 style={{ cursor: "pointer" }}
                                                 onClick={() => {
                                                     handleDelete(tm?._id)
                                                 }}
-                                            />
+                                            /> */}
                                         </th>
                                     </tr>
                                 </tbody>
@@ -193,7 +220,7 @@ function TestimonialManagement() {
                                 class="form-label"
                                 for="name"
                             >
-                                 Name
+                                Name
                             </label>
                             <input
                                 type="text"
@@ -207,48 +234,100 @@ function TestimonialManagement() {
 
                         </div>
 
-                        <div className="form-group mt-4">
-                            <label
-                                class="form-label"
-                                for="user-name"
-                            >
-                                User Name
-                            </label>
-                            <input
-                                type="text"
-                                id="user-name "
-                                value={userName}
-                                className="form-control"
-                                onChange={(e) => {
-                                    setUserName(e.target.value)
-                                }}
-                            />
 
+
+                        <div className="form-group mt-4">
+                            {
+                                images.map((image, index) => (
+                                    <>
+                                        <div className="d-flex justify-content-center">
+                                            <p className="fw-bold">{`Change user number ${index + 1} information`}</p>
+                                        </div>
+                                        <div className="form-group mt-4">
+                                            <label
+                                                class="form-label"
+                                                for="user-name"
+                                            >
+                                                User Name
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="user-name "
+                                                value={userNames[index]}
+                                                className="form-control"
+                                                onChange={(e) => {
+                                                    let tempUserNames = userNames
+                                                    tempUserNames[index] = e.target.value
+                                                    setUserNames([...tempUserNames])
+                                                }}
+                                            />
+
+                                        </div>
+
+                                        <div className="form-group mt-4">
+                                            <label
+                                                class="form-label"
+                                                for="db-testimonial-image"
+                                            >
+                                                Attached Testimonial Images <span className="fw-bold">(you can't change this image from here)</span>
+                                            </label>
+                                            <img
+                                                alt="attached-testimonial-image"
+                                                className="form-control w-25"
+                                                src={image}
+                                                style={{
+                                                    height: index !== 2 ? "25%" : "20%"
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div className="form-group mt-4">
+                                            <label
+                                                class="form-label"
+                                                for="description"
+                                            >
+                                                description
+                                            </label>
+                                            <textarea
+                                                type="text"
+                                                id="description"
+                                                value={descriptions[index]}
+                                                className="form-control"
+                                                onChange={(e) => {
+                                                    let tempDescriptions = descriptions
+                                                    tempDescriptions[index] = e.target.value
+                                                    setDescriptions([...tempDescriptions])
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div className="form-group mt-4">
+                                            <label
+                                                class="form-label"
+                                                for="discounted_price"
+                                            >
+                                                Profession
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="profession"
+                                                value={professions[index]}
+                                                className="form-control"
+                                                onChange={(e) => {
+                                                    let tempProfessions = professions
+                                                    tempProfessions[index] = e.target.value
+                                                    setProfessions([...tempProfessions])
+                                                }}
+                                            />
+                                        </div>
+
+                                        <hr className="mt-4 mb-2" />
+                                    </>
+                                ))
+                            }
                         </div>
 
-                       
-
-                        {
-                            dbImage && (
-                                <div className="form-group mt-4">
-                                    <label
-                                        class="form-label"
-                                        for="db-testimonial-image"
-                                    >
-                                        Attached Testimonial Image
-                                    </label>
-                                    <img
-
-                                        alt="db-testimonial-image"
-                                        className="form-control"
-                                        src={dbImage}
-                                    />
-
-                                </div>
-                            )
-                        }
-
-                        <div className="form-group mt-4">
+                        {/* <div className="form-group mt-4">
                             <label
                                 class="form-label"
                                 for="image"
@@ -264,52 +343,10 @@ function TestimonialManagement() {
                                 }}
                             />
 
-                        </div>
+                        </div> */}
 
-                        <div className="form-group mt-4">
-                            <label
-                                class="form-label"
-                                for="description"
-                            >
-                               description
-                            </label>
-                            <textarea
-                                type="text"
-                                id="description"
-                                value={description}
-                                className="form-control"
-                                onChange={(e) => {
-                                  
-                                    setDescription(e.target.value)
-                                }}
-                            />
-
-                        </div>
-
-                        <div className="form-group mt-4">
-                            <label
-                                class="form-label"
-                                for="discounted_price"
-                            >
-                                Profession
-                            </label>
-                            <input
-                                type="text"
-                                id="profession"
-                                value={profession}
-                                className="form-control"
-                                onChange={(e) => {
-                                    
-                                    setProfession(e.target.value)
-                                }}
-                            />
-
-                        </div>
-
-                      
 
                     </div>
-
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
@@ -322,19 +359,16 @@ function TestimonialManagement() {
                     <Button
                         variant="primary"
                         onClick={() => {
-
-                            { update ? handleUpdate() : handleCreate() }
+                            {
+                                update ? handleUpdate() :
+                                    handleCreate()
+                            }
                         }}
                     >
                         {update ? "Update" : "Create"}
                     </Button>
                 </Modal.Footer>
             </Modal>
-
-
-
-
-
         </div>
     )
 }

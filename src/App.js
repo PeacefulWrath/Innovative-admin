@@ -19,12 +19,21 @@ import TrainingModule from "./components/trainingModule/trainingModule";
 import ChooseUsManagement from "./components/chooseUs/chooseUs";
 import TestimonialManagement from "./components/testimonial/testimonial";
 import ServiceManagement from "./components/serviceManagement/serviceManagement";
+import PartnerManagement from "./components/partnerManagement/partnerManagement";
+import Login from "./components/login/login";
+import { useLogin } from "./context/loginContext";
+
 
 function App() {
+  const{loginValidity}=useLogin()
   return (
-    <Router>
+    <>
+   {/* {loginValidity===false && <Login/>}
+   {loginValidity===true&& */}
+   <Router>
     <Routes>
-    <Route exact path="/" element={<Dashboard />} />
+      <Route exact path="/" element={<Login />} />
+      {/* <Route exact path="/" element={<Dashboard />} /> */}
       <Route exact path="/dashboard" element={<Dashboard />} />
       <Route exact path="/file-upload-temp-editor" element={< FileUploadTempEditor/>} />
       <Route exact path="/mcq-temp-editor" element={< McqTemplateEditor/>} />
@@ -44,8 +53,11 @@ function App() {
       <Route path="/choose-us-management" element={<ChooseUsManagement/>} />
       <Route path="/testimonial-management" element={<TestimonialManagement/>} />
       <Route path="/service-management" element={<ServiceManagement/>} />
+      <Route path="/partner-management" element={<PartnerManagement/>} />
     </Routes>
-  </Router>
+   </Router>
+   {/* } */}
+   </>
   );
 }
 

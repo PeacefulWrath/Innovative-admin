@@ -10,23 +10,25 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { Modal, Button } from "react-bootstrap";
 import {
-  createFaqs,
-  fetchFaqs,
-  updateFaqs,
-  deleteFaqs
+createPartners,
+updatePartners,
+deletePartners,
+fetchPartners
 } from "../../api-calls/apicalls";
-import { useLogin } from '../../context/loginContext'
 
-function FaqManagement() {
+
+function PartnerManagement() {
   const [windowWidth, setWindowWidth] = useState();
-  const [faqs, setFaqs] = useState([])
-  const [question, setQuestion] = useState("")
-  const [answer, setAnswer] = useState("")
+  const [partners, setPartners] = useState([])
+  
   const [name, setName] = useState("")
+  const [image, setImage] = useState("")
+  const [dbImage, setDbImage] = useState("")
+
   const [update,setUpdate]=useState(false)
   const[showModal,setShowModal]=useState(false)
-  const [faqId,setFaqId]=useState("")
-  const { loginValidity, setLoginValidity } = useLogin()
+
+  const [partnerId,setPartnerId]=useState("")
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
@@ -37,36 +39,30 @@ function FaqManagement() {
   };
 
   const handleCreate = async () => {
-    const faqData = {
-      name:name,
-      question: question,
-      answer: answer,
-
-    }
-    const createdData = await createFaqs(faqData)
+    const addData = new FormData()
+    addData.append("name",name)
+    addData.append("partner",image)
+    const createdData = await createPartners(addData)
     if (createdData) {
       window.location.reload()
     }
   }
 
   const handleUpdate=async()=>{
-    const faqData = {
-      name: name,
-      question: question,
-      answer:answer,
-      faq_id: faqId
-    }
-
+    const updateData = new FormData()
+    updateData.append("name",name)
+    updateData.append("partner_id",partnerId)
+    updateData.append("partner",image)
        
-    const updatedData = await updateFaqs(faqData)
+    const updatedData = await updatePartners(updateData)
     if (updatedData) {
       window.location.reload()
     }
   }
 
   const handleDelete=async(id)=>{
-    const deleteData={faq_id:id}
-    const deletedData=await deleteFaqs(deleteData)
+    const deleteData={partner_id:id}
+    const deletedData=await deletePartners(deleteData)
     if(deletedData){
        
    
@@ -82,8 +78,8 @@ function FaqManagement() {
     window.addEventListener("resize", updateWindowWidth);
 
     const fetcher = async () => {
-        let tempFaqsData = await fetchFaqs();
-        setFaqs([...tempFaqsData]);
+        let tempPartnersData = await fetchPartners();
+        setPartners([...tempPartnersData]);
     };
 
     fetcher();
@@ -93,7 +89,6 @@ function FaqManagement() {
     };
   }, []);
 
-  if (loginValidity && localStorage.getItem("token")) {
   return (
     <>
       <Nav />
@@ -101,7 +96,7 @@ function FaqManagement() {
 
       <div className="row">
         {windowWidth > 768 && (
-          <Sidebar activeOption="faq-management" />
+          <Sidebar activeOption="partner-management" />
         )}
         <div className="col-md-10 p-4">
 
@@ -125,7 +120,7 @@ function FaqManagement() {
 
           <div className="d-flex row">
             <div className="col fw-bold">
-              {`Faqs(${faqs.length})`}
+              {`Partners(${partners.length})`}
             </div>
             <div className="col d-flex">
               <div className="input-group mb-3">
@@ -157,11 +152,11 @@ function FaqManagement() {
                 <th scope="col">Action</th>
               </tr>
             </thead>
-            {faqs.length !== 0 && faqs.map((faq, ind) => (
+            {partners.length !== 0 && partners.map((part, ind) => (
               <tbody>
                 <tr >
                   <th scope="col">{ind + 1}</th>
-                  <th scope="col"> {faq?.name}</th>
+                  <th scope="col"> {part?.name}</th>
 
                   <th scope="col ">
                     <CreateIcon
@@ -169,18 +164,18 @@ function FaqManagement() {
                       style={{ cursor: "pointer" }}
                       onClick={() => {
                          setUpdate(true)
-                         setName(faq?.name)
-                         setQuestion(faq?.question)
-                         setAnswer(faq?.answer)
+                         setName(part?.name)
+                        setDbImage(part?.image)
+                        
                          setShowModal(true)
-                         setFaqId(faq?._id)
+                         setPartnerId(part?._id)
                       }}
                     />
                     <DeleteIcon
                       className="text-danger border border-danger cursor-pointer rounded"
                       style={{ cursor: "pointer" }}
                       onClick={() => {
-                         handleDelete(faq?._id)
+                         handleDelete(part?._id)
                       }}
                     />
                   </th>
@@ -198,7 +193,7 @@ function FaqManagement() {
       <Modal show={showModal} onHide={handleClose} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            {update ? "Update Faqs" : "Add Faqs"}
+            {update ? "Update Partners" : "Add Partners"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -216,28 +211,27 @@ function FaqManagement() {
               />
             </div>
 
-            <div className="mb-2">
-              <label className="pb-1">Question</label>
-              <input
-                type="text"
+            {dbImage&&(
+              <div className="mb-2">
+              <label className="pb-1">Attached Image</label>
+              <img
+             
                 className="form-control"
-                placeholder="Question"
-                value={question}
-                onChange={(e) => {
-                  setQuestion(e.target.value);
-                }}
+                alt="attached-image"
+               src={dbImage}
               />
             </div>
+            )}
 
             <div className="mb-2">
-              <label className="pb-1">Answer</label>
+              <label className="pb-1">{update?"Change Image":"Image"}</label>
               <input
-                type="text"
+                type="file"
                 className="form-control"
-                placeholder="Answer"
-                value={answer}
+                placeholder="Image"
+              
                 onChange={(e) => {
-                  setAnswer(e.target.value);
+                  setImage(e.target.files[0]);
                 }}
               />
             </div>
@@ -269,11 +263,7 @@ function FaqManagement() {
 
 
 
-  )}else {
-    return (<>
-      <h1>Page Not Found</h1>
-    </>)
-  }
+  )
 }
 
-export default FaqManagement
+export default PartnerManagement

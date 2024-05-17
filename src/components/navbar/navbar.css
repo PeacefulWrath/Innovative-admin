@@ -22,6 +22,9 @@
 .headernavbar{
     border-bottom: 2px solid black;
 }
+.account_icon{
+    cursor: pointer;
+}
 
 @media screen and (max-width: 768px){
     #navLargeScreenBar{
@@ -40,3 +43,4 @@
         display: contents;
     }
 }
+

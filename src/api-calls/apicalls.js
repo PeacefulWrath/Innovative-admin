@@ -1,4 +1,6 @@
 import axios from "axios";
+const token=localStorage.getItem("token")
+
 
 export const fetchTemplates = async () => {
     let templatesData = [];
@@ -576,13 +578,19 @@ export const createFaqs = async (faqData) => {
 
 export const fetchFaqs = async () => {
     let faqsData = [];
+    // console.log("fetch faq")
     try {
-        const response = await axios.get(
-            `${process.env.REACT_APP_BASE_URL}/api/faq`
-        );
+        const response = await axios({
+            method:"get",
+            url:`${process.env.REACT_APP_BASE_URL}/api/faq`,
+            headers:{
+            authorization: `Bearer ${token}`
+            }
+    });
         faqsData = response.data.allFaqData;
     } catch (error) {
         console.log("err", error);
+        faqsData =error?.response?.data
     } finally {
         return faqsData;
     }
@@ -1079,7 +1087,7 @@ export const createTestimonials = async (addData) => {
                     url: `${process.env.REACT_APP_BASE_URL}/api/testimonial`,
                     data: addData,
                     headers: {
-                        "Content-Type": "multipart/form-data",
+                        "Content-Type": "application/json",
                     }
                 })
             .then((res) => {
@@ -1118,7 +1126,7 @@ export const updateTestimonials = async (updateData) => {
                     url: `${process.env.REACT_APP_BASE_URL}/api/testimonial`,
                     data: updateData,
                     headers: {
-                        "Content-Type": "multipart/form-data",
+                        "Content-Type": "application/json",
                     }
                 })
             .then((res) => {
@@ -1238,5 +1246,116 @@ export const deleteServices = async (deleteData) => {
         console.log("can not delete services");
     } finally {
         return serviceData;
+    }
+};
+
+export const createPartners = async (partnerData) => {
+    let tempPartner = [];
+    try {
+        // console.log("userData", userData);
+
+        await axios
+            (
+                {
+                    method: "post",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/partner`,
+                    data: partnerData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+            .then((res) => {
+                tempPartner = res.data;
+            });
+    } catch (error) {
+        console.log("can not save partner");
+    } finally {
+        return tempPartner;
+    }
+};
+
+export const fetchPartners = async () => {
+    let partnersData = [];
+    try {
+        const response = await axios.get(
+            `${process.env.REACT_APP_BASE_URL}/api/partner`
+        );
+        partnersData = response.data.allPartnerData;
+    } catch (error) {
+        console.log("err", error);
+    } finally {
+        return partnersData;
+    }
+}
+
+export const updatePartners = async (faqData) => {
+    let tempPartner = [];
+    try {
+        // console.log("userData", userData);
+
+        await axios
+            (
+                {
+                    method: "put",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/partner/`,
+                    data: faqData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+            .then((res) => {
+                tempPartner = res.data;
+            });
+    } catch (error) {
+        console.log("can not update partner");
+    } finally {
+        return tempPartner;
+    }
+};
+
+export const deletePartners = async (deleteData) => {
+    let tempPartner = [];
+    try {
+
+
+        await axios
+            (
+                {
+                    method: "delete",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/partner`,
+                    data: deleteData
+
+                })
+            .then((res) => {
+                tempPartner = res.data;
+            });
+    } catch (error) {
+        console.log("can not delete partner");
+    } finally {
+        return tempPartner;
+    }
+};
+
+export const logIn = async (userData) => {
+    let tempUsers = [];
+    try {
+        console.log("userData", userData);
+        await axios
+            (
+                {
+                    method: "post",
+                    url: `${process.env.REACT_APP_BASE_URL}/api/user/signin`,
+                    data: userData,
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
+            .then((res) => {
+                tempUsers = res.data;
+            });
+    } catch (error) {
+        tempUsers=error?.response?.data
+    } finally {
+        return tempUsers;
     }
 };
