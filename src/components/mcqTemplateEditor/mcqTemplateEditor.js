@@ -17,6 +17,7 @@ import {
   deleteMcqTemplates
 } from "../../api-calls/apicalls";
 
+import { useNavigate } from "react-router-dom";
 
 
 function McqTemplateEditor() {
@@ -42,6 +43,8 @@ function McqTemplateEditor() {
   const [dbExplainations, setDbExplainations] = useState([])
   const [dbTextAnswers, setDbTextAnswers] = useState([])
   const [dbQuestions, setDbQuestions] = useState([])
+
+  const navigate = useNavigate();
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
@@ -230,11 +233,24 @@ function McqTemplateEditor() {
     })
 
     let createdData = await createMcqTemplates(addData);
-    let tempCreatedData = [];
-    tempCreatedData.push(createdData);
-    setMcqTemplates([...mcqTemplates, ...tempCreatedData]);
-    handleClose();
-    window.location.reload();
+    // let tempCreatedData = [];
+    // tempCreatedData.push(createdData);
+    // setMcqTemplates([...mcqTemplates, ...tempCreatedData]);
+    // handleClose();
+    // window.location.reload();
+
+    if (
+      createdData?.success == "no" &&
+      createdData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (createdData?.success == "no") {
+      alert("system error try again leter");
+    } else if (createdData?.success == "yes") {
+      alert("mcq template created successfully")
+      handleClose()
+      window.location.reload();
+    }
   };
 
   const handleMarks = async (e, operation, ind) => {
@@ -252,13 +268,26 @@ function McqTemplateEditor() {
   const handleDelete=async(id)=>{
     const deleteData={mcqDocId:id}
        const deletedData=await deleteMcqTemplates(deleteData)
-       if(deletedData){
-          
-      
-         alert("template deleted successfully")
-
-         window.location.reload()
-       }
+       if (
+        deletedData?.success == "no" &&
+        deletedData?.message === "jwt expired"
+      ) {
+        return navigate("/");
+      } else if (deletedData?.success == "no") {
+        alert("system error try again leter");
+      } else if (deletedData?.success == "yes") {
+        // let tempTemplates = templates
+        // tempTemplates.forEach((temp, ind) => {
+        //   if (temp?._id == id) {
+        //     tempTemplates.splice(ind, 1)
+        //   }
+        // })
+        // setTemplates([...tempTemplates])
+  
+        alert("mcq template deleted successfully")
+        window.location.reload();
+      }
+  
   }
 
   const handleExplainations = async (e, operation, ind) => {
@@ -455,11 +484,23 @@ function McqTemplateEditor() {
 
 
     const updatedData=await updateMcqTemplates(updateData)
-    if(updatedData){
-    handleClose();
-    setMcqsCnt([])
-    setUpdate(false)
-    window.location.reload();
+    // if(updatedData){
+    // handleClose();
+    // setMcqsCnt([])
+    // setUpdate(false)
+    // window.location.reload();
+    // }
+
+    if (
+      updatedData?.success == "no" &&
+      updatedData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (updatedData?.success == "no") {
+      alert("system error try again leter");
+    } else if (updatedData?.success == "yes") {
+      alert("mcq template updated successfully")
+      window.location.reload();
     }
 
   }
@@ -484,7 +525,10 @@ function McqTemplateEditor() {
 
     const fetcher = async () => {
       let mcqTemplatesData = await fetchMcqTemplates();
-      setMcqTemplates([...mcqTemplatesData]);
+      if (mcqTemplatesData?.message === "jwt expired") {
+        return navigate("/");
+      } else {
+      setMcqTemplates([...mcqTemplatesData]);}
     };
 
     fetcher();

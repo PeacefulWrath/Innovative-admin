@@ -15,7 +15,7 @@ updatePartners,
 deletePartners,
 fetchPartners
 } from "../../api-calls/apicalls";
-
+import { useNavigate } from "react-router-dom";
 
 function PartnerManagement() {
   const [windowWidth, setWindowWidth] = useState();
@@ -29,7 +29,7 @@ function PartnerManagement() {
   const[showModal,setShowModal]=useState(false)
 
   const [partnerId,setPartnerId]=useState("")
-
+  const navigate = useNavigate();
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
   };

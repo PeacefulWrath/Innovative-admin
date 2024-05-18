@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import FileUploadTempEditor from "./components/fileUploadTempEditor/fileUploadTempEditor";
 import Dashboard from "./components/dashboard/dashboard";
@@ -26,6 +26,9 @@ import { useLogin } from "./context/loginContext";
 
 function App() {
   const{loginValidity}=useLogin()
+  useEffect(()=>{
+// console.log("appp")
+  },[])
   return (
     <>
    {/* {loginValidity===false && <Login/>}

@@ -11,7 +11,7 @@ import CreateIcon from "@mui/icons-material/Create";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from '@mui/icons-material/Close';
 import { createCategories, fetchMcqTemplates, fetchQuizTemplates, fetchTemplates, fetchCategories, updateCategories, deleteCategories } from "../../api-calls/apicalls";
-
+import { useNavigate } from "react-router-dom";
 
 function CategoryManagement() {
     const [windowWidth, setWindowWidth] = useState();
@@ -35,6 +35,7 @@ function CategoryManagement() {
     const [update, setUpdate] = useState(false)
     const [showCreate, setShowCreate] = useState(false);
 
+    const navigate = useNavigate();
 
     // const [showFileTempDropdown, setShowFileTempDropdown] = useState(false);
     // const [showQuizTempDropdown, setShowQuizTempDropdown] = useState(false);
@@ -111,13 +112,19 @@ function CategoryManagement() {
         addData.append("name", categoryName)
         addData.append("category", categoryImage)
 
-        const insertedData = await createCategories(addData)
+        const createdData = await createCategories(addData)
 
-        if (insertedData) {
+        if (
+            createdData?.success == "no" &&
+            createdData?.message === "jwt expired"
+          ) {
+            return navigate("/");
+          } else if (createdData?.success == "no") {
+            alert("system error try again leter");
+          } else if (createdData?.success == "yes") {
             alert("category created successfully")
-            handleClose()
-            window.location.reload()
-        }
+            window.location.reload();
+          }
 
     }
 
@@ -155,21 +162,33 @@ function CategoryManagement() {
 
         const updatedData = await updateCategories(updateData)
 
-        if (updatedData) {
+        if (
+            updatedData?.success == "no" &&
+            updatedData?.message === "jwt expired"
+          ) {
+            return navigate("/");
+          } else if (updatedData?.success == "no") {
+            alert("system error try again leter");
+          } else if (updatedData?.success == "yes") {
             alert("category updated successfully")
-            handleClose()
-            window.location.reload()
-        }
+            window.location.reload();
+          }
     }
 
     const handleDelete = async (id) => {
         const deleteData = { cat_id: id }
         const deletedData = await deleteCategories(deleteData)
-        if (deletedData) {
-
-            alert("template deleted successfully")
-            window.location.reload()
-        }
+        if (
+            deletedData?.success == "no" &&
+            deletedData?.message === "jwt expired"
+          ) {
+            return navigate("/");
+          } else if (deletedData?.success == "no") {
+            alert("system error try again leter");
+          } else if (deletedData?.success == "yes") {
+            alert("category deleted successfully")
+            window.location.reload();
+          }
     }
 
     useEffect(() => {
@@ -187,7 +206,11 @@ function CategoryManagement() {
             // setMcqTemplates([...mcqsData]);
 
             let categories = await fetchCategories();
-            setCategories([...categories]);
+            if (categories?.message === "jwt expired") {
+                return navigate("/");
+              } else {
+               setCategories([...categories]);
+              }
 
         };
 

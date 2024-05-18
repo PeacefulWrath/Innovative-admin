@@ -29,7 +29,6 @@ function Dashboard() {
     };
   }, [])
 
-  if (loginValidity && localStorage.getItem("token")) {
     return (
       <div>
         <Nav />
@@ -108,11 +107,8 @@ function Dashboard() {
         </div>
       </div>
     )
-  }else {
-    return (<>
-      <h1>Page Not Found</h1>
-    </>)
-  }
+  
+  
 }
 
 export default Dashboard

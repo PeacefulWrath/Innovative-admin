@@ -15,7 +15,7 @@ import {
   updateCus,
   deleteCus
 } from "../../api-calls/apicalls";
-
+import { useNavigate } from "react-router-dom";
 
 function ChooseUsManagement() {
   const [windowWidth, setWindowWidth] = useState();
@@ -26,6 +26,8 @@ function ChooseUsManagement() {
   const [update,setUpdate]=useState(false)
   const[showModal,setShowModal]=useState(false)
   const [cusId,setCusId]=useState("")
+
+  const navigate = useNavigate();
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
@@ -43,8 +45,16 @@ function ChooseUsManagement() {
 
     }
     const createdData = await createCus(cusData)
-    if (createdData.success==="yes") {
-      window.location.reload()
+    if (
+      createdData?.success == "no" &&
+      createdData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (createdData?.success == "no") {
+      alert("system error try again leter");
+    } else if (createdData?.success == "yes") {
+      alert("choose us item created successfully")
+      window.location.reload();
     }
   }
 
@@ -58,20 +68,32 @@ function ChooseUsManagement() {
 
        
     const updatedData = await updateCus(cusData)
-    if (updatedData.success=="yes") {
-      window.location.reload()
+    if (
+      updatedData?.success == "no" &&
+      updatedData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (updatedData?.success == "no") {
+      alert("system error try again leter");
+    } else if (updatedData?.success == "yes") {
+      alert("choose us item updated successfully")
+      window.location.reload();
     }
   }
 
   const handleDelete=async(id)=>{
     const deleteData={cus_id:id}
     const deletedData=await deleteCus(deleteData)
-    if(deletedData?.success==="yes"){
-       
-   
-      alert("cus deleted successfully")
-
-      window.location.reload()
+    if (
+      deletedData?.success == "no" &&
+      deletedData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (deletedData?.success == "no") {
+      alert("system error try again leter");
+    } else if (deletedData?.success == "yes") {
+      alert("choose us item deleted successfully")
+      window.location.reload();
     }
   }
 
@@ -81,8 +103,13 @@ function ChooseUsManagement() {
     window.addEventListener("resize", updateWindowWidth);
 
     const fetcher = async () => {
+   
         let tempCusData = await fetchCus();
+        if (tempCusData?.message === "jwt expired") {
+          return navigate("/");
+        } else {
         setChooseUsItems([...tempCusData]);
+      }
     };
 
     fetcher();

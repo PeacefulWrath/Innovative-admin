@@ -4,7 +4,7 @@ import { logIn } from '../../api-calls/apicalls';
 import { useNavigate  } from "react-router-dom";
 
 function Login() {
-  const { loginValidity, setLoginValidity } = useLogin()
+  // const { loginValidity, setLoginValidity } = useLogin()
   const [password,setPassword]=useState([])
   const [email,setEmail]=useState([])
 
@@ -17,7 +17,7 @@ function Login() {
           alert(loginData?.message)
         }else if(loginData.success==true){
           // console.log("login successfull")
-          setLoginValidity(true)
+          // setLoginValidity(true)
           localStorage.setItem("token",loginData.token)
           navigate("/dashboard");
         }

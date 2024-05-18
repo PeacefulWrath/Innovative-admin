@@ -16,7 +16,7 @@ import {
   updateTemplates,
   deleteTemplates
 } from "../../api-calls/apicalls";
-
+import { useNavigate } from "react-router-dom";
 
 function FileUploadTempEditor() {
   const [windowWidth, setWindowWidth] = useState();
@@ -37,6 +37,8 @@ function FileUploadTempEditor() {
   const [dbLinks, setDbLinks] = useState([]);
   const [templateId, setTemplateId] = useState("");
   const [dbImage, setDbImage] = useState("")
+
+  const navigate = useNavigate();
 
   const handleClose = () => {
     setShowModal(false);
@@ -186,9 +188,21 @@ function FileUploadTempEditor() {
     // let tempCreatedData = [];
     // tempCreatedData.push(createdData);
     // setTemplates([...templates, ...tempCreatedData]);
-    if (createdData) {
+    // if (createdData) {
       // handleClose();
       // window.location.reload()
+    // }
+
+    if (
+      createdData?.success == "no" &&
+      createdData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (createdData?.success == "no") {
+      alert("system error try again leter");
+    } else if (createdData?.success == "yes") {
+      alert("file template created successfully")
+      window.location.reload();
     }
   };
 
@@ -322,25 +336,43 @@ function FileUploadTempEditor() {
 
     let updatedData = await updateTemplates(updateData);
 
-    if (updatedData) {
-      handleClose();
-      window.location.reload()
+    if (
+      updatedData?.success == "no" &&
+      updatedData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (updatedData?.success == "no") {
+      alert("system error try again leter");
+    } else if (updatedData?.success == "yes") {
+      alert("file template updated successfully")
+      window.location.reload();
     }
   };
 
   const handleDelete = async (id) => {
     const deleteData = { templateId: id }
     const deletedData = await deleteTemplates(deleteData)
-    if (deletedData) {
-      let tempTemplates = templates
-      tempTemplates.forEach((temp, ind) => {
-        if (temp?._id == id) {
-          tempTemplates.splice(ind, 1)
-        }
-      })
-      setTemplates([...tempTemplates])
-      alert("template deleted successfully")
+    if (
+      deletedData?.success == "no" &&
+      deletedData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (deletedData?.success == "no") {
+      alert("system error try again leter");
+    } else if (deletedData?.success == "yes") {
+      // let tempTemplates = templates
+      // tempTemplates.forEach((temp, ind) => {
+      //   if (temp?._id == id) {
+      //     tempTemplates.splice(ind, 1)
+      //   }
+      // })
+      // setTemplates([...tempTemplates])
+
+      alert("faq deleted successfully")
+      window.location.reload();
     }
+
+    
   }
 
   useEffect(() => {
@@ -349,7 +381,10 @@ function FileUploadTempEditor() {
 
     const fetcher = async () => {
       let templatesData = await fetchTemplates();
-      setTemplates([...templatesData]);
+      if (templatesData?.message === "jwt expired") {
+        return navigate("/");
+      } else {
+      setTemplates([...templatesData]);}
     };
 
     fetcher();

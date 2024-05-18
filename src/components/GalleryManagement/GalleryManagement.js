@@ -16,7 +16,7 @@ import {
   deleteGallery
 
 } from "../../api-calls/apicalls";
-
+import { useNavigate } from "react-router-dom";
 
 
 function GalleryManagement() {
@@ -29,7 +29,7 @@ function GalleryManagement() {
   const [update, setUpdate] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [galleryId,setGalleryId]=useState("")
-
+  const navigate = useNavigate();
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
   };
@@ -46,8 +46,16 @@ function GalleryManagement() {
     galleryData.append("category", category)
 
     const createdData = await createGallery(galleryData)
-    if (createdData) {
-      window.location.reload()
+    if (
+      createdData?.success == "no" &&
+      createdData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (createdData?.success == "no") {
+      alert("system error try again leter");
+    } else if (createdData?.success == "yes") {
+      alert("gallery template created successfully")
+      window.location.reload();
     }
   }
 
@@ -62,21 +70,42 @@ function GalleryManagement() {
 
     const updatedData = await updateGallery(galleryData)
 
-    if (updatedData) {
-      window.location.reload()
+    if (
+      updatedData?.success == "no" &&
+      updatedData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (updatedData?.success == "no") {
+      alert("system error try again leter");
+    } else if (updatedData?.success == "yes") {
+      alert("gallery template updated successfully")
+      window.location.reload();
     }
   }
 
   const handleDelete=async(id)=>{
     const deleteData={gallery_id:id}
     const deletedData=await deleteGallery(deleteData)
-    if(deletedData){
-       
-   
-      alert("gallery deleted successfully")
+    if (
+      deletedData?.success == "no" &&
+      deletedData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (deletedData?.success == "no") {
+      alert("system error try again leter");
+    } else if (deletedData?.success == "yes") {
+      // let tempTemplates = templates
+      // tempTemplates.forEach((temp, ind) => {
+      //   if (temp?._id == id) {
+      //     tempTemplates.splice(ind, 1)
+      //   }
+      // })
+      // setTemplates([...tempTemplates])
 
-      window.location.reload()
+      alert("gallery template deleted successfully")
+      window.location.reload();
     }
+
   }
 
   useEffect(() => {
@@ -85,7 +114,10 @@ function GalleryManagement() {
 
     const fetcher = async () => {
         let tempGalleriesData = await fetchGalleries();
-        setGalleries([...tempGalleriesData]);
+        if (tempGalleriesData?.message === "jwt expired") {
+          return navigate("/");
+        } else {
+        setGalleries([...tempGalleriesData]);}
     };
 
     fetcher();
