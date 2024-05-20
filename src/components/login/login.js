@@ -27,12 +27,16 @@ function Login() {
 
     const verifier = async () => {
 
+      if(localStorage.getItem("token"))
+{
       const verifiedTokenData = await verifyToken()
       // console.log("rrr",verifiedTokenData?.message)
       if (verifiedTokenData?.message == "jwt expired") {
         setShowNotFound(false)
       } else {
         setShowNotFound(true)
+      }}else{
+        setShowNotFound(false)
       }
     }
 
