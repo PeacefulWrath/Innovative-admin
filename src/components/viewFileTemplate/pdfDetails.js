@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Watermark from "./Watermark";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Nav from '../navbar/navbar';
 import Sidebar from '../sidebar/sidebar';
 import logo from "../../assets/logo.png"
+import { verifyToken } from "../../api-calls/apicalls";
 
 function PdfDetails() {
   const [numPages, setNumPages] = useState(null);
@@ -17,6 +18,8 @@ function PdfDetails() {
 
   const location = useLocation();
   const { template, clickedPdf } = location.state;
+
+  const navigate=useNavigate()
 
   pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -56,14 +59,29 @@ function PdfDetails() {
 
   useEffect(() => {
 
+    setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", updateWindowWidth);
+
+
+    const verifier=async()=>{
+      const verifiedTokenData=await verifyToken()
+
+      if(verifiedTokenData?.message === "jwt expired") {
+        return navigate("/");
+      } else {
+          return;
+      }
+    }
+    
+     verifier()
+
     template?.template_pdfs?.forEach((pdf) => {
       if (pdf._id === clickedPdf._id) {
         setPdfUrl(pdf?.url)
       }
     })
 
-    setWindowWidth(window.innerWidth);
-    window.addEventListener("resize", updateWindowWidth);
+   
 
     // const container = document.querySelector(".pdf-container");
     // const handleContextMenu = (event) => {

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Link } from "react-router-dom";
 import Nav from "../navbar/navbar";
 import Sidebar from "../sidebar/sidebar";
 import "./viewMcqTemplate.css";
@@ -9,7 +8,7 @@ import dotted from "../../assets/Dotted.png";
 import line from "../../assets/Line.png";
 import rightPng from "../../assets/Right.png";
 import wrongPng from "../../assets/Wrong.png";
-import { updateMcqTemplatesAttempts } from "../../api-calls/apicalls";
+import { updateMcqTemplatesAttempts, verifyToken } from "../../api-calls/apicalls";
 
 function ViewMcqTemplate() {
   const location = useLocation();
@@ -23,7 +22,7 @@ function ViewMcqTemplate() {
   const [showAns, setShowAns] = useState(false)
   const [sign, setSign] = useState([])
   const [answered, setAnswered] = useState(false)
-  
+  const navigate=useNavigate()
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
@@ -152,6 +151,18 @@ function ViewMcqTemplate() {
   useEffect(() => {
     setWindowWidth(window.innerWidth);
     window.addEventListener("resize", updateWindowWidth);
+
+    const verifier=async()=>{
+      const verifiedTokenData=await verifyToken()
+
+      if(verifiedTokenData?.message === "jwt expired") {
+        return navigate("/");
+      } else {
+          return;
+      }
+    }
+    
+     verifier()
 
     (!showAns &&
       templateData &&

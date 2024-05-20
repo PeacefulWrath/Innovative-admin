@@ -29,7 +29,9 @@ function PartnerManagement() {
   const[showModal,setShowModal]=useState(false)
 
   const [partnerId,setPartnerId]=useState("")
+
   const navigate = useNavigate();
+  
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
   };
@@ -43,8 +45,17 @@ function PartnerManagement() {
     addData.append("name",name)
     addData.append("partner",image)
     const createdData = await createPartners(addData)
-    if (createdData) {
-      window.location.reload()
+    if (
+      createdData?.success === "no" &&
+      createdData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (createdData?.success === "no") {
+      alert("system error try again leter");
+    } else if (createdData?.success === "yes") {
+      alert("partner created successfully")
+      handleClose()
+      window.location.reload();
     }
   }
 
@@ -55,20 +66,41 @@ function PartnerManagement() {
     updateData.append("partner",image)
        
     const updatedData = await updatePartners(updateData)
-    if (updatedData) {
-      window.location.reload()
+  
+    if (
+      updatedData?.success == "no" &&
+      updatedData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (updatedData?.success == "no") {
+      alert("system error try again leter");
+    } else if (updatedData?.success == "yes") {
+      alert("partner updated successfully")
+      window.location.reload();
     }
   }
 
   const handleDelete=async(id)=>{
     const deleteData={partner_id:id}
     const deletedData=await deletePartners(deleteData)
-    if(deletedData){
-       
-   
-      alert("faq deleted successfully")
+    if (
+      deletedData?.success == "no" &&
+      deletedData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (deletedData?.success == "no") {
+      alert("system error try again leter");
+    } else if (deletedData?.success == "yes") {
+      // let tempTemplates = templates
+      // tempTemplates.forEach((temp, ind) => {
+      //   if (temp?._id == id) {
+      //     tempTemplates.splice(ind, 1)
+      //   }
+      // })
+      // setTemplates([...tempTemplates])
 
-      window.location.reload()
+      alert("partner deleted successfully")
+      window.location.reload();
     }
   }
 
@@ -79,7 +111,11 @@ function PartnerManagement() {
 
     const fetcher = async () => {
         let tempPartnersData = await fetchPartners();
+        if (tempPartnersData?.message === "jwt expired") {
+          return navigate("/");
+        } else {
         setPartners([...tempPartnersData]);
+        }
     };
 
     fetcher();
@@ -110,6 +146,9 @@ function PartnerManagement() {
               }}
               onClick={() => {
                 setUpdate(false);
+                setName("")
+                setImage("")
+                setDbImage("")
                 setShowModal(true);
               }}
             >

@@ -8,7 +8,8 @@ import Sidebar from '../sidebar/sidebar';
 import { fetchUsers } from '../../api-calls/apicalls';
 import AddIcon from "@mui/icons-material/Add";
 import { Modal, Button } from "react-bootstrap";
-import { createUsers,updateUsers,deleteUsers } from "../../api-calls/apicalls";
+import { createUsers, updateUsers, deleteUsers } from "../../api-calls/apicalls";
+import { useNavigate } from 'react-router-dom';
 
 
 function UserManagement() {
@@ -22,7 +23,9 @@ function UserManagement() {
   const [email, setEmail] = useState("")
   const [role, setRole] = useState("")
   const [password, setPassword] = useState("")
-  const[userId,setUserId]=useState("")
+  const [userId, setUserId] = useState("")
+
+  const navigate = useNavigate()
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
@@ -42,12 +45,21 @@ function UserManagement() {
       password: password
     }
     const createdData = await createUsers(userData)
-    if (createdData) {
-      window.location.reload()
+    if (
+      createdData?.success === "no" &&
+      createdData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (createdData?.success === "no") {
+      alert("system error try again leter");
+    } else if (createdData?.success === "yes") {
+      alert("user created successfully")
+      handleClose()
+      window.location.reload();
     }
   }
 
-  const handleUpdate =async () => {
+  const handleUpdate = async () => {
     const userData = {
       first_name: firstName,
       last_name: lastName,
@@ -57,13 +69,21 @@ function UserManagement() {
       user_id: userId
     }
 
-    if(password!==""){
-      userData.password=password
+    if (password !== "") {
+      userData.password = password
     }
-    
+
     const updatedData = await updateUsers(userData)
-    if (updatedData) {
-      window.location.reload()
+    if (
+      updatedData?.success == "no" &&
+      updatedData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (updatedData?.success == "no") {
+      alert("system error try again leter");
+    } else if (updatedData?.success == "yes") {
+      alert("user data updated successfully")
+      window.location.reload();
     }
   }
 
@@ -71,15 +91,27 @@ function UserManagement() {
     setRole(e.target.value)
   }
 
-  const handleDelete=async(id)=>{
-    const deleteData={user_id:id}
-    const deletedData=await deleteUsers(deleteData)
-    if(deletedData){
-       
-   
-      alert("user deleted successfully")
+  const handleDelete = async (id) => {
+    const deleteData = { user_id: id }
+    const deletedData = await deleteUsers(deleteData)
+     if (
+      deletedData?.success == "no" &&
+      deletedData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (deletedData?.success == "no") {
+      alert("system error try again leter");
+    } else if (deletedData?.success == "yes") {
+      // let tempTemplates = templates
+      // tempTemplates.forEach((temp, ind) => {
+      //   if (temp?._id == id) {
+      //     tempTemplates.splice(ind, 1)
+      //   }
+      // })
+      // setTemplates([...tempTemplates])
 
-      window.location.reload()
+      alert("user deleted successfully")
+      window.location.reload();
     }
   }
 
@@ -91,7 +123,11 @@ function UserManagement() {
     const fetcher = async () => {
       let usersData = await fetchUsers();
       // console.log("27", usersData)
+      if (usersData?.message === "jwt expired") {
+        return navigate("/");
+      } else {
       setUsers([...usersData]);
+      }
     };
 
     fetcher();
@@ -186,7 +222,7 @@ function UserManagement() {
                       className="text-danger border border-danger cursor-pointer rounded"
                       style={{ cursor: "pointer" }}
                       onClick={() => {
-                           handleDelete(user?._id)
+                        handleDelete(user?._id)
                       }}
                     />
                   </th>

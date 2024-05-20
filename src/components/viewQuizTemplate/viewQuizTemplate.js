@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Nav from "../navbar/navbar";
 import Sidebar from "../sidebar/sidebar";
@@ -7,6 +7,7 @@ import "./viewQuizTemplate.css";
 import dotted from "../../assets/Dotted.png";
 import line from "../../assets/Line.png";
 import rightPng from "../../assets/Right.png";
+import { verifyToken } from "../../api-calls/apicalls";
 
 
 function ViewMcqTemplate() {
@@ -22,6 +23,7 @@ function ViewMcqTemplate() {
   const [sign, setSign] = useState([])
   const [nextClicked,setNextClicked]=useState([])
 
+  const navigate = useNavigate();
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
@@ -85,10 +87,24 @@ function ViewMcqTemplate() {
   useEffect(() => {
     setWindowWidth(window.innerWidth);
     window.addEventListener("resize", updateWindowWidth);
+
+    const verifier=async()=>{
+      const verifiedTokenData=await verifyToken()
+
+      if(verifiedTokenData?.message === "jwt expired") {
+        return navigate("/");
+      } else {
+          return;
+      }
+    }
+    
+     verifier()
+
+
     !showAns &&
       templateData &&
       templateData?.quizzes?.length !== 0 &&
-      templateData?.quizzes.forEach((temp, ind) => {
+      templateData?.quizzes.forEach((_, ind) => {
         if (ind === templateData?.quizzes.length - 1) {
           document.getElementById(`dotted-${ind}`).style.display = "none";
           document.getElementById(`line-${ind}`).style.display = "none";
@@ -106,12 +122,12 @@ function ViewMcqTemplate() {
   useEffect(() => {
     if (showAns == false) {
       setTimeout(async () => {
-        if(nextClicked[pageNumber-1]!=="clicked"){
-        await handleSaveAndNext();
+        if (nextClicked[pageNumber - 1] !== "clicked") {
+          await handleSaveAndNext();
         }
       }, 10000);
     }
-    
+
   })
 
   return (
@@ -170,7 +186,19 @@ function ViewMcqTemplate() {
               ))}
             </> :
             <>
-              {templateData && <h1 className="">{templateData.paper_name}</h1>}
+              {templateData && 
+              
+              (
+              
+              <>
+              <h1>{templateData?.paper_name}</h1>
+              <img className="w-100" alt="banner" src={templateData?.banner}/>
+              </>
+              )
+              
+              
+              }
+
               {templateData && templateData?.quizzes?.length !== 0 && (
                 <div className="d-flex View_quiz_template_pagination_mainWrapper mt-3">
                   {templateData?.quizzes?.map((_, ind) => (
@@ -205,6 +233,7 @@ function ViewMcqTemplate() {
                   ))}
                 </div>
               )}
+
               <h3 className="mt-5 mb-3">
                 Qustion {pageNumber} of {templateData.quizzes.length}
               </h3>
@@ -259,6 +288,7 @@ function ViewMcqTemplate() {
                     </>
                   ))}
               </div>
+
               {/* {explaination && (
                 <div
                   className="d-flex justify-content-center mt-3"
@@ -267,6 +297,7 @@ function ViewMcqTemplate() {
                   {explaination}
                 </div>
               )} */}
+
               <div className="d-flex justify-content-center mt-5">
                 <button
                   className="btn btn-primary rounded"

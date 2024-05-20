@@ -13,6 +13,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import emailjs from "@emailjs/browser";
 import "./purchaseOrderManagement.css"
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -51,6 +52,8 @@ function PurchaseOrderManagement() {
   const [receiverName, setReceiverName] = useState("")
   const [pOId, setPoId] = useState("")
   const [dbDetails, setDbDetails] = useState([])
+
+  const navigate = useNavigate();
 
   useEffect(() => emailjs.init("ptuqDG8Zl2iuDoPXR"), []);
 
@@ -128,6 +131,7 @@ function PurchaseOrderManagement() {
 
   const handleCreateModalClose = () => {
     setShowCreate(false);
+    window.location.reload()
   };
 
   const handlePdfModalClose = () => {
@@ -174,13 +178,27 @@ function PurchaseOrderManagement() {
 
     const createdData = await createPurchaseOrders(addData)
 
-    if (createdData.success == true) {
-      alert("purchase order created")
+    // if (createdData.success == true) {
+    //   alert("purchase order created")
+    //   setShowCreate(false)
+    //   setShowPdf(true)
+    //   setCompanyLogo(createdData?.insertedData?.company_logo)
+    // }
+    if (
+      createdData?.success === "no" &&
+      createdData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (createdData?.success === "no") {
+      alert("system error try again leter");
+    } else if (createdData?.success === "yes") {
+      alert("purchase order created successfully")
+      // handleClose()
+      // window.location.reload();
       setShowCreate(false)
       setShowPdf(true)
       setCompanyLogo(createdData?.insertedData?.company_logo)
     }
-
 
   }
 
@@ -189,6 +207,7 @@ function PurchaseOrderManagement() {
 
     if (!tempDetails[ind]) {
       tempDetails[ind] = {
+        "description":"",
         "quantity": "",
         "rate": "",
         "discount": "",
@@ -242,14 +261,29 @@ function PurchaseOrderManagement() {
 
     const updatedData = await updatePurchaseOrders(updateData)
 
-    if (updatedData.success == true) {
-      alert("invoice updated")
+    // if (updatedData.success == true) {
+    //   alert("invoice updated")
+    //   setDetails(dbDetails.concat(details))
+    //   setShowCreate(false)
+    //   setShowPdf(true)
+
+    // }
+
+    if (
+      updatedData?.success === "no" &&
+      updatedData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (updatedData?.success === "no") {
+      alert("system error try again leter");
+    } else if (updatedData?.success === "yes") {
+      alert("purchase order updated successfully")
+      // window.location.reload();
       setDetails(dbDetails.concat(details))
       setShowCreate(false)
       setShowPdf(true)
-
+      // setUpdate(false)
     }
-
   }
 
   const handleDelete = async (id) => {
@@ -261,10 +295,30 @@ function PurchaseOrderManagement() {
 
    const deletedData= await deletePurchaseOrders(deleteData)
    
-   if(deletedData){
-    alert("invoice deleted")
-   window.location.reload()
-   }
+  //  if(deletedData){
+  //   alert("invoice deleted")
+  //  window.location.reload()
+  //  }
+
+  if (
+    deletedData?.success == "no" &&
+    deletedData?.message === "jwt expired"
+  ) {
+    return navigate("/");
+  } else if (deletedData?.success == "no") {
+    alert("system error try again leter");
+  } else if (deletedData?.success == "yes") {
+    // let tempTemplates = templates
+    // tempTemplates.forEach((temp, ind) => {
+    //   if (temp?._id == id) {
+    //     tempTemplates.splice(ind, 1)
+    //   }
+    // })
+    // setTemplates([...tempTemplates])
+
+    alert("purchase order deleted successfully")
+    window.location.reload();
+  }
 
 
   }
@@ -294,7 +348,11 @@ function PurchaseOrderManagement() {
 
     const fetcher = async () => {
       let poData = await fetchPurchaseOrders();
-      setPurchaseOrders([...poData]);
+
+      if (poData?.message === "jwt expired") {
+        return navigate("/");
+      } else {
+      setPurchaseOrders([...poData]);}
     };
 
     fetcher();
@@ -305,6 +363,7 @@ function PurchaseOrderManagement() {
 
   useEffect(() => {
     dbDetails.forEach((db, ind) => {
+      document.getElementById(`db-desc-${ind}`).value = db?.quantity
       document.getElementById(`db-qty-${ind}`).value = db?.quantity
       document.getElementById(`db-disc-${ind}`).value = db?.discount
       document.getElementById(`db-rate-${ind}`).value = db?.rate
@@ -329,6 +388,8 @@ function PurchaseOrderManagement() {
               }}
               onClick={() => {
                 setShowCreate(true)
+                setDbDetails([])
+                setUpdate(false)
               }}
             >
               <AddIcon />
@@ -806,7 +867,7 @@ handleDelete(po?._id)
             </div>
             <div className="mt-4">
               <div className="d-flex justify-content-between">
-                <label className="pb-1">Attached Details</label>
+                <label className="pb-1">{update?"Attached Details":""}</label>
               </div>
             </div>
             {dbDetails.length !== 0 &&
@@ -814,8 +875,17 @@ handleDelete(po?._id)
                 <>
 
                   <div className="d-flex mt-2">
-                    <input
+                  <input
                       type="text"
+                      id={`db-desc-${ind}`}
+                      className="form-control"
+                      placeholder="desc"
+                      onChange={(e) => {
+                        handleDbDetails("db-desc", "description", e, ind)
+                      }}
+                    />
+                    <input
+                      type="number"
                       id={`db-qty-${ind}`}
                       className="form-control"
                       placeholder="qty"
@@ -824,7 +894,7 @@ handleDelete(po?._id)
                       }}
                     />
                     <input
-                      type="text"
+                      type="number"
                       id={`db-disc-${ind}`}
                       className="ms-2 form-control"
                       placeholder="discount"
@@ -833,7 +903,7 @@ handleDelete(po?._id)
                       }}
                     />
                     <input
-                      type="text"
+                      type="number"
                       id={`db-rate-${ind}`}
                       className="ms-2 form-control"
                       placeholder="rate"
@@ -842,7 +912,7 @@ handleDelete(po?._id)
                       }}
                     />
                     <input
-                      type="text"
+                      type="number"
                       id={`db-gst-${ind}`}
                       className="ms-2 form-control"
                       placeholder="gst"
@@ -877,6 +947,15 @@ handleDelete(po?._id)
               detailsCnt.map((_, ind) => (
                 <>
                   <div className="d-flex mt-2">
+                  <input
+                      type="text"
+                      id={`desc-${ind}`}
+                      className="form-control"
+                      placeholder="desc"
+                      onChange={(e) => {
+                        handleDetails("description", e, ind)
+                      }}
+                    />
                     <input
                       type="number"
                       id={`qty-${ind}`}

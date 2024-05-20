@@ -43,6 +43,8 @@ function McqTemplateEditor() {
   const [dbExplainations, setDbExplainations] = useState([])
   const [dbTextAnswers, setDbTextAnswers] = useState([])
   const [dbQuestions, setDbQuestions] = useState([])
+  const [banner, setBanner] = useState("")
+  const [dbBanner, setDbBanner] = useState("")
 
   const navigate = useNavigate();
 
@@ -173,8 +175,9 @@ function McqTemplateEditor() {
 
   const handleCreate = async () => {
     let addData = new FormData();
-
+   
     addData.append("paper_name", paperName);
+    addData.append("banner", banner)
 
     optionsType.forEach((ot) => {
       addData.append("options_type", ot);
@@ -304,6 +307,7 @@ function McqTemplateEditor() {
 
     updateData.append("mcqDocId", editMcqDocId)
     updateData.append("paper_name", paperName)
+updateData.append("banner", banner)
 
     let updatedDataToBackend = []
 
@@ -650,6 +654,7 @@ function McqTemplateEditor() {
                           setPaperName(temp?.paper_name)
                           setDbMcqs(temp.mcqs)
                           setEditMcqDocId(temp?._id)
+                          setDbBanner(temp?.banner)
                         }}
                       />
                       <DeleteIcon
@@ -699,6 +704,30 @@ function McqTemplateEditor() {
                 }}
               />
             </div>
+
+
+            {dbBanner && <div className="mb-2">
+              <label className="pb-1">Attached Banner</label>
+              <img
+                
+                className="form-control"
+                src={dbBanner}
+              />
+            </div>}
+
+
+            <div className="mb-2">
+              <label className="pb-1">Banner</label>
+              <input
+                type="file"
+                className="form-control"
+                placeholder="Banner"
+                onChange={(e) => {
+                  setBanner(e.target.files[0])
+                }}
+              />
+            </div>
+            
             <div className="mb-2">
               {dbMcqs && dbMcqs.length !== 0 && (<>
                 <label className="pb-1">Attached Mcqs</label>

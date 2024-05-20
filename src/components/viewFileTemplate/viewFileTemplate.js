@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import banner from "../../assets/banner.png"
 import "./viewFileTemplate.css"
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -8,11 +8,14 @@ import Nav from '../navbar/navbar';
 import Sidebar from '../sidebar/sidebar';
 import { saveAs } from 'file-saver';
 import DownloadIcon from '@mui/icons-material/Download';
+import { verifyToken } from '../../api-calls/apicalls';
 
 function ViewFileTemplate() {
     const [windowWidth, setWindowWidth] = useState();
     const location = useLocation();
     const { templateData } = location.state;
+
+    const navigate=useNavigate()
 
     const updateWindowWidth = () => {
         setWindowWidth(window.innerWidth);
@@ -27,13 +30,21 @@ function ViewFileTemplate() {
     }
 
     useEffect(() => {
-        require("bootstrap/dist/js/bootstrap.min.js");
-        // console.log("tdd",templateData)
         setWindowWidth(window.innerWidth);
         window.addEventListener("resize", updateWindowWidth);
 
 
-
+        const verifier=async()=>{
+            const verifiedTokenData=await verifyToken()
+      
+            if(verifiedTokenData?.message === "jwt expired") {
+              return navigate("/");
+            } else {
+                return;
+            }
+          }
+          
+           verifier()
 
         return () => {
             window.removeEventListener("resize", updateWindowWidth);

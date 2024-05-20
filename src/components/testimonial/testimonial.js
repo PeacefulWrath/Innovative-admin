@@ -13,6 +13,7 @@ import { fetchTestimonials, createTestimonials, updateTestimonials, deleteTestim
 import testi1 from "../../assets/testi1.png";
 import testi2 from "../../assets/testi2.png";
 import testi3 from "../../assets/testi3.png";
+import { useNavigate } from "react-router-dom";
 
 function TestimonialManagement() {
     const [windowWidth, setWindowWidth] = useState();
@@ -26,6 +27,8 @@ function TestimonialManagement() {
     const [showCreate, setShowCreate] = useState(false);
     const [testimonialId, setTestimonialId] = useState("")
     const [testimonials, setTestimonials] = useState([])
+
+    const navigate = useNavigate();
 
     const updateWindowWidth = () => {
         setWindowWidth(window.innerWidth);
@@ -52,10 +55,17 @@ function TestimonialManagement() {
         }
         // console.log("rrr",addData)
         const createdData = await createTestimonials({ name: name, user_details: JSON.stringify(addData) })
-        if (createdData.success === "yes") {
-            alert("testimonial created")
+        if (
+            createdData?.success === "no" &&
+            createdData?.message === "jwt expired"
+        ) {
+            return navigate("/");
+        } else if (createdData?.success === "no") {
+            alert("system error try again leter");
+        } else if (createdData?.success === "yes") {
+            alert("testimonial created successfully")
             handleClose()
-            window.location.reload()
+            window.location.reload();
         }
     }
 
@@ -75,10 +85,17 @@ function TestimonialManagement() {
         }
 
         const updatedData = await updateTestimonials({ testimonial_id: testimonialId, name: name, user_details: JSON.stringify(updateData) })
-        if (updatedData.success === "yes") {
-            alert("testimonial updated")
+        if (
+            updatedData?.success === "no" &&
+            updatedData?.message === "jwt expired"
+        ) {
+            return navigate("/");
+        } else if (updatedData?.success === "no") {
+            alert("system error try again leter");
+        } else if (updatedData?.success === "yes") {
+            alert("testimonial updated successfully")
             handleClose()
-            window.location.reload()
+            window.location.reload();
         }
     }
 
@@ -99,8 +116,11 @@ function TestimonialManagement() {
         const fetcher = async () => {
 
             let testimonials = await fetchTestimonials();
-
-            setTestimonials([...testimonials]);
+            if (testimonials?.message === "jwt expired") {
+                return navigate("/");
+            } else {
+                setTestimonials([...testimonials]);
+            }
 
         };
 

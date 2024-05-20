@@ -11,7 +11,7 @@ import CreateIcon from "@mui/icons-material/Create";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { fetchCategories, fetchMcqTemplates, fetchQuizTemplates, fetchTemplates, createProducts, fetchProducts, updateProducts, deleteProducts } from "../../api-calls/apicalls";
 import CloseIcon from '@mui/icons-material/Close';
-
+import { useNavigate } from "react-router-dom";
 
 
 function ProductManagement() {
@@ -65,6 +65,7 @@ function ProductManagement() {
     const quizTempInputRef = useRef(null);
     const mcqTempInputRef = useRef(null);
 
+    const navigate = useNavigate();
 
     const handleFileTempInputClick = () => {
         setShowFileTempDropdown(!showFileTempDropdown);
@@ -139,10 +140,17 @@ function ProductManagement() {
         addData.append("quiz_templates", JSON.stringify(quizTemplatesIds))
 
         const createdData = await createProducts(addData)
-        if (createdData) {
-            alert("product created")
+        if (
+            createdData?.success === "no" &&
+            createdData?.message === "jwt expired"
+        ) {
+            return navigate("/");
+        } else if (createdData?.success === "no") {
+            alert("system error try again leter");
+        } else if (createdData?.success === "yes") {
+            alert("products created successfully")
             handleClose()
-            window.location.reload()
+            window.location.reload();
         }
     }
 
@@ -177,20 +185,40 @@ function ProductManagement() {
         updateData.append("quiz_templates", JSON.stringify(quizTemplatesIds))
 
         const updatedData = await updateProducts(updateData)
-        if (updatedData) {
-            alert("product updated")
-            handleClose()
-            window.location.reload()
+        if (
+            updatedData?.success == "no" &&
+            updatedData?.message === "jwt expired"
+        ) {
+            return navigate("/");
+        } else if (updatedData?.success == "no") {
+            alert("system error try again leter");
+        } else if (updatedData?.success == "yes") {
+            alert("product updated successfully")
+            window.location.reload();
         }
     }
 
     const handleDelete = async (id) => {
         const deleteData = { product_id: id }
         const deletedData = await deleteProducts(deleteData)
-        if (deletedData) {
+        if (
+            deletedData?.success == "no" &&
+            deletedData?.message === "jwt expired"
+        ) {
+            return navigate("/");
+        } else if (deletedData?.success == "no") {
+            alert("system error try again leter");
+        } else if (deletedData?.success == "yes") {
+            // let tempTemplates = templates
+            // tempTemplates.forEach((temp, ind) => {
+            //   if (temp?._id == id) {
+            //     tempTemplates.splice(ind, 1)
+            //   }
+            // })
+            // setTemplates([...tempTemplates])
 
             alert("product deleted successfully")
-            window.location.reload()
+            window.location.reload();
         }
     }
 
@@ -199,21 +227,42 @@ function ProductManagement() {
         setWindowWidth(window.innerWidth);
         window.addEventListener("resize", updateWindowWidth);
         const fetcher = async () => {
+
             let categories = await fetchCategories();
-            setCategories([...categories]);
+            if (categories?.message === "jwt expired") {
+                return navigate("/");
+            } else {
+                setCategories([...categories]);
+            }
 
             let templatesData = await fetchTemplates();
-            setFileTemplates([...templatesData]);
+            if (templatesData?.message === "jwt expired") {
+                return navigate("/");
+            } else {
+                setFileTemplates([...templatesData]);
+            }
 
             let quizzesData = await fetchQuizTemplates();
-            setQuizTemplates([...quizzesData]);
+            if (quizzesData?.message === "jwt expired") {
+                return navigate("/");
+            } else {
+                setQuizTemplates([...quizzesData]);
+            }
 
             let mcqsData = await fetchMcqTemplates();
-            setMcqTemplates([...mcqsData]);
+            if (mcqsData?.message === "jwt expired") {
+                return navigate("/");
+            } else {
+                setMcqTemplates([...mcqsData]);
+            }
 
             let products = await fetchProducts();
             // console.log("products", products)
-            setProducts([...products]);
+            if (products?.message === "jwt expired") {
+                return navigate("/");
+            } else {
+                setProducts([...products]);
+            }
 
         };
 
@@ -228,9 +277,9 @@ function ProductManagement() {
 
     useEffect(() => {
         if (update == true && showCreate == true) {
-            
-                document.getElementById("product-category").value = selectedCat?.name
-            }
+
+            document.getElementById("product-category").value = selectedCat?.name
+        }
     }, [showCreate])
 
     return (

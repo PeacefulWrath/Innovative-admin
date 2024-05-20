@@ -16,7 +16,7 @@ import {
   deleteQuizTemplates,
   updateQuizTemplates
 } from "../../api-calls/apicalls";
-
+import { useNavigate } from "react-router-dom";
 
 
 function QuizTemplateEditor() {
@@ -33,6 +33,8 @@ function QuizTemplateEditor() {
   const [dbTemplateOptTexts, setDbTemplateOptTexts] = useState([]);
   const [answerImages, setAnswerImages] = useState([]);
   const [explainations, setExplainations] = useState([])
+  const [banner, setBanner] = useState("")
+  const [dbBanner, setDbBanner] = useState("")
   // const [marks, setMarks] = useState([])
   const [dbQuizzes, setDbQuizzes] = useState([])
   const [dbOptionsType, setDbOptionsType] = useState([]);
@@ -42,6 +44,8 @@ function QuizTemplateEditor() {
   const [dbExplainations, setDbExplainations] = useState([])
   const [dbTextAnswers, setDbTextAnswers] = useState([])
   const [dbQuestions, setDbQuestions] = useState([])
+
+  const navigate = useNavigate();
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
@@ -137,14 +141,12 @@ function QuizTemplateEditor() {
       tempTemplateTexts[cntInd]?.length !== 0
     ) {
       tempTemplateTexts[cntInd][optInd] = selectedText;
-      if(update)
-      {document.getElementById(`db-opt-text-${cntInd}-${optInd}`).value = selectedText}
+      if (update) { document.getElementById(`db-opt-text-${cntInd}-${optInd}`).value = selectedText }
       operation === "add" ? setTemplateOptTexts([...tempTemplateTexts]) : setDbTemplateOptTexts([...tempTemplateTexts]);
     } else {
       tempTemplateTexts[cntInd] = [];
       tempTemplateTexts[cntInd][optInd] = selectedText;
-      if(update)
-   {   document.getElementById(`db-opt-text-${cntInd}-${optInd}`).value = selectedText}
+      if (update) { document.getElementById(`db-opt-text-${cntInd}-${optInd}`).value = selectedText }
       operation === "add" ? setTemplateOptTexts([...tempTemplateTexts]) : setDbTemplateOptTexts([...tempTemplateTexts]);
     }
   };
@@ -170,7 +172,7 @@ function QuizTemplateEditor() {
     let addData = new FormData();
 
     addData.append("paper_name", paperName);
-
+    addData.append("banner", banner)
     optionsType.forEach((ot) => {
       addData.append("options_type", ot);
     });
@@ -228,11 +230,23 @@ function QuizTemplateEditor() {
     // })
 
     let createdData = await createQuizTemplates(addData);
-    let tempCreatedData = [];
-    tempCreatedData.push(createdData);
-    setQuizTemplates([...quizTemplates, ...tempCreatedData]);
-    handleClose();
-    window.location.reload();
+    // let tempCreatedData = [];
+    // tempCreatedData.push(createdData);
+    // setQuizTemplates([...quizTemplates, ...tempCreatedData]);
+    // handleClose();
+    // window.location.reload();
+    if (
+      createdData?.success === "no" &&
+      createdData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (createdData?.success === "no") {
+      alert("system error try again leter");
+    } else if (createdData?.success === "yes") {
+      alert("quiz created successfully")
+      handleClose()
+      window.location.reload();
+    }
   };
 
   // const handleMarks = async (e, operation, ind) => {
@@ -247,17 +261,22 @@ function QuizTemplateEditor() {
   //   setDbQuestions([...tempQuestions])
   // }
 
-  const handleDelete=async(id)=>{
-    const deleteData={quizDocId:id}
-       const deletedData=await deleteQuizTemplates(deleteData)
-       if(deletedData){
-          
-      
-         alert("template deleted successfully")
-
-         window.location.reload()
-       }
-     }
+  const handleDelete = async (id) => {
+    const deleteData = { quizDocId: id }
+    const deletedData = await deleteQuizTemplates(deleteData)
+    if (
+      deletedData?.success === "no" &&
+      deletedData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (deletedData?.success === "no") {
+      alert("system error try again leter");
+    } else if (deletedData?.success === "yes") {
+      alert("quiz template deleted successfully")
+      handleClose()
+      window.location.reload();
+    }
+  }
 
   const handleExplainations = async (e, operation, ind) => {
     let tempExplainations = operation === "add" ? explainations : dbExplainations
@@ -273,6 +292,7 @@ function QuizTemplateEditor() {
 
     updateData.append("quizDocId", editQuizDocId)
     updateData.append("paper_name", paperName)
+    updateData.append("banner", banner)
 
     let updatedDataToBackend = []
 
@@ -452,15 +472,19 @@ function QuizTemplateEditor() {
     updateData.append("updated_data", JSON.stringify(updatedDataToBackend))
 
 
-    const updatedData=await updateQuizTemplates(updateData)
+    const updatedData = await updateQuizTemplates(updateData)
 
-    if(updatedData){
-    handleClose();
-    setUpdate(false)
-    setQuizzesCnt([])
-    window.location.reload();
+    if (
+      updatedData?.success == "no" &&
+      updatedData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (updatedData?.success == "no") {
+      alert("system error try again leter");
+    } else if (updatedData?.success == "yes") {
+      alert("quiz template updated successfully")
+      window.location.reload();
     }
-
   }
 
   const handleDbTextAnswers = (e, ind) => {
@@ -489,7 +513,11 @@ function QuizTemplateEditor() {
 
     const fetcher = async () => {
       let quizTemplatesData = await fetchQuizTemplates();
-      setQuizTemplates([...quizTemplatesData]);
+      if (quizTemplatesData?.message === "jwt expired") {
+        return navigate("/");
+      } else {
+        setQuizTemplates([...quizTemplatesData]);
+      }
     };
 
     fetcher();
@@ -613,6 +641,7 @@ function QuizTemplateEditor() {
                           setShowModal(true)
                           setPaperName(temp?.paper_name)
                           setDbQuizzes(temp.quizzes)
+                          setDbBanner(temp?.banner)
                           setEditQuizDocId(temp?._id)
                         }}
                       />
@@ -620,7 +649,7 @@ function QuizTemplateEditor() {
                         className="text-danger border border-danger cursor-pointer rounded"
                         style={{ cursor: "pointer" }}
 
-                        onClick={()=>{
+                        onClick={() => {
                           handleDelete(temp?._id)
                         }}
                       />
@@ -653,13 +682,36 @@ function QuizTemplateEditor() {
                 placeholder="Paper Name"
                 value={paperName}
                 onChange={(e) => {
-                  for(let temp of quizTemplates){
-                    if(e.target.value===temp?.paper_name){
+                  for (let temp of quizTemplates) {
+                    if (e.target.value === temp?.paper_name) {
                       alert("paper name already taken")
                       return;
                     }
-                   }
+                  }
                   setPaperName(e.target.value);
+                }}
+              />
+            </div>
+
+
+            {dbBanner && <div className="mb-2">
+              <label className="pb-1">Attached Banner</label>
+              <img
+                
+                className="form-control"
+                src={dbBanner}
+              />
+            </div>}
+
+
+            <div className="mb-2">
+              <label className="pb-1">Banner</label>
+              <input
+                type="file"
+                className="form-control"
+                placeholder="Banner"
+                onChange={(e) => {
+                  setBanner(e.target.files[0])
                 }}
               />
             </div>
@@ -670,6 +722,7 @@ function QuizTemplateEditor() {
                   dbQuizzes.map((dm, ind) => (
                     <>
                       <div className="d-flex mt-2">
+                        <p style={{whiteSpace:"nowrap"}}>{`Q${ind+1}.`}&nbsp;</p>
                         <input
                           type="text"
                           id={`db-question-${ind}`}
@@ -966,7 +1019,7 @@ function QuizTemplateEditor() {
             variant="primary"
             onClick={() => {
               update ? handleUpdate() : handleCreate();
-              
+
             }}
           >
             {update ? "update" : "Create"}

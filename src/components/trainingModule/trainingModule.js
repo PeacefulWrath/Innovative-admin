@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 import Nav from "../navbar/navbar";
 import Sidebar from "../sidebar/sidebar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CreateIcon from "@mui/icons-material/Create";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -33,6 +33,8 @@ function TrainingModule() {
   const[dbImage,setDbImage]=useState("")
   const[moduleId,setModuleId]=useState("")
 
+  const navigate = useNavigate();
+
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
   };
@@ -50,9 +52,17 @@ function TrainingModule() {
     addData.append("hover_title",hoverTitle)
     addData.append("hover_description",hoverDescription)
     const createdData = await createTrainingModules(addData)
-    if (createdData?.success==="yes") {
+    if (
+      createdData?.success === "no" &&
+      createdData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (createdData?.success === "no") {
+      alert("system error try again leter");
+    } else if (createdData?.success === "yes") {
+      alert("training module created successfully")
       handleClose()
-      window.location.reload()
+      window.location.reload();
     }
   }
 
@@ -66,9 +76,16 @@ function TrainingModule() {
     updateData.append("hover_title",hoverTitle)
     updateData.append("hover_description",hoverDescription)
     const updatedData = await updateTrainingModules(updateData)
-    if (updatedData?.success==="yes") {
-      handleClose()
-      window.location.reload()
+    if (
+      updatedData?.success == "no" &&
+      updatedData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (updatedData?.success == "no") {
+      alert("system error try again leter");
+    } else if (updatedData?.success == "yes") {
+      alert("trainng module updated successfully")
+      window.location.reload();
     }
   }
 
@@ -76,9 +93,24 @@ function TrainingModule() {
     const deleteData={module_id:id}
     const deletedData=await deleteTrainingModules(deleteData)
 
-    if(deletedData.success==="yes"){
+    if (
+      deletedData?.success == "no" &&
+      deletedData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (deletedData?.success == "no") {
+      alert("system error try again leter");
+    } else if (deletedData?.success == "yes") {
+      // let tempTemplates = templates
+      // tempTemplates.forEach((temp, ind) => {
+      //   if (temp?._id == id) {
+      //     tempTemplates.splice(ind, 1)
+      //   }
+      // })
+      // setTemplates([...tempTemplates])
+
       alert("training module deleted successfully")
-      window.location.reload()
+      window.location.reload();
     }
   }
 

@@ -314,7 +314,7 @@ export const createUsers = async (userData) => {
 
     await axios({
       method: "post",
-      url: `${process.env.REACT_APP_BASE_URL}/api/user/signup`,
+      url: `${process.env.REACT_APP_BASE_URL}/api/user/create-user`,
       data: userData,
       headers: {
         "Content-Type": "application/json",
@@ -663,13 +663,19 @@ export const createGallery = async (addData) => {
 export const fetchGalleries = async () => {
   let galleriesData = [];
   try {
-    const response = await axios.get(
-      `${process.env.REACT_APP_BASE_URL}/api/gallery`
+
+    const response = await axios(
+      {method: "get",
+      url:`${process.env.REACT_APP_BASE_URL}/api/gallery`,
+      headers: {
+        authorization: `Bearer ${token}`
+      },
+      }
     );
     galleriesData = response.data.allGalleryData;
   } catch (error) {
     // console.log("err", error);
-    galleriesData=error?.response?.data;
+    galleriesData = error?.response?.data;
   } finally {
     return galleriesData;
   }
@@ -1342,5 +1348,27 @@ export const logIn = async (userData) => {
     tempUsers = error?.response?.data;
   } finally {
     return tempUsers;
+  }
+};
+
+
+export const verifyToken = async () => {
+  let tokenData = [];
+  try {
+    
+    await axios({
+      method: "post",
+      url: `${process.env.REACT_APP_BASE_URL}/api/user/verify-token`,
+      data: {jwt_token:token},
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      tokenData = res.data;
+    });
+  } catch (error) {
+    tokenData = error?.response?.data;
+  } finally {
+    return tokenData;
   }
 };

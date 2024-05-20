@@ -17,7 +17,11 @@ import {
 } from "../../api-calls/apicalls";
 import { useLogin } from "../../context/loginContext";
 import { useNavigate } from "react-router-dom";
+import CryptoJS from 'crypto-js';
 
+
+
+// console.log(decryptedData);
 function FaqManagement() {
   const [windowWidth, setWindowWidth] = useState();
   const [faqs, setFaqs] = useState([]);
@@ -30,6 +34,17 @@ function FaqManagement() {
   // const { loginValidity, setLoginValidity } = useLogin();
 
   const navigate = useNavigate();
+
+
+  // function decrypt(encryptedData, iv) {
+  //   const bytes = CryptoJS.AES.decrypt(encryptedData, key, {
+  //     iv: CryptoJS.enc.Hex.parse(iv),
+  //     padding: CryptoJS.pad.Pkcs7,
+  //     mode: CryptoJS.mode.CBC,
+  //   });
+  //   return bytes.toString(CryptoJS.enc.Utf8);
+  // }
+  
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
@@ -99,6 +114,7 @@ function FaqManagement() {
     }
   };
 
+
   useEffect(() => {
     // console.log("faq")
     setWindowWidth(window.innerWidth);
@@ -106,11 +122,14 @@ function FaqManagement() {
 
     const fetcher = async () => {
       let tempFaqsData = await fetchFaqs();
-
+      
       if (tempFaqsData?.message === "jwt expired") {
         return navigate("/");
       } else {
-        setFaqs([...tempFaqsData]);
+        // console.log("bbb22",tempFaqsData)
+        // tempFaqsData = CryptoJS.AES.decrypt(tempFaqsData, 'secret key 123');
+        // console.log("bbb", JSON.parse(tempFaqsData.toString(CryptoJS.enc.Utf8)))
+        setFaqs([...JSON.parse(tempFaqsData.toString(CryptoJS.enc.Utf8))]);
       }
     };
 
