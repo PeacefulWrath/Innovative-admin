@@ -17,7 +17,7 @@ const Sidebar = (props) => {
     navigate(`/${clickedItem}`);
   };
   return (
-    <div className='col-md-2 col-12 bg-dark py-4' style={{ minHeight: "100vh", zIndex: "100" }}>
+    <div className='col-md-2 col-12 bg-dark py-4' style={{ height: "90vh", zIndex: "100",overflowY:'auto',position:'sticky',left:'0' }}>
 
       <a style={{ textDecoration: "none" }} href="/dashboard">
         <div className="row fw-bold text-white" style={activeOption === 'dashboard' ? { backgroundColor: '#575655' } : { backgroundColor: "transparent" }}>
