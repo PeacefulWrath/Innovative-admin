@@ -142,15 +142,15 @@ function McqTemplateEditor() {
       tempTemplateTexts[cntInd]?.length !== 0
     ) {
       tempTemplateTexts[cntInd][optInd] = selectedText;
-      if(update){
-      document.getElementById(`db-opt-text-${cntInd}-${optInd}`).value = selectedText
+      if (update) {
+        document.getElementById(`db-opt-text-${cntInd}-${optInd}`).value = selectedText
       }
       operation === "add" ? setTemplateOptTexts([...tempTemplateTexts]) : setDbTemplateOptTexts([...tempTemplateTexts]);
     } else {
       tempTemplateTexts[cntInd] = [];
       tempTemplateTexts[cntInd][optInd] = selectedText;
-      if(update){
-      document.getElementById(`db-opt-text-${cntInd}-${optInd}`).value = selectedText
+      if (update) {
+        document.getElementById(`db-opt-text-${cntInd}-${optInd}`).value = selectedText
       }
       operation === "add" ? setTemplateOptTexts([...tempTemplateTexts]) : setDbTemplateOptTexts([...tempTemplateTexts]);
     }
@@ -175,7 +175,7 @@ function McqTemplateEditor() {
 
   const handleCreate = async () => {
     let addData = new FormData();
-   
+
     addData.append("paper_name", paperName);
     addData.append("banner", banner)
 
@@ -268,29 +268,29 @@ function McqTemplateEditor() {
     setDbQuestions([...tempQuestions])
   }
 
-  const handleDelete=async(id)=>{
-    const deleteData={mcqDocId:id}
-       const deletedData=await deleteMcqTemplates(deleteData)
-       if (
-        deletedData?.success == "no" &&
-        deletedData?.message === "jwt expired"
-      ) {
-        return navigate("/");
-      } else if (deletedData?.success == "no") {
-        alert("system error try again leter");
-      } else if (deletedData?.success == "yes") {
-        // let tempTemplates = templates
-        // tempTemplates.forEach((temp, ind) => {
-        //   if (temp?._id == id) {
-        //     tempTemplates.splice(ind, 1)
-        //   }
-        // })
-        // setTemplates([...tempTemplates])
-  
-        alert("mcq template deleted successfully")
-        window.location.reload();
-      }
-  
+  const handleDelete = async (id) => {
+    const deleteData = { mcqDocId: id }
+    const deletedData = await deleteMcqTemplates(deleteData)
+    if (
+      deletedData?.success == "no" &&
+      deletedData?.message === "jwt expired"
+    ) {
+      return navigate("/");
+    } else if (deletedData?.success == "no") {
+      alert("system error try again leter");
+    } else if (deletedData?.success == "yes") {
+      // let tempTemplates = templates
+      // tempTemplates.forEach((temp, ind) => {
+      //   if (temp?._id == id) {
+      //     tempTemplates.splice(ind, 1)
+      //   }
+      // })
+      // setTemplates([...tempTemplates])
+
+      alert("mcq template deleted successfully")
+      window.location.reload();
+    }
+
   }
 
   const handleExplainations = async (e, operation, ind) => {
@@ -303,11 +303,9 @@ function McqTemplateEditor() {
 
     let updateData = new FormData()
 
-
-
     updateData.append("mcqDocId", editMcqDocId)
     updateData.append("paper_name", paperName)
-updateData.append("banner", banner)
+    updateData.append("banner", banner)
 
     let updatedDataToBackend = []
 
@@ -487,7 +485,7 @@ updateData.append("banner", banner)
     updateData.append("updated_data", JSON.stringify(updatedDataToBackend))
 
 
-    const updatedData=await updateMcqTemplates(updateData)
+    const updatedData = await updateMcqTemplates(updateData)
     // if(updatedData){
     // handleClose();
     // setMcqsCnt([])
@@ -516,31 +514,30 @@ updateData.append("banner", banner)
   }
 
   useEffect(() => {
-    if (mcqsCnt.length !== 0) {
-      const index = mcqsCnt.length - 1;
-      document.getElementById(`add-option-type-text-${index}`).value = "off";
-      document.getElementById(`add-option-type-image-${index}`).value = "off";
-    }
-  }, [mcqsCnt]);
-
-  useEffect(() => {
     setWindowWidth(window.innerWidth);
     window.addEventListener("resize", updateWindowWidth);
-
     const fetcher = async () => {
       let mcqTemplatesData = await fetchMcqTemplates();
       if (mcqTemplatesData?.message === "jwt expired") {
         return navigate("/");
       } else {
-      setMcqTemplates([...mcqTemplatesData]);}
-    };
-
+        setMcqTemplates([...mcqTemplatesData]);
+      }
+    }
     fetcher();
 
     return () => {
       window.removeEventListener("resize", updateWindowWidth);
     };
   }, []);
+
+  useEffect(() => {
+    if (mcqsCnt.length !== 0) {
+      const index = mcqsCnt.length - 1;
+      document.getElementById(`add-option-type-text-${index}`).value = "off";
+      document.getElementById(`add-option-type-image-${index}`).value = "off";
+    }
+  }, [mcqsCnt]);
 
   useEffect(() => {
     if (dbMcqs && dbMcqs.length !== 0) {
@@ -583,11 +580,34 @@ updateData.append("banner", banner)
       <hr style={{ color: "black", margin: "0" }} />
 
       <div className="row">
-        {windowWidth > 768 && <Sidebar activeOption="mcq-temp-editor" />}
+        {windowWidth > 768 && <Sidebar activeOption="mcq-template-editor" />}
+
+
         <div className="col-md-10 p-4">
-          <div className="d-flex justify-content-end mb-5">
+          <div className="d-flex">
+
+            <div className="fw-bold">
+              {`Mcq Templates(${mcqTemplates?.length || 0})`}
+            </div>
+            <div className="w-50 ms-3">
+
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search"
+              />
+
+            </div>
+
             <button
-              className="btn "
+              className="btn btn-outline-primary ms-2"
+              type="search"
+
+            >
+              Search
+            </button>
+            <button
+              className="btn ms-2"
               style={{
                 width: "fit-content",
                 background: "#90EE90",
@@ -599,37 +619,17 @@ updateData.append("banner", banner)
               }}
             >
               <AddIcon />
-              <span className="ms-2">create</span>
+              <span className="ms-2">Create</span>
             </button>
           </div>
-          <div className="d-flex row">
-            <div className="col fw-bold">
-              {`Mcq Templates(${mcqTemplates?.length || 0})`}
-            </div>
-            <div className="col d-flex">
-              <div className="input-group mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Search"
-                />
-                <button
-                  className="btn btn-outline-primary"
-                  type="search"
-                  id="button-addon2"
-                >
-                  Search
-                </button>
-              </div>
-            </div>
-          </div>
-          <table className="table mt-1 p-4 w-70 text-center">
+
+          <table className="table mt-4 p-4 w-70 text-center">
             <thead>
               <tr className="table-primary table-striped">
-                <th scope="col">SN.</th>
-                <th scope="col">Mcq Template Name</th>
-                <th scope="col">View</th>
-                <th scope="col">Action</th>
+                {/* <th scope="col">SN.</th> */}
+                <th className="w-25">Mcq Template Name</th>
+                <th className="w-25">View</th>
+                <th className="w-25">Action</th>
               </tr>
             </thead>
 
@@ -637,14 +637,14 @@ updateData.append("banner", banner)
               mcqTemplates.map((temp, index) => (
                 <tbody>
                   <tr>
-                    <th scope="col">{index + 1}.</th>
-                    <th scope="col">{temp?.paper_name}</th>
-                    <th scope="col">
+                    {/* <th scope="col">{index + 1}.</th> */}
+                    <th className="w-25">{temp?.paper_name}</th>
+                    <th className="w-25">
                       <Link to="/view-mcq-template" state={{ templateData: temp }}>
                         view
                       </Link>
                     </th>
-                    <th scope="col ">
+                    <th className="w-25">
                       <CreateIcon
                         className="text-primary border border-primary rounded me-2"
                         style={{ cursor: "pointer" }}
@@ -661,7 +661,7 @@ updateData.append("banner", banner)
                         className="text-danger border border-danger cursor-pointer rounded"
                         style={{ cursor: "pointer" }}
 
-                        onClick={()=>{
+                        onClick={() => {
                           handleDelete(temp?._id)
                         }}
                       />
@@ -676,6 +676,15 @@ updateData.append("banner", banner)
             )}
           </table>
         </div>
+
+
+
+
+
+
+
+
+
       </div>
 
       <Modal show={showModal} onHide={handleClose} size="lg" centered>
@@ -694,12 +703,12 @@ updateData.append("banner", banner)
                 placeholder="Paper Name"
                 value={paperName}
                 onChange={(e) => {
-                  for(let temp of mcqTemplates){
-                    if(e.target.value===temp?.paper_name){
+                  for (let temp of mcqTemplates) {
+                    if (e.target.value === temp?.paper_name) {
                       alert("paper name already taken")
                       return;
                     }
-                   }
+                  }
                   setPaperName(e.target.value);
                 }}
               />
@@ -709,7 +718,7 @@ updateData.append("banner", banner)
             {dbBanner && <div className="mb-2">
               <label className="pb-1">Attached Banner</label>
               <img
-                
+
                 className="form-control"
                 src={dbBanner}
               />
@@ -727,7 +736,7 @@ updateData.append("banner", banner)
                 }}
               />
             </div>
-            
+
             <div className="mb-2">
               {dbMcqs && dbMcqs.length !== 0 && (<>
                 <label className="pb-1">Attached Mcqs</label>
@@ -1034,7 +1043,7 @@ updateData.append("banner", banner)
               update ? handleUpdate() : handleCreate();
             }}
           >
-            {update ? "update" : "Create"}
+            {update ? "Update" : "Create"}
           </Button>
         </Modal.Footer>
       </Modal>

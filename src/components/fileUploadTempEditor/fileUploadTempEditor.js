@@ -379,15 +379,15 @@ function FileUploadTempEditor() {
     setWindowWidth(window.innerWidth);
     window.addEventListener("resize", updateWindowWidth);
 
-    const fetcher = async () => {
-      let templatesData = await fetchTemplates();
-      if (templatesData?.message === "jwt expired") {
-        return navigate("/");
-      } else {
+      const fetcher = async () => {
+        let templatesData = await fetchTemplates();
+        if (templatesData?.message === "jwt expired") {
+          return navigate("/");
+        } else {
       setTemplates([...templatesData]);}
-    };
+      };
 
-    fetcher();
+      fetcher();
 
     return () => {
       window.removeEventListener("resize", updateWindowWidth);

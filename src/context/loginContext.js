@@ -17,7 +17,9 @@ function LoginProvider({ children }) {
     <LoginContext.Provider
       value={{ 
         // loginValidity, setLoginValidity, 
-        adminEmail, setAdminEmail }}
+        adminEmail, 
+        setAdminEmail 
+      }}
     >
       {children}
     </LoginContext.Provider>

@@ -129,7 +129,8 @@ function FaqManagement() {
         // console.log("bbb22",tempFaqsData)
         // tempFaqsData = CryptoJS.AES.decrypt(tempFaqsData, 'secret key 123');
         // console.log("bbb", JSON.parse(tempFaqsData.toString(CryptoJS.enc.Utf8)))
-        setFaqs([...JSON.parse(tempFaqsData.toString(CryptoJS.enc.Utf8))]);
+        // setFaqs([...JSON.parse(tempFaqsData.toString(CryptoJS.enc.Utf8))]);
+        setFaqs([...tempFaqsData])
       }
     };
 

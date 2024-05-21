@@ -156,18 +156,16 @@ function ViewMcqTemplate() {
       const verifiedTokenData=await verifyToken()
 
       if(verifiedTokenData?.message === "jwt expired") {
-        return navigate("/");
-      } else {
-          return;
-      }
+         navigate("/");
+      } 
     }
     
      verifier()
 
-    (!showAns &&
+    !showAns &&
       templateData &&
       Array.isArray(templateData?.attempted) &&
-      templateData?.attempted?.length !== 0) ?
+      templateData?.attempted?.length !== 0?
       templateData?.attempted.forEach((tat, _) => {
         if (tat?.user_email === ADMIN_EMAIL) {
           let tempAns=[]

@@ -571,11 +571,31 @@ function QuizTemplateEditor() {
       <hr style={{ color: "black", margin: "0" }} />
 
       <div className="row">
-        {windowWidth > 768 && <Sidebar activeOption="quiz-temp-editor" />}
+        {windowWidth > 768 && <Sidebar activeOption="quiz-template-editor" />}
         <div className="col-md-10 p-4">
-          <div className="d-flex justify-content-end mb-5">
+          <div className="d-flex">
+
+
+            <div className="fw-bold">
+              {`Quiz Templates(${quizTemplates?.length || 0})`}
+            </div>
+            <div className="w-50 ms-3">
+
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search"
+              />
+            </div>
             <button
-              className="btn "
+              className="btn btn-outline-primary ms-2"
+              type="search"
+
+            >
+              Search
+            </button>
+            <button
+              className="btn ms-2"
               style={{
                 width: "fit-content",
                 background: "#90EE90",
@@ -587,37 +607,19 @@ function QuizTemplateEditor() {
               }}
             >
               <AddIcon />
-              <span className="ms-2">create</span>
+              <span className="ms-2">Create</span>
             </button>
+
           </div>
-          <div className="d-flex row">
-            <div className="col fw-bold">
-              {`Quiz Templates(${quizTemplates?.length || 0})`}
-            </div>
-            <div className="col d-flex">
-              <div className="input-group mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Search"
-                />
-                <button
-                  className="btn btn-outline-primary"
-                  type="search"
-                  id="button-addon2"
-                >
-                  Search
-                </button>
-              </div>
-            </div>
-          </div>
-          <table className="table mt-1 p-4 w-70 text-center">
+
+
+          <table className="table mt-4 p-4 w-70 text-center">
             <thead>
               <tr className="table-primary table-striped">
-                <th scope="col">SN.</th>
-                <th scope="col">Quiz Template Name</th>
-                <th scope="col">View</th>
-                <th scope="col">Action</th>
+                {/* <th scope="col">SN.</th> */}
+                <th className="w-25">Quiz Template Name</th>
+                <th className="w-25">View</th>
+                <th className="w-25">Action</th>
               </tr>
             </thead>
 
@@ -625,14 +627,14 @@ function QuizTemplateEditor() {
               quizTemplates.map((temp, index) => (
                 <tbody>
                   <tr>
-                    <th scope="col">{index + 1}.</th>
-                    <th scope="col">{temp?.paper_name}</th>
-                    <th scope="col">
+                    {/* <th scope="col">{index + 1}.</th> */}
+                    <th className="w-25">{temp?.paper_name}</th>
+                    <th className="w-25">
                       <Link to="/view-quiz-template" state={{ templateData: temp }}>
                         view
                       </Link>
                     </th>
-                    <th scope="col ">
+                    <th className="w-25">
                       <CreateIcon
                         className="text-primary border border-primary rounded me-2"
                         style={{ cursor: "pointer" }}
@@ -697,7 +699,7 @@ function QuizTemplateEditor() {
             {dbBanner && <div className="mb-2">
               <label className="pb-1">Attached Banner</label>
               <img
-                
+
                 className="form-control"
                 src={dbBanner}
               />
@@ -722,7 +724,7 @@ function QuizTemplateEditor() {
                   dbQuizzes.map((dm, ind) => (
                     <>
                       <div className="d-flex mt-2">
-                        <p style={{whiteSpace:"nowrap"}}>{`Q${ind+1}.`}&nbsp;</p>
+                        <p style={{ whiteSpace: "nowrap" }}>{`Q${ind + 1}.`}&nbsp;</p>
                         <input
                           type="text"
                           id={`db-question-${ind}`}

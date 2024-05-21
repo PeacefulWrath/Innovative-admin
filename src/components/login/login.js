@@ -24,18 +24,20 @@ function Login() {
 
   useEffect(() => {
 
-
+    console.log("login")
+    
     const verifier = async () => {
 
-      if(localStorage.getItem("token"))
-{
-      const verifiedTokenData = await verifyToken()
-      // console.log("rrr",verifiedTokenData?.message)
-      if (verifiedTokenData?.message == "jwt expired") {
-        setShowNotFound(false)
+      if (localStorage.getItem("token")) {
+        const verifiedTokenData = await verifyToken()
+        // console.log("rrr",verifiedTokenData?.message)
+        if (verifiedTokenData?.message == "jwt expired") {
+          // console.log("rrr",verifiedTokenData?.message)
+          setShowNotFound(false)
+        } else {
+          setShowNotFound(true)
+        }
       } else {
-        setShowNotFound(true)
-      }}else{
         setShowNotFound(false)
       }
     }
@@ -47,14 +49,11 @@ function Login() {
 
   if (showNotFound === true) {
     return (<div className='d-flex justify-content-center'>
-      Page Not Found
+     you are already logged in, go to&nbsp;<a href="/dashboard">dashboard</a>
     </div>)
   } else if (showNotFound === false) {
 
     return (
-      <>
-        {/* <h1>login</h1> */}
-        {/* <button onClick={()=>{setLoginValidity(true)}}>set validity</button> */}
         <div className="container mt-5">
           <h3 className="text-center">Login From</h3>
           <div className="mb-3">
@@ -94,7 +93,6 @@ function Login() {
             Login
           </button>
         </div>
-      </>
     )
   }
 }

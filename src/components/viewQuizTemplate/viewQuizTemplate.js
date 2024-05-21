@@ -93,9 +93,7 @@ function ViewMcqTemplate() {
 
       if(verifiedTokenData?.message === "jwt expired") {
         return navigate("/");
-      } else {
-          return;
-      }
+      } 
     }
     
      verifier()

@@ -94,7 +94,7 @@ function UserManagement() {
   const handleDelete = async (id) => {
     const deleteData = { user_id: id }
     const deletedData = await deleteUsers(deleteData)
-     if (
+    if (
       deletedData?.success == "no" &&
       deletedData?.message === "jwt expired"
     ) {
@@ -126,7 +126,7 @@ function UserManagement() {
       if (usersData?.message === "jwt expired") {
         return navigate("/");
       } else {
-      setUsers([...usersData]);
+        setUsers([...usersData]);
       }
     };
 
@@ -144,9 +144,31 @@ function UserManagement() {
       <div className="row">
         {windowWidth > 768 && <Sidebar activeOption="user-management" />}
         <div className="col-md-10 p-4">
-          <div className="d-flex justify-content-end mb-5">
+        
+          <div className="d-flex">
+            <div className="fw-bold">
+              {`Users(${users.length - 1})`}
+            </div>
+
+            <div className="w-50 ms-3">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search"
+              />
+
+
+            </div>
+            
             <button
-              className="btn "
+              className="btn btn-outline-primary ms-2"
+              type="search"
+
+            >
+              Search
+            </button>
+            <button
+              className="btn ms-2"
               style={{
                 width: "fit-content",
                 background: "#90EE90",
@@ -158,77 +180,58 @@ function UserManagement() {
               }}
             >
               <AddIcon />
-              <span className="ms-2">create</span>
+              <span className="ms-2">Create</span>
             </button>
-          </div>
 
-          <div className="d-flex row">
-            <div className="col fw-bold">
-              {`Users(${users.length})`}
-            </div>
-            <div className="col d-flex">
-              <div className="input-group mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Search"
-                />
-                <button
-                  className="btn btn-outline-primary"
-                  type="search"
-                  id="button-addon2"
-                >
-                  Search
-                </button>
-
-              </div>
-            </div>
           </div>
 
 
 
 
-          <table className="table mt-1 p-4 w-70 text-center">
+          <table className="table mt-4 p-4 w-70 text-center">
             <thead>
               <tr className="table-primary table-striped">
-                <th scope="col">SN.</th>
-                <th scope="col">Name</th>
-                <th scope="col">Action</th>
+                {/* <th scope="col">SN.</th> */}
+                <th  className='w-25'>Name</th>
+                <th className='w-25'>Action</th>
               </tr>
             </thead>
-            {users.length !== 0 && users.map((user, ind) => (
-              <tbody>
-                <tr >
-                  <th scope="col">{ind + 1}</th>
-                  <th scope="col"> {user?.first_name + " " + user?.last_name}</th>
+            {users.length !== 0 && users.map((user, ind) =>
+              user.email !== "admin@gmail.com" && (
+                <tbody>
+                  <tr >
+                    {/* <th scope="col">{ind + 1}</th> */}
+                    <th className='w-25'> {user?.first_name + " " + user?.last_name}</th>
 
-                  <th scope="col ">
-                    <CreateIcon
-                      className="text-primary border border-primary rounded me-2"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        setUpdate(true)
-                        setShowModal(true);
-                        setFirstName(user?.first_name)
-                        setLastName(user?.last_name)
-                        setEmail(user?.email)
-                        setPhone(user?.phone_no)
-                        setPassword("")
-                        setRole(user?.role)
-                        setUserId(user?._id)
-                      }}
-                    />
-                    <DeleteIcon
-                      className="text-danger border border-danger cursor-pointer rounded"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        handleDelete(user?._id)
-                      }}
-                    />
-                  </th>
-                </tr>
-              </tbody>
-            ))}
+                    <th className='w-25'>
+                      <CreateIcon
+                        className="text-primary border border-primary rounded me-2"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          setUpdate(true)
+                          setShowModal(true);
+                          setFirstName(user?.first_name)
+                          setLastName(user?.last_name)
+                          setEmail(user?.email)
+                          setPhone(user?.phone_no)
+                          setPassword("")
+                          setRole(user?.role)
+                          setUserId(user?._id)
+                        }}
+                      />
+                      <DeleteIcon
+                        className="text-danger border border-danger cursor-pointer rounded"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          handleDelete(user?._id)
+                        }}
+                      />
+                    </th>
+                  </tr>
+                </tbody>
+              )
+
+            )}
 
 
 
@@ -335,7 +338,7 @@ function UserManagement() {
               update ? handleUpdate() : handleCreate();
             }}
           >
-            {update ? "update" : "Create"}
+            {update ? "Update" : "Create"}
           </Button>
         </Modal.Footer>
       </Modal>
