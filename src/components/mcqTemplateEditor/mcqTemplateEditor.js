@@ -583,7 +583,7 @@ function McqTemplateEditor() {
         {windowWidth > 768 && <Sidebar activeOption="mcq-template-editor" />}
 
 
-        <div className="col-md-10 p-4">
+        <div className="col-md-10 p-4" style={{ height:'90vh',overflowY:'auto' }}>
           <div className="d-flex">
 
             <div className="fw-bold">

@@ -143,7 +143,7 @@ function UserManagement() {
       <hr style={{ color: "black", margin: '0' }} />
       <div className="row">
         {windowWidth > 768 && <Sidebar activeOption="user-management" />}
-        <div className="col-md-10 p-4">
+        <div className="col-md-10 p-4" style={{ height:'90vh',overflowY:'auto' }}>
         
           <div className="d-flex">
             <div className="fw-bold">

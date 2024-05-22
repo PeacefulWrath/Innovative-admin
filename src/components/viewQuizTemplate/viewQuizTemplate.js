@@ -8,7 +8,8 @@ import dotted from "../../assets/Dotted.png";
 import line from "../../assets/Line.png";
 import rightPng from "../../assets/Right.png";
 import { verifyToken } from "../../api-calls/apicalls";
-
+import correct from "../../assets/correct.png"
+import incorrect from "../../assets/incorrect.png"
 
 function ViewMcqTemplate() {
   const location = useLocation();
@@ -21,7 +22,9 @@ function ViewMcqTemplate() {
   const [ans, setAns] = useState([])
   const [showAns, setShowAns] = useState(false)
   const [sign, setSign] = useState([])
-  const [nextClicked,setNextClicked]=useState([])
+  const [nextClicked, setNextClicked] = useState([])
+  const [ansSigns, setAnsSigns] = useState([])
+  const ALPHABET=["A","B","C","D"]
 
   const navigate = useNavigate();
 
@@ -31,7 +34,7 @@ function ViewMcqTemplate() {
 
   const handleSaveAndNext = async () => {
 
-    let tempNextClicked=nextClicked
+    let tempNextClicked = nextClicked
     tempNextClicked.push("clicked") //clicke used for just for mock data
     setNextClicked([...nextClicked])
 
@@ -39,7 +42,7 @@ function ViewMcqTemplate() {
     let tempAns = ans
     let tempPageNo = pageNumber;
 
-    if (!tempAns[tempPageNo - 1]) {
+    if (isNaN(tempAns[tempPageNo - 1])) {
       tempAns[tempPageNo - 1] = "unattempted"
       setAns([...tempAns])
     }
@@ -60,7 +63,7 @@ function ViewMcqTemplate() {
   };
 
   const handleClickedOption = (type, ind) => {
-    
+
 
     templateData &&
       templateData?.quizzes?.length !== 0 &&
@@ -88,15 +91,15 @@ function ViewMcqTemplate() {
     setWindowWidth(window.innerWidth);
     window.addEventListener("resize", updateWindowWidth);
 
-    const verifier=async()=>{
-      const verifiedTokenData=await verifyToken()
+    const verifier = async () => {
+      const verifiedTokenData = await verifyToken()
 
-      if(verifiedTokenData?.message === "jwt expired") {
+      if (verifiedTokenData?.message === "jwt expired") {
         return navigate("/");
-      } 
+      }
     }
-    
-     verifier()
+
+    verifier()
 
 
     !showAns &&
@@ -128,73 +131,103 @@ function ViewMcqTemplate() {
 
   })
 
+  useEffect(() => {
+    console.log("ans", ans)
+    let tempAnsSign = []
+    if (ans.length === templateData?.quizzes?.length) {
+
+      for (let i = 0; i < templateData.quizzes.length; i++) {
+        for (let j = 0; j < templateData.quizzes[i].options.length; j++) {
+
+          if (templateData.quizzes[i].answer === templateData.quizzes[i].options[j] && ans[i] == j) {
+            tempAnsSign[i] = "correct"
+            break;
+          } else {
+            tempAnsSign[i] = "incorrect"
+          }
+        }
+      }
+      // console.log("PPPPP",tempAnsSign)
+      setAnsSigns([...tempAnsSign])
+    }
+
+  }, [ans])
   return (
     <>
       <Nav />
       <hr style={{ color: "black", margin: "0" }} />
       <div className="row">
         {windowWidth > 768 && <Sidebar activeOption="quiz-temp-editor" />}
-        <div className="col-md-10  p-4">
+        <div className="col-md-10  p-4"
+          style={{ height: '90vh', overflowY: 'auto' }}
+        >
           {showAns ?
             <>
               {/* <button className="btn" onClick={()=>{window.location.reload()}}>Back Only For Admin</button> */}
               {templateData.quizzes.map((quiz, index) => (
-                <div className="d-flex justify-content-start View_quiz_template_quiz mt-3">
-                  <h5 className="ms-3 mt-3" style={{ whiteSpace: "nowrap" }}>{quiz?.question}</h5>
+                <div className="d-flex justify-content-start View_quiz_template_quiz mt-3 flex-column">
+                  <div className="d-flex">
+                    <h5 className="ms-3 mt-3" style={{ whiteSpace: "nowrap" }}>{quiz?.question}</h5>
+                    {ansSigns[index] === "correct" ? <img src={correct} className="mt-3 ms-3" alt="correct" style={{ height: "2%", width: "2%" }} /> : <img className="mt-3 ms-3" style={{ height: "2%", width: "2%" }} src={incorrect} alt="incorrect" />}
+                  </div>
                   {ans[index] === "unattempted" ? <p className="View_quiz_template_not_attempted">Not Attempted</p> :
                     (
-                      <div class="View_quiz_template_options_super_main row gap-3 ms-3 mb-3 " >
-                        {quiz.options.map((op, ind) => (
+                      <div className="container">
+                        <div class="View_quiz_template_options_super_main row gap-3 ms-3 mb-3   " >
+                          {quiz.options.map((op, ind) => (
 
-                          <div class="View_quiz_template_options_main border border-secondary p-0">
-                            {quiz?.options_type === "image" ? (
-                              <>
-                                <img
-                                  className="View_quiz_template_options_img"
-                                  id={`img-option-${ind}`}
-                                  src={op}
-                                  alt="op-img"
-                                  style={{
-                                    cursor: "pointer",
-                                  }}
-                                />
-                                {quiz.answer === op ? <p className="View_quiz_template_correct_answer">correct answer</p> : ""}
-                                {ans[index] === ind && quiz.answer != op ? <p className="View_quiz_template_incorrect_answer">incorrect answer</p> : ""}
-                              </>
-                            ) : (
-                              <>
-                                <div
-                                  className="View_quiz_template_options_text"
-                                  id={`text-option-${ind}`}
-                                  style={{
-                                    cursor: "pointer"
-                                  }}
-                                >
-                                  {op}
-                                </div>
-                                {quiz.answer === op ? <p className="View_quiz_template_correct_answer">correct answer</p> : ""}
-                                {ans[index] === ind && quiz.answer != op ? <p className="View_quiz_template_incorrect_answer">incorrect answer</p> : ""}
-                              </>
-                            )}
-                          </div>
-                        ))}
+                            <div class="View_quiz_template_options_main border border-secondary p-0">
+                              {quiz?.options_type === "image" ? (
+                                <>
+                                <p>{`${ALPHABET[ind]}.`}</p>
+                                  <img
+                                    className="View_quiz_template_options_img"
+                                    id={`img-option-${ind}`}
+                                    src={op}
+                                    alt="op-img"
+                                    style={{
+                                      cursor: "pointer",
+                                    }}
+                                  />
+                                  {quiz.answer === op ? <p className="View_quiz_template_correct_answer">correct answer</p> : ""}
+                                  {ans[index] === ind && quiz.answer != op ? <p className="View_quiz_template_incorrect_answer">incorrect answer</p> : ""}
+                                </>
+                              ) : (
+                                <>
+                                <p>{`${ALPHABET[ind]}.`}</p>
+                                  <div
+                                    className="View_quiz_template_options_text"
+                                    id={`text-option-${ind}`}
+                                    style={{
+                                      cursor: "pointer"
+                                    }}
+                                  >
+                                    {op}
+                                  </div>
+                                  {quiz.answer === op ? <p className="View_quiz_template_correct_answer">correct answer</p> : ""}
+                                  {ans[index] === ind && quiz.answer != op ? <p className="View_quiz_template_incorrect_answer">incorrect answer</p> : ""}
+                                </>
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                 </div>
               ))}
             </> :
             <>
-              {templateData && 
-              
-              (
-              
-              <>
-              <h1>{templateData?.paper_name}</h1>
-              <img className="w-100" alt="banner" src={templateData?.banner}/>
-              </>
-              )
-              
-              
+              {templateData &&
+
+                (
+
+                  <>
+                    <h1>{templateData?.paper_name}</h1>
+                    <img className="w-100" alt="banner" src={templateData?.banner} />
+                  </>
+                )
+
+
               }
 
               {templateData && templateData?.quizzes?.length !== 0 && (
@@ -250,6 +283,8 @@ function ViewMcqTemplate() {
                             {quiz.options.map((op, ind) => (
                               <div class=" View_quiz_template_options_main border border-secondary p-0">
                                 {quiz?.options_type === "image" ? (
+<>
+<p>{`${ALPHABET[ind]}.`}</p>
 
                                   <img
                                     className="View_quiz_template_options_img"
@@ -263,8 +298,13 @@ function ViewMcqTemplate() {
                                       handleClickedOption("img", ind);
                                     }}
                                   />
+                                  </>
 
                                 ) : (
+                                  <>
+                          <p>{`${ALPHABET[ind]}.`}</p>         
+                                  
+                                  
                                   <div
                                     className="View_quiz_template_options_text"
                                     id={`text-option-${ind}`}
@@ -277,6 +317,7 @@ function ViewMcqTemplate() {
                                   >
                                     {op}
                                   </div>
+                                  </>
                                 )}
                               </div>
                             ))}

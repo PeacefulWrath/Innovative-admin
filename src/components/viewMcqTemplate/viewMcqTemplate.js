@@ -9,11 +9,14 @@ import line from "../../assets/Line.png";
 import rightPng from "../../assets/Right.png";
 import wrongPng from "../../assets/Wrong.png";
 import { updateMcqTemplatesAttempts, verifyToken } from "../../api-calls/apicalls";
+import correct from "../../assets/correct.png"
+import incorrect from "../../assets/incorrect.png"
 
 function ViewMcqTemplate() {
   const location = useLocation();
   const ADMIN_EMAIL = "admin@gmail.com" //temporary
   const { templateData } = location.state;
+  const[ansSigns,setAnsSigns]=useState([])
   const [windowWidth, setWindowWidth] = useState();
   const [pageNumber, setPageNumber] = useState(1);
   const [explaination, setExplaination] = useState("");
@@ -23,6 +26,7 @@ function ViewMcqTemplate() {
   const [sign, setSign] = useState([])
   const [answered, setAnswered] = useState(false)
   const navigate=useNavigate()
+  const ALPHABET=["A","B","C","D"]
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
@@ -275,26 +279,58 @@ function ViewMcqTemplate() {
     };
   }, []);
 
+  useEffect(() => {
+    let tempAnsSign = []
+    if (ans.length === templateData?.mcqs?.length) {
+      
+      for(let i=0;i<templateData.mcqs.length;i++) {
+        for(let j=0;j<templateData.mcqs[i].options.length;j++) {
+         
+          if (templateData.mcqs[i].answer === templateData.mcqs[i].options[j]&&ans[i]==j) {
+                tempAnsSign[i]="correct"
+                break;
+          }else{
+            tempAnsSign[i]="incorrect"
+          }
+        }
+      }
+      // console.log("PPPPP",tempAnsSign)
+      setAnsSigns([...tempAnsSign])
+    }
+    
+  }, [ans])
+
   return (
     <>
       <Nav />
       <hr style={{ color: "black", margin: "0" }} />
       <div className="row">
         {windowWidth > 768 && <Sidebar activeOption="mcq-temp-editor" />}
-        <div className="col-md-10  p-4">
+        <div className="col-md-10  p-4" 
+        style={{
+                    height:"500px",
+                    overflowY: "scroll"
+                }}
+                >
           {showAns ?
             <>
               {templateData.mcqs.map((mcq, index) => (
-                <div className="d-flex justify-content-start View_mcq_template_mcq mt-3">
+                <div className="d-flex justify-content-start View_mcq_template_mcq mt-3    flex-column                     ">
+                  <div className="d-flex">
                   <h5 className="ms-3 mt-3" style={{ whiteSpace: "nowrap" }}>{mcq?.question}</h5>
+                   {ansSigns[index]==="correct"?<img src={correct} className="mt-3 ms-3" alt="correct" style={{height:"2%", width:"2%"}}/>:<img  className="mt-3 ms-3" style={{height:"2%", width:"2%"}} src={incorrect} alt="incorrect"/>}
+                  </div>
+                 
                   {ans[index] === "unattempted" ? <p className="View_mcq_template_not_attemted">Not Attempted</p> :
                     (
+                      <div className="container">
                       <div class="View_mcq_template_options_super_main row gap-3 ms-3 mb-3 " >
                         {mcq.options.map((op, ind) => (
 
                           <div class="View_mcq_template_options_main border border-secondary p-0">
                             {mcq?.options_type === "image" ? (
                               <>
+                                <p>{`${ALPHABET[ind]}.`}</p>
                                 <img
                                   className="View_mcq_template_options_img"
                                   id={`img-option-${ind}`}
@@ -305,10 +341,13 @@ function ViewMcqTemplate() {
                                   }}
                                 />
                                 {mcq.answer === op ? <p className="View_mcq_template_correct_answer">correct answer</p> : ""}
+                                {/* {mcq.answer === op ? handleAnsSign():handleAnsSign()} */}
+                                {/* {mcq.answer === op ? <p className="View_mcq_template_correct_answer">correct answer</p> : ""} */}
                                 {ans[index] === ind && mcq.answer != op ? <p className="View_mcq_template_incorrect_answer">incorrect answer</p> : ""}
                               </>
                             ) : (
                               <>
+                                <p>{`${ALPHABET[ind]}.`}</p>
                                 <div
                                   className="View_mcq_template_options_text"
                                   id={`text-option-${ind}`}
@@ -319,11 +358,13 @@ function ViewMcqTemplate() {
                                   {op}
                                 </div>
                                 {mcq.answer === op ? <p className="View_mcq_template_correct_answer">correct answer</p> : ""}
+                                {/* {ansSigns[index]?"":(ans[index] === ind && mcq.answer != op ? handleAnsSign("incorrect",index):handleAnsSign("correct",index))} */}
                                 {ans[index] === ind && mcq.answer != op ? <p className="View_mcq_template_incorrect_answer">incorrect answer</p> : ""}
                               </>
                             )}
                           </div>
                         ))}
+                      </div>
                       </div>
                     )}
                 </div>
@@ -387,7 +428,8 @@ function ViewMcqTemplate() {
                             {mcq.options.map((op, ind) => (
                               <div class=" View_mcq_template_options_main border border-secondary p-0">
                                 {mcq?.options_type === "image" ? (
-
+<>
+<p>{`${ALPHABET[ind]}.`}</p>
                                   <img
                                     className="View_mcq_template_options_img"
                                     id={`img-option-${ind}`}
@@ -400,8 +442,12 @@ function ViewMcqTemplate() {
                                       handleClickedOption("img", ind);
                                     }}
                                   />
+                                  </>
 
                                 ) : (
+                                  <>
+                               <p>{`${ALPHABET[ind]}.`}</p>    
+                                 
                                   <div
                                     className="View_mcq_template_options_text"
                                     id={`text-option-${ind}`}
@@ -414,6 +460,7 @@ function ViewMcqTemplate() {
                                   >
                                     {op}
                                   </div>
+                                  </>
                                 )}
                               </div>
                             ))}

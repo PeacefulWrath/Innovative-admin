@@ -140,7 +140,7 @@ function TrainingModule() {
         {windowWidth > 768 && (
           <Sidebar activeOption="training-module-management" />
         )}
-        <div className="col-md-10 p-4">
+        <div className="col-md-10 p-4"   style={{ height:'90vh',overflowY:'auto' }}>
 
           <div className="d-flex justify-content-end mb-5">
             <button

@@ -7,7 +7,7 @@ import Sidebar from "../sidebar/sidebar";
 import { Link } from "react-router-dom";
 import CreateIcon from "@mui/icons-material/Create";
 import DeleteIcon from "@mui/icons-material/Delete";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+// import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import AddIcon from "@mui/icons-material/Add";
 import { Modal, Button } from "react-bootstrap";
 import {
@@ -17,6 +17,7 @@ import {
   deleteTemplates
 } from "../../api-calls/apicalls";
 import { useNavigate } from "react-router-dom";
+import banner from "../../assets/banner.png"
 
 function FileUploadTempEditor() {
   const [windowWidth, setWindowWidth] = useState();
@@ -123,7 +124,7 @@ function FileUploadTempEditor() {
 
     addData.append("template_name", templateName);
     addData.append("template_desc", templateDesc);
-    addData.append("files", templateImage);
+    addData.append("files", banner);
     console.log("template pdfs", templatePdfs);
 
     templatePdfs.forEach((pdf, index) => {
@@ -275,7 +276,7 @@ function FileUploadTempEditor() {
         );
       });
 
-    updateData.append("files", templateImage);
+    // updateData.append("files", templateImage);
 
     templatePdfs.forEach((pdf, index) => {
       updateData.append("files", pdf);
@@ -534,7 +535,7 @@ function FileUploadTempEditor() {
               }}
             >
               <AddIcon />
-              <span className="ms-2">create</span>
+              <span className="ms-2">Create</span>
             </button>
           </div>
           <div className="d-flex row">
@@ -587,7 +588,6 @@ function FileUploadTempEditor() {
                           setUpdate(true);
                           setTemplateName(temp?.template_name);
                           setTemplateDesc(temp?.template_desc);
-
                           setDbPdfs(temp?.template_pdfs);
                           setDbZips(temp?.template_zips);
                           setTemplateId(temp?._id);
@@ -655,25 +655,25 @@ function FileUploadTempEditor() {
               />
             </div>
 
-            {dbImage && <div className="mb-2">
+            {/* {dbImage && <div className="mb-2">
               <label className="pb-1">Attached Template Image</label>
               <img
                 src={dbImage}
                 alt="db template image"
                 className="form-control"
               />
-            </div>}
+            </div>} */}
 
-            <div className="mb-2">
+            {/* <div className="mb-2">
               <label className="pb-1">Template Image</label>
               <input
                 type="file"
                 id="add-image"
                 className="form-control"
                 placeholder="Template Image"
-                onChange={imageFileHandler}
+                // onChange={imageFileHandler}
               />
-            </div>
+            </div> */}
 
             {dbPdfs.length !== 0 &&
 

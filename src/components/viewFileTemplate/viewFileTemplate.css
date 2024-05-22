@@ -83,3 +83,6 @@
     opacity:100;
     margin-left: 25%;
 }
+.View_file_boxes{
+     box-shadow: 10px 10px rgba(79, 79, 79, 0.2);
+}
