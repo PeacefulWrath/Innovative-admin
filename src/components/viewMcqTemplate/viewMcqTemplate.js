@@ -16,7 +16,7 @@ function ViewMcqTemplate() {
   const location = useLocation();
   const ADMIN_EMAIL = "admin@gmail.com" //temporary
   const { templateData } = location.state;
-  const[ansSigns,setAnsSigns]=useState([])
+  const [ansSigns, setAnsSigns] = useState([])
   const [windowWidth, setWindowWidth] = useState();
   const [pageNumber, setPageNumber] = useState(1);
   const [explaination, setExplaination] = useState("");
@@ -25,8 +25,8 @@ function ViewMcqTemplate() {
   const [showAns, setShowAns] = useState(false)
   const [sign, setSign] = useState([])
   const [answered, setAnswered] = useState(false)
-  const navigate=useNavigate()
-  const ALPHABET=["A","B","C","D"]
+  const navigate = useNavigate()
+  const ALPHABET = ["A", "B", "C", "D"]
 
   const updateWindowWidth = () => {
     setWindowWidth(window.innerWidth);
@@ -34,62 +34,62 @@ function ViewMcqTemplate() {
 
   const handleSaveAndNext = async () => {
 
-      let tempSign = sign
-      let tempAns = ans
-      let tempPageNo = pageNumber;
+    let tempSign = sign
+    let tempAns = ans
+    let tempPageNo = pageNumber;
 
-      // console.log("temppp",tempPageNo)
+    // console.log("temppp",tempPageNo)
 
-      if (answered == false) {
+    if (answered == false) {
 
-        tempAns[tempPageNo - 1] = "unattempted"
-        setAns([...tempAns])
-      } else if (answered == true) {
-        setAnswered(false)
+      tempAns[tempPageNo - 1] = "unattempted"
+      setAns([...tempAns])
+    } else if (answered == true) {
+      setAnswered(false)
+    }
+
+    let dbAns = []
+    tempAns.forEach((t) => {
+      if (t !== "unattempted") {
+        dbAns.push(t.toString())
+      } else {
+        dbAns.push("unattempted")
       }
+    })
 
-      let dbAns = []
-      tempAns.forEach((t) => {
-        if (t !== "unattempted") {
-          dbAns.push(t.toString())
-        } else {
-          dbAns.push("unattempted")
-        }
-      })
+    // console.log("dbbb",dbAns)
+    let updateData = { update_attempt: "yes", mcqDocId: templateData?._id, user_email: ADMIN_EMAIL, last_visited_question: pageNumber, given_answers: dbAns }
 
-      // console.log("dbbb",dbAns)
-      let updateData = { update_attempt: "yes", mcqDocId: templateData?._id, user_email: ADMIN_EMAIL, last_visited_question: pageNumber, given_answers: dbAns }
-
-      await updateMcqTemplatesAttempts(updateData)
+    await updateMcqTemplatesAttempts(updateData)
 
 
-      if (tempPageNo == templateData?.mcqs?.length) {
-        setShowAns(true)
-        return;
+    if (tempPageNo == templateData?.mcqs?.length) {
+      setShowAns(true)
+      return;
+    }
+
+
+    document.getElementById(`dotted-${pageNumber - 1}`).style.display = "none";
+    document.getElementById(`line-${pageNumber - 1}`).style.display = "flex";
+
+
+
+    templateData.mcqs[pageNumber - 1].options.forEach((_, opInd) => {
+      if (ans[pageNumber - 1] === "unattempted") {
+        tempSign[pageNumber - 1] = "unsigned"
+        setSign([...tempSign])
+      } else if (templateData.mcqs[pageNumber - 1].answer === templateData.mcqs[pageNumber - 1].options[ans[pageNumber - 1]]) {
+        tempSign[pageNumber - 1] = "right"
+        setSign([...tempSign])
+      } else if (templateData.mcqs[pageNumber - 1].answer !== templateData.mcqs[pageNumber - 1].options[ans[pageNumber - 1]]) {
+        tempSign[pageNumber - 1] = "wrong"
+        setSign([...tempSign])
       }
+    })
 
 
-      document.getElementById(`dotted-${pageNumber - 1}`).style.display = "none";
-      document.getElementById(`line-${pageNumber - 1}`).style.display = "flex";
-
-
-
-      templateData.mcqs[pageNumber - 1].options.forEach((_, opInd) => {
-        if (ans[pageNumber - 1] === "unattempted") {
-          tempSign[pageNumber - 1] = "unsigned"
-          setSign([...tempSign])
-        } else if (templateData.mcqs[pageNumber - 1].answer === templateData.mcqs[pageNumber - 1].options[ans[pageNumber - 1]]) {
-          tempSign[pageNumber - 1] = "right"
-          setSign([...tempSign])
-        } else if (templateData.mcqs[pageNumber - 1].answer !== templateData.mcqs[pageNumber - 1].options[ans[pageNumber - 1]]) {
-          tempSign[pageNumber - 1] = "wrong"
-          setSign([...tempSign])
-        }
-      })
-
-
-      setExplaination("")
-      setPageNumber(tempPageNo + 1);
+    setExplaination("")
+    setPageNumber(tempPageNo + 1);
   };
 
   const handleClickedOption = (type, ind) => {
@@ -110,10 +110,10 @@ function ViewMcqTemplate() {
 
             setExplaination(templateData.mcqs[pageNumber - 1].explaination);
 
-            document.getElementById(`${type}-option-${ind}`).style.border = "6px solid #D4FFD6";
+            document.getElementById(`main-div-${type}-option-${ind}`).style.border = "6px solid #D4FFD6";
 
             templateData.mcqs[pageNumber - 1].options.forEach((_, opInd) => {
-              document.getElementById(`${type}-option-${opInd}`).addEventListener("click", function (event) {
+              document.getElementById(`main-div-${type}-option-${opInd}`).addEventListener("click", function (event) {
                 event.stopPropagation();
               });
             })
@@ -132,11 +132,11 @@ function ViewMcqTemplate() {
 
             setExplaination(templateData.mcqs[pageNumber - 1].explaination);
 
-            document.getElementById(`${type}-option-${ind}`).style.border = "6px solid #FFD4D4";
+            document.getElementById(`main-div-${type}-option-${ind}`).style.border = "6px solid #FFD4D4";
 
             templateData.mcqs[pageNumber - 1].options.forEach((op, opInd) => {
               if (op === templateData.mcqs[pageNumber - 1].answer) {
-                document.getElementById(`${type}-option-${opInd}`).style.border = "6px solid #D4FFD6";
+                document.getElementById(`main-div-${type}-option-${opInd}`).style.border = "6px solid #D4FFD6";
               }
             })
 
@@ -156,39 +156,29 @@ function ViewMcqTemplate() {
     setWindowWidth(window.innerWidth);
     window.addEventListener("resize", updateWindowWidth);
 
-    const verifier=async()=>{
-      const verifiedTokenData=await verifyToken()
+    const verifier = async () => {
+      const verifiedTokenData = await verifyToken()
 
-      if(verifiedTokenData?.message === "jwt expired") {
-         navigate("/");
-      } 
+      if (verifiedTokenData?.message === "jwt expired") {
+        navigate("/");
+      }
     }
-    
-     verifier()
+
+    verifier()
 
     !showAns &&
       templateData &&
       Array.isArray(templateData?.attempted) &&
-      templateData?.attempted?.length !== 0?
+      templateData?.attempted?.length !== 0 ?
       templateData?.attempted.forEach((tat, _) => {
         if (tat?.user_email === ADMIN_EMAIL) {
-          let tempAns=[]
+          let tempAns = []
 
           // console.log("230")
 
           //change lines
           for (let i = 0; i < parseInt(tat?.last_visited_question); i++) {
-            if (i==templateData?.mcqs?.length-1) {
-              document.getElementById(`dotted-${i}`).style.display = "none";
-              document.getElementById(`line-${i}`).style.display = "none";
-            } else{
-              document.getElementById(`dotted-${i}`).style.display = "none";
-              document.getElementById(`line-${i}`).style.display = "flex";
-            }
-          }
-
-          for (let i = parseInt(tat?.last_visited_question); i<templateData?.mcqs?.length; i++) {
-            if (i==templateData?.mcqs?.length-1) {
+            if (i == templateData?.mcqs?.length - 1) {
               document.getElementById(`dotted-${i}`).style.display = "none";
               document.getElementById(`line-${i}`).style.display = "none";
             } else {
@@ -197,8 +187,18 @@ function ViewMcqTemplate() {
             }
           }
 
-      
-         
+          for (let i = parseInt(tat?.last_visited_question); i < templateData?.mcqs?.length; i++) {
+            if (i == templateData?.mcqs?.length - 1) {
+              document.getElementById(`dotted-${i}`).style.display = "none";
+              document.getElementById(`line-${i}`).style.display = "none";
+            } else {
+              document.getElementById(`dotted-${i}`).style.display = "none";
+              document.getElementById(`line-${i}`).style.display = "flex";
+            }
+          }
+
+
+
 
           //change signs
           for (let ga = 0; ga < tat?.given_answers?.length; ga++) {
@@ -223,50 +223,50 @@ function ViewMcqTemplate() {
             }
 
 
-            tempAns[ga]=tat?.given_answers[ga]=="unattempted"?"unattempted":parseInt(tat?.given_answers[ga])
-            
+            tempAns[ga] = tat?.given_answers[ga] == "unattempted" ? "unattempted" : parseInt(tat?.given_answers[ga])
+
           }
 
-          for(let sga=tat?.given_answers?.length;sga<templateData?.mcqs?.length;sga++){
+          for (let sga = tat?.given_answers?.length; sga < templateData?.mcqs?.length; sga++) {
             let tempSign = sign
             tempSign[sga] = "unsigned"
             setSign([...tempSign])
           }
-          
-          tempAns.length!==0&&setAns([...tempAns])
-          parseInt(tat?.last_visited_question)==templateData?.mcqs?.length?setShowAns(true):setPageNumber(parseInt(tat?.last_visited_question)+1)
+
+          tempAns.length !== 0 && setAns([...tempAns])
+          parseInt(tat?.last_visited_question) == templateData?.mcqs?.length ? setShowAns(true) : setPageNumber(parseInt(tat?.last_visited_question) + 1)
 
         }
 
-      }): templateData?.mcqs.forEach((tat, _) => {
-        
+      }) : templateData?.mcqs.forEach((tat, _) => {
+
         //  console.log("283")
-        
-          for (let i = 0; i <  templateData?.mcqs?.length; i++) {
-            if (i === templateData?.mcqs.length - 1) {
-              document.getElementById(`dotted-${i}`).style.display = "none";
-              document.getElementById(`line-${i}`).style.display = "none";
-            } else {
-              document.getElementById(`dotted-${i}`).style.display = "none";
-              document.getElementById(`line-${i}`).style.display = "flex";
-            }
+
+        for (let i = 0; i < templateData?.mcqs?.length; i++) {
+          if (i === templateData?.mcqs.length - 1) {
+            document.getElementById(`dotted-${i}`).style.display = "none";
+            document.getElementById(`line-${i}`).style.display = "none";
+          } else {
+            document.getElementById(`dotted-${i}`).style.display = "none";
+            document.getElementById(`line-${i}`).style.display = "flex";
           }
+        }
 
-      
-         
 
-         
-          for (let ga = 0; ga <  templateData?.mcqs?.length; ga++) {     
-              let tempSign = sign
-              tempSign[ga] = "unsigned"
-              setSign([...tempSign])
-           
 
-          }
 
-    
 
-        
+        for (let ga = 0; ga < templateData?.mcqs?.length; ga++) {
+          let tempSign = sign
+          tempSign[ga] = "unsigned"
+          setSign([...tempSign])
+
+
+        }
+
+
+
+
       })
 
 
@@ -282,22 +282,22 @@ function ViewMcqTemplate() {
   useEffect(() => {
     let tempAnsSign = []
     if (ans.length === templateData?.mcqs?.length) {
-      
-      for(let i=0;i<templateData.mcqs.length;i++) {
-        for(let j=0;j<templateData.mcqs[i].options.length;j++) {
-         
-          if (templateData.mcqs[i].answer === templateData.mcqs[i].options[j]&&ans[i]==j) {
-                tempAnsSign[i]="correct"
-                break;
-          }else{
-            tempAnsSign[i]="incorrect"
+
+      for (let i = 0; i < templateData.mcqs.length; i++) {
+        for (let j = 0; j < templateData.mcqs[i].options.length; j++) {
+
+          if (templateData.mcqs[i].answer === templateData.mcqs[i].options[j] && ans[i] == j) {
+            tempAnsSign[i] = "correct"
+            break;
+          } else {
+            tempAnsSign[i] = "incorrect"
           }
         }
       }
       // console.log("PPPPP",tempAnsSign)
       setAnsSigns([...tempAnsSign])
     }
-    
+
   }, [ans])
 
   return (
@@ -306,72 +306,81 @@ function ViewMcqTemplate() {
       <hr style={{ color: "black", margin: "0" }} />
       <div className="row">
         {windowWidth > 768 && <Sidebar activeOption="mcq-temp-editor" />}
-        <div className="col-md-10  p-4" 
-        style={{
-                    height:"500px",
-                    overflowY: "scroll"
-                }}
-                >
+        <div className="col-md-10  p-4"
+          style={{
+            height: "500px",
+            overflowY: "scroll"
+          }}
+        >
           {showAns ?
             <>
               {templateData.mcqs.map((mcq, index) => (
                 <div className="d-flex justify-content-start View_mcq_template_mcq mt-3    flex-column                     ">
                   <div className="d-flex">
-                  <h5 className="ms-3 mt-3" style={{ whiteSpace: "nowrap" }}>{mcq?.question}</h5>
-                   {ansSigns[index]==="correct"?<img src={correct} className="mt-3 ms-3" alt="correct" style={{height:"2%", width:"2%"}}/>:<img  className="mt-3 ms-3" style={{height:"2%", width:"2%"}} src={incorrect} alt="incorrect"/>}
+                    <h5 className="ms-3 mt-3" style={{ whiteSpace: "nowrap" }}>{mcq?.question}</h5>
+                    {ansSigns[index] === "correct" ? <img src={correct} className="mt-3 ms-3" alt="correct" style={{ height: "2%", width: "2%" }} /> : <img className="mt-3 ms-3" style={{ height: "2%", width: "2%" }} src={incorrect} alt="incorrect" />}
                   </div>
-                 
+
                   {ans[index] === "unattempted" ? <p className="View_mcq_template_not_attemted">Not Attempted</p> :
                     (
                       <div className="container">
-                      <div class="View_mcq_template_options_super_main row gap-3 ms-3 mb-3 " >
-                        {mcq.options.map((op, ind) => (
+                        <div class="View_mcq_template_options_super_main row gap-3 ms-3 mb-3 " >
+                          {mcq.options.map((op, ind) => (
 
-                          <div class="View_mcq_template_options_main border border-secondary p-0">
-                            {mcq?.options_type === "image" ? (
-                              <>
-                                <p>{`${ALPHABET[ind]}.`}</p>
-                                <img
-                                  className="View_mcq_template_options_img"
-                                  id={`img-option-${ind}`}
-                                  src={op}
-                                  alt="op-img"
-                                  style={{
-                                    cursor: "pointer",
-                                  }}
-                                />
-                                {mcq.answer === op ? <p className="View_mcq_template_correct_answer">correct answer</p> : ""}
-                                {/* {mcq.answer === op ? handleAnsSign():handleAnsSign()} */}
-                                {/* {mcq.answer === op ? <p className="View_mcq_template_correct_answer">correct answer</p> : ""} */}
-                                {ans[index] === ind && mcq.answer != op ? <p className="View_mcq_template_incorrect_answer">incorrect answer</p> : ""}
-                              </>
-                            ) : (
-                              <>
-                                <p>{`${ALPHABET[ind]}.`}</p>
-                                <div
-                                  className="View_mcq_template_options_text"
-                                  id={`text-option-${ind}`}
-                                  style={{
-                                    cursor: "pointer"
-                                  }}
-                                >
-                                  {op}
-                                </div>
-                                {mcq.answer === op ? <p className="View_mcq_template_correct_answer">correct answer</p> : ""}
-                                {/* {ansSigns[index]?"":(ans[index] === ind && mcq.answer != op ? handleAnsSign("incorrect",index):handleAnsSign("correct",index))} */}
-                                {ans[index] === ind && mcq.answer != op ? <p className="View_mcq_template_incorrect_answer">incorrect answer</p> : ""}
-                              </>
-                            )}
-                          </div>
-                        ))}
-                      </div>
+                            <div class="View_mcq_template_options_main border border-secondary p-0">
+                              {mcq?.options_type === "image" ? (
+                                <>
+                                  <p>{`${ALPHABET[ind]}.`}</p>
+                                  <img
+                                    className="View_mcq_template_options_img"
+                                    id={`img-option-${ind}`}
+                                    src={op}
+                                    alt="op-img"
+                                    style={{
+                                      cursor: "pointer",
+                                    }}
+                                  />
+                                  {mcq.answer === op ? <p className="View_mcq_template_correct_answer">correct answer</p> : ""}
+                                  {ans[index] === ind && mcq.answer != op ? <p className="View_mcq_template_incorrect_answer">incorrect answer</p> : ""}
+                                </>
+                              ) : (
+                                <>
+                                  <p>{`${ALPHABET[ind]}.`}</p>
+                                  <div
+                                    className="View_mcq_template_options_text"
+                                    id={`text-option-${ind}`}
+                                    style={{
+                                      cursor: "pointer"
+                                    }}
+                                  >
+                                    {op}
+                                  </div>
+                                  {mcq.answer === op ? <p className="View_mcq_template_correct_answer">correct answer</p> : ""}
+                                  {ans[index] === ind && mcq.answer != op ? <p className="View_mcq_template_incorrect_answer">incorrect answer</p> : ""}
+                                </>
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                 </div>
               ))}
             </> :
             <>
-              {templateData && <h1 className="">{templateData.paper_name}</h1>}
+              {templateData &&
+
+                (
+
+                  <>
+                    <h1>{templateData?.paper_name}</h1>
+                    <img className="w-100" alt="banner" src={templateData?.banner} />
+                  </>
+                )
+
+
+              }
+
               {templateData && templateData?.mcqs?.length !== 0 && (
                 <div className="d-flex View_mcq_template_pagination_mainWrapper mt-3">
                   {templateData?.mcqs?.map((_, ind) => (
@@ -428,39 +437,38 @@ function ViewMcqTemplate() {
                             {mcq.options.map((op, ind) => (
                               <div class=" View_mcq_template_options_main border border-secondary p-0">
                                 {mcq?.options_type === "image" ? (
-<>
-<p>{`${ALPHABET[ind]}.`}</p>
-                                  <img
-                                    className="View_mcq_template_options_img"
-                                    id={`img-option-${ind}`}
-                                    src={op}
-                                    alt="op-img"
-                                    style={{
-                                      cursor: "pointer",
-                                    }}
-                                    onClick={() => {
-                                      handleClickedOption("img", ind);
-                                    }}
-                                  />
-                                  </>
+                                  <div id={`main-div-img-option-${ind}`} className="w-100">
+                                    <p>{`${ALPHABET[ind]}.`}</p>
+                                    <img
+                                      className="View_mcq_template_options_img"
+                                      id={`img-option-${ind}`}
+                                      src={op}
+                                      alt="op-img"
+                                      style={{
+                                        cursor: "pointer",
+                                      }}
+                                      onClick={() => {
+                                        handleClickedOption("img", ind);
+                                      }}
+                                    />
+                                  </div>
 
                                 ) : (
-                                  <>
-                               <p>{`${ALPHABET[ind]}.`}</p>    
-                                 
-                                  <div
-                                    className="View_mcq_template_options_text"
-                                    id={`text-option-${ind}`}
-                                    style={{
-                                      cursor: "pointer"
-                                    }}
-                                    onClick={() => {
-                                      handleClickedOption("text", ind);
-                                    }}
-                                  >
-                                    {op}
+                                  <div id={`main-div-text-option-${ind}`} className="w-100">
+                                    <p>{`${ALPHABET[ind]}.`}</p>
+                                    <div
+                                      className="View_mcq_template_options_text"
+                                      id={`text-option-${ind}`}
+                                      style={{
+                                        cursor: "pointer"
+                                      }}
+                                      onClick={() => {
+                                        handleClickedOption("text", ind);
+                                      }}
+                                    >
+                                      {op}
+                                    </div>
                                   </div>
-                                  </>
                                 )}
                               </div>
                             ))}

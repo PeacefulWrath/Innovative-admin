@@ -22,6 +22,11 @@ import ServiceManagement from "./components/serviceManagement/serviceManagement"
 import PartnerManagement from "./components/partnerManagement/partnerManagement";
 import Login from "./components/login/login";
 import { useLogin } from "./context/loginContext";
+import OurMissionManagement from "./components/ourMission/ourMission";
+import OurVisionManagement from "./components/ourVision/ourVision";
+import AboutUsManagement from "./components/aboutUs/aboutUs";
+import CallUsManagement from "./components/callUs/callUs";
+import EmailUsManagement from "./components/emailUs/emailUs";
 
 
 function App() {
@@ -57,6 +62,11 @@ function App() {
       <Route path="/testimonial-management" element={<TestimonialManagement/>} />
       <Route path="/service-management" element={<ServiceManagement/>} />
       <Route path="/partner-management" element={<PartnerManagement/>} />
+      <Route path="/our-mission-management" element={<OurMissionManagement/>} />
+      <Route path="/our-vision-management" element={<OurVisionManagement/>} />
+      <Route path="/about-us-management" element={<AboutUsManagement/>} />
+      <Route path="/call-us-management" element={<CallUsManagement/>} />
+      <Route path="/email-us-management" element={<EmailUsManagement/>} />
     </Routes>
    </Router>
    {/* } */}

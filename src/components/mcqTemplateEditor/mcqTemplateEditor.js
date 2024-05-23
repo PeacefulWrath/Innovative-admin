@@ -34,11 +34,11 @@ function McqTemplateEditor() {
   const [dbTemplateOptTexts, setDbTemplateOptTexts] = useState([]);
   const [answerImages, setAnswerImages] = useState([]);
   const [explainations, setExplainations] = useState([])
-  const [marks, setMarks] = useState([])
+  // const [marks, setMarks] = useState([])
   const [dbMcqs, setDbMcqs] = useState([])
   const [dbOptionsType, setDbOptionsType] = useState([]);
   const [editMcqDocId, setEditMcqDocId] = useState("")
-  const [dbMarks, setDbMarks] = useState([])
+  // const [dbMarks, setDbMarks] = useState([])
   const [dbAnswerImages, setDbAnswerImages] = useState([]);
   const [dbExplainations, setDbExplainations] = useState([])
   const [dbTextAnswers, setDbTextAnswers] = useState([])
@@ -56,6 +56,7 @@ function McqTemplateEditor() {
     setUpdate(false)
     setDbMcqs([])
     setShowModal(false);
+    window.location.reload()
   };
 
   const handleMcqsInputCnt = () => {
@@ -231,9 +232,9 @@ function McqTemplateEditor() {
       addData.append("explaination", exp)
     })
 
-    marks && marks.length !== 0 && marks.forEach((mark) => {
-      addData.append("mark", mark)
-    })
+    // marks && marks.length !== 0 && marks.forEach((mark) => {
+    //   addData.append("mark", mark)
+    // })
 
     let createdData = await createMcqTemplates(addData);
     // let tempCreatedData = [];
@@ -256,11 +257,11 @@ function McqTemplateEditor() {
     }
   };
 
-  const handleMarks = async (e, operation, ind) => {
-    let tempMarks = operation === "add" ? marks : dbMarks
-    tempMarks[ind] = e.target.value
-    operation === "add" ? setMarks([...tempMarks]) : setDbMarks([...tempMarks])
-  }
+  // const handleMarks = async (e, operation, ind) => {
+  //   let tempMarks = operation === "add" ? marks : dbMarks
+  //   tempMarks[ind] = e.target.value
+  //   operation === "add" ? setMarks([...tempMarks]) : setDbMarks([...tempMarks])
+  // }
 
   const handleDbQuestions = async (e, ind) => {
     let tempQuestions = dbQuestions
@@ -305,7 +306,7 @@ function McqTemplateEditor() {
 
     updateData.append("mcqDocId", editMcqDocId)
     updateData.append("paper_name", paperName)
-    updateData.append("banner", banner)
+    {banner&&updateData.append("banner", banner)}
 
     let updatedDataToBackend = []
 
@@ -392,21 +393,21 @@ function McqTemplateEditor() {
 
     })
 
-    dbMarks && dbMarks.length !== 0 && dbMarks.forEach((dta, ind) => {
-      if (dta) {
+    // dbMarks && dbMarks.length !== 0 && dbMarks.forEach((dta, ind) => {
+    //   if (dta) {
 
 
-        updatedDataToBackend.push({
+    //     updatedDataToBackend.push({
 
-          "db_marks_replacable_question_no": ind,
-          "db_marks_replacable_option_type": "text",
-          "db_marks_data": dta
-        })
+    //       "db_marks_replacable_question_no": ind,
+    //       "db_marks_replacable_option_type": "text",
+    //       "db_marks_data": dta
+    //     })
 
 
-      }
+    //   }
 
-    })
+    // })
 
     dbQuestions && dbQuestions.length !== 0 && dbQuestions.forEach((dta, ind) => {
       if (dta) {
@@ -478,9 +479,9 @@ function McqTemplateEditor() {
       updateData.append("explaination", exp)
     })
 
-    marks && marks.length !== 0 && marks.forEach((mark) => {
-      updateData.append("mark", mark)
-    })
+    // marks && marks.length !== 0 && marks.forEach((mark) => {
+    //   updateData.append("mark", mark)
+    // })
 
     updateData.append("updated_data", JSON.stringify(updatedDataToBackend))
 
@@ -502,7 +503,7 @@ function McqTemplateEditor() {
       alert("system error try again leter");
     } else if (updatedData?.success == "yes") {
       alert("mcq template updated successfully")
-      window.location.reload();
+      // window.location.reload();
     }
 
   }
@@ -567,7 +568,7 @@ function McqTemplateEditor() {
           document.getElementById(`db-attached-img-answer-${ind}`).src = dm?.answer
         }
 
-        document.getElementById(`db-marks-${ind}`).value = dm?.mark
+        // document.getElementById(`db-marks-${ind}`).value = dm?.mark
         document.getElementById(`db-explaination-${ind}`).value = dm?.explaination
         document.getElementById(`db-question-${ind}`).value = dm?.question
       })
@@ -583,7 +584,7 @@ function McqTemplateEditor() {
         {windowWidth > 768 && <Sidebar activeOption="mcq-template-editor" />}
 
 
-        <div className="col-md-10 p-4" style={{ height:'90vh',overflowY:'auto' }}>
+        <div className="col-md-10 p-4" style={{ height: '90vh', overflowY: 'auto' }}>
           <div className="d-flex">
 
             <div className="fw-bold">
@@ -744,6 +745,7 @@ function McqTemplateEditor() {
                   dbMcqs.map((dm, ind) => (
                     <>
                       <div className="d-flex mt-2">
+                        <p>{`Q${ind + 1}.`}&nbsp;</p>
                         <input
                           type="text"
                           id={`db-question-${ind}`}
@@ -869,11 +871,11 @@ function McqTemplateEditor() {
                         </>
                       )}
 
-                      <div className="d-flex mt-2">
+                      {/* <div className="d-flex mt-2">
                         <input placeholder="marks" id={`db-marks-${ind}`} onChange={(e) => {
                           handleMarks(e, "update", ind)
                         }} type="number" />
-                      </div>
+                      </div> */}
 
                       <div className="d-flex mt-2">
                         <textarea className="w-100" placeholder="explaination" id={`db-explaination-${ind}`} onChange={(e) => {
@@ -901,7 +903,7 @@ function McqTemplateEditor() {
                     handleMcqsInputCnt();
                   }}
                 >
-                  add mcqs <AddIcon />
+                  Add Mcqs <AddIcon />
                 </button>
               </div>
 
@@ -909,6 +911,7 @@ function McqTemplateEditor() {
                 mcqsCnt.map((data, ind) => (
                   <>
                     <div className="d-flex mt-2">
+                      <p>{`Q${ind + 1}.`}&nbsp;</p>
                       <input
                         type="text"
                         id={`add-question-${ind}`}
@@ -1012,11 +1015,11 @@ function McqTemplateEditor() {
                       </div>
                     )}
 
-                    <div className="d-flex mt-2">
+                    {/* <div className="d-flex mt-2">
                       <input placeholder="marks" onChange={(e) => {
                         handleMarks(e, "add", ind)
                       }} type="number" />
-                    </div>
+                    </div> */}
 
                     <div className="d-flex mt-2">
                       <textarea className="w-100" placeholder="explaination" onChange={(e) => {

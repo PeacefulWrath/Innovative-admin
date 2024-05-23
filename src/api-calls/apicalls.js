@@ -1372,3 +1372,328 @@ export const verifyToken = async () => {
     return tokenData;
   }
 };
+
+export const createOurMission = async (omData) => {
+  let tempOurMission = [];
+  try {
+    // console.log("userData", userData);
+
+    await axios({
+      method: "post",
+      url: `${process.env.REACT_APP_BASE_URL}/api/our-mission`,
+      data: omData,
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+    }).then((res) => {
+      tempOurMission = res.data;
+    });
+  } catch (error) {
+    tempOurMission = error?.response?.data;
+  } finally {
+    return tempOurMission;
+  }
+};
+
+export const fetchOurMission  = async () => {
+  let tempOurMission = [];
+  
+  try {
+    const response = await axios({
+      method: "get",
+      url: `${process.env.REACT_APP_BASE_URL}/api/our-mission`,
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+    tempOurMission = response.data.allOmData;
+  } catch (error) {
+    tempOurMission = error?.response?.data;
+  } finally {
+    return tempOurMission;
+  }
+};
+
+export const updateOurMission = async (omData) => {
+  let tempOurMission = [];
+  try {
+    // console.log("userData", userData);
+
+    await axios({
+      method: "put",
+      url: `${process.env.REACT_APP_BASE_URL}/api/our-mission/`,
+      data: omData,
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+    }).then((res) => {
+      tempOurMission = res.data;
+    });
+  } catch (error) {
+    tempOurMission = error?.response?.data;
+  } finally {
+    return tempOurMission;
+  }
+};
+
+export const createOurVision = async (ovData) => {
+  let tempOurVision = [];
+  try {
+    // console.log("userData", userData);
+
+    await axios({
+      method: "post",
+      url: `${process.env.REACT_APP_BASE_URL}/api/our-vision`,
+      data: ovData,
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+    }).then((res) => {
+      tempOurVision = res.data;
+    });
+  } catch (error) {
+    tempOurVision = error?.response?.data;
+  } finally {
+    return tempOurVision;
+  }
+};
+
+export const fetchOurVision  = async () => {
+  let tempOurVision = [];
+  
+  try {
+    const response = await axios({
+      method: "get",
+      url: `${process.env.REACT_APP_BASE_URL}/api/our-vision`,
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+    tempOurVision = response.data.allOvData;
+  } catch (error) {
+    tempOurVision = error?.response?.data;
+  } finally {
+    return tempOurVision;
+  }
+};
+
+export const updateOurVision = async (ovData) => {
+  let tempOurVision = [];
+  try {
+    // console.log("userData", userData);
+
+    await axios({
+      method: "put",
+      url: `${process.env.REACT_APP_BASE_URL}/api/our-vision/`,
+      data: ovData,
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+    }).then((res) => {
+      tempOurVision = res.data;
+    });
+  } catch (error) {
+    tempOurVision = error?.response?.data;
+  } finally {
+    return tempOurVision;
+  }
+};
+
+export const createAboutUs = async (aboutUsData) => {
+  let tempAboutUsData = [];
+  try {
+    // console.log("userData", userData);
+
+    await axios({
+      method: "post",
+      url: `${process.env.REACT_APP_BASE_URL}/api/about-us`,
+      data: aboutUsData,
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+    }).then((res) => {
+      tempAboutUsData = res.data;
+    });
+  } catch (error) {
+    tempAboutUsData = error?.response?.data;
+  } finally {
+    return tempAboutUsData;
+  }
+};
+
+export const fetchAboutUs  = async () => {
+  let tempAboutUsData = [];
+  
+  try {
+    const response = await axios({
+      method: "get",
+      url: `${process.env.REACT_APP_BASE_URL}/api/about-us`,
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+    tempAboutUsData = response.data.allAboutUsData;
+  } catch (error) {
+    tempAboutUsData = error?.response?.data;
+  } finally {
+    return tempAboutUsData;
+  }
+};
+
+export const updateAboutUs = async (aboutUsData) => {
+  let tempAboutUsData = [];
+  try {
+    // console.log("userData", userData);
+
+    await axios({
+      method: "put",
+      url: `${process.env.REACT_APP_BASE_URL}/api/about-us/`,
+      data: aboutUsData,
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+    }).then((res) => {
+      tempAboutUsData = res.data;
+    });
+  } catch (error) {
+    tempAboutUsData = error?.response?.data;
+  } finally {
+    return tempAboutUsData;
+  }
+};
+
+export const createCallUs = async (callUsData) => {
+  let tempCallUsData = [];
+  try {
+    // console.log("userData", userData);
+
+    await axios({
+      method: "post",
+      url: `${process.env.REACT_APP_BASE_URL}/api/call-us`,
+      data: callUsData,
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+    }).then((res) => {
+      tempCallUsData = res.data;
+    });
+  } catch (error) {
+    tempCallUsData = error?.response?.data;
+  } finally {
+    return tempCallUsData;
+  }
+};
+
+export const fetchCallUs  = async () => {
+  let tempCallUsData = [];
+  
+  try {
+    const response = await axios({
+      method: "get",
+      url: `${process.env.REACT_APP_BASE_URL}/api/call-us`,
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+    tempCallUsData = response.data.allCallUsData;
+  } catch (error) {
+    tempCallUsData = error?.response?.data;
+  } finally {
+    return tempCallUsData;
+  }
+};
+
+export const updateCallUs = async (callUsData) => {
+  let tempCallUsData = [];
+  try {
+    // console.log("userData", userData);
+
+    await axios({
+      method: "put",
+      url: `${process.env.REACT_APP_BASE_URL}/api/call-us/`,
+      data: callUsData,
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+    }).then((res) => {
+      tempCallUsData = res.data;
+    });
+  } catch (error) {
+    tempCallUsData = error?.response?.data;
+  } finally {
+    return tempCallUsData;
+  }
+};
+
+export const createEmailUs = async (callUsData) => {
+  let tempEmailUsData = [];
+  try {
+    // console.log("userData", userData);
+
+    await axios({
+      method: "post",
+      url: `${process.env.REACT_APP_BASE_URL}/api/email-us`,
+      data: callUsData,
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+    }).then((res) => {
+      tempEmailUsData = res.data;
+    });
+  } catch (error) {
+    tempEmailUsData = error?.response?.data;
+  } finally {
+    return tempEmailUsData;
+  }
+};
+
+export const fetchEmailUs  = async () => {
+  let tempEmailUsData = [];
+  
+  try {
+    const response = await axios({
+      method: "get",
+      url: `${process.env.REACT_APP_BASE_URL}/api/email-us`,
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+    tempEmailUsData = response.data.allEmailUsData;
+  } catch (error) {
+    tempEmailUsData = error?.response?.data;
+  } finally {
+    return tempEmailUsData;
+  }
+};
+
+export const updateEmailUs = async (emailUsData) => {
+  let tempEmailUsData = [];
+  try {
+    // console.log("userData", userData);
+
+    await axios({
+      method: "put",
+      url: `${process.env.REACT_APP_BASE_URL}/api/email-us/`,
+      data: emailUsData,
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+    }).then((res) => {
+      tempEmailUsData = res.data;
+    });
+  } catch (error) {
+    tempEmailUsData = error?.response?.data;
+  } finally {
+    return tempEmailUsData;
+  }
+};

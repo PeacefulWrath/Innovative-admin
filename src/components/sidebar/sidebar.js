@@ -143,7 +143,34 @@ const Sidebar = (props) => {
         </div>
       </a>
 
+      
 
+      <a style={{ textDecoration: "none" }} href="/our-mission-management">
+        <div className="row fw-bold text-white" style={activeOption === 'our-mission-management' ? { backgroundColor: '#575655' } : { backgroundColor: "transparent" }}>
+          <p className='px-3 pt-2 ms-4 me-2 ' style={{ whiteSpace: "nowrap" }}>Our Mission Management</p>
+        </div>
+      </a>
+
+      <a style={{ textDecoration: "none" }} href="/our-vision-management">
+        <div className="row fw-bold text-white" style={activeOption === 'our-vision-management' ? { backgroundColor: '#575655' } : { backgroundColor: "transparent" }}>
+          <p className='px-3 pt-2 ms-4 me-2 ' style={{ whiteSpace: "nowrap" }}>Our Vision Management</p>
+        </div>
+      </a>
+      <a style={{ textDecoration: "none" }} href="/about-us-management">
+        <div className="row fw-bold text-white" style={activeOption === 'about-us-management' ? { backgroundColor: '#575655' } : { backgroundColor: "transparent" }}>
+          <p className='px-3 pt-2 ms-4 me-2 ' style={{ whiteSpace: "nowrap" }}>About Us Management</p>
+        </div>
+      </a>
+      <a style={{ textDecoration: "none" }} href="/call-us-management">
+        <div className="row fw-bold text-white" style={activeOption === 'call-us-management' ? { backgroundColor: '#575655' } : { backgroundColor: "transparent" }}>
+          <p className='px-3 pt-2 ms-4 me-2 ' style={{ whiteSpace: "nowrap" }}>Call Us Management</p>
+        </div>
+      </a>
+      <a style={{ textDecoration: "none" }} href="/email-us-management">
+        <div className="row fw-bold text-white" style={activeOption === 'email-us-management' ? { backgroundColor: '#575655' } : { backgroundColor: "transparent" }}>
+          <p className='px-3 pt-2 ms-4 me-2 ' style={{ whiteSpace: "nowrap" }}>Email Us Management</p>
+        </div>
+      </a>
 
       {/* <a style={{textDecoration: "none"}} href="/pages/logout">
         <div className="row fw-bold text-white" style={activeOption==='logout'?{backgroundColor: '#575655'}:{backgroundColor:"transparent"}}>

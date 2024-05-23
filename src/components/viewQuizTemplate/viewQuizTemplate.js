@@ -24,7 +24,7 @@ function ViewMcqTemplate() {
   const [sign, setSign] = useState([])
   const [nextClicked, setNextClicked] = useState([])
   const [ansSigns, setAnsSigns] = useState([])
-  const ALPHABET=["A","B","C","D"]
+  const ALPHABET = ["A", "B", "C", "D"]
 
   const navigate = useNavigate();
 
@@ -77,7 +77,7 @@ function ViewMcqTemplate() {
           setAns([...tempAns])
 
           setExplaination(templateData.quizzes[pageNumber - 1].explaination);
-          document.getElementById(`${type}-option-${opInd}`).style.opacity = 0.2
+          document.getElementById(`main-div-${type}-option-${opInd}`).style.border = "2px solid #5DC1F2"
           templateData.quizzes[pageNumber - 1].options.forEach((_, opInd) => {
             document.getElementById(`${type}-option-${opInd}`).addEventListener("click", function (event) {
               event.stopPropagation();
@@ -132,7 +132,7 @@ function ViewMcqTemplate() {
   })
 
   useEffect(() => {
-    console.log("ans", ans)
+    // console.log("ans", ans)
     let tempAnsSign = []
     if (ans.length === templateData?.quizzes?.length) {
 
@@ -152,6 +152,7 @@ function ViewMcqTemplate() {
     }
 
   }, [ans])
+
   return (
     <>
       <Nav />
@@ -179,7 +180,7 @@ function ViewMcqTemplate() {
                             <div class="View_quiz_template_options_main border border-secondary p-0">
                               {quiz?.options_type === "image" ? (
                                 <>
-                                <p>{`${ALPHABET[ind]}.`}</p>
+                                  <p>{`${ALPHABET[ind]}.`}</p>
                                   <img
                                     className="View_quiz_template_options_img"
                                     id={`img-option-${ind}`}
@@ -194,7 +195,7 @@ function ViewMcqTemplate() {
                                 </>
                               ) : (
                                 <>
-                                <p>{`${ALPHABET[ind]}.`}</p>
+                                  <p>{`${ALPHABET[ind]}.`}</p>
                                   <div
                                     className="View_quiz_template_options_text"
                                     id={`text-option-${ind}`}
@@ -283,41 +284,41 @@ function ViewMcqTemplate() {
                             {quiz.options.map((op, ind) => (
                               <div class=" View_quiz_template_options_main border border-secondary p-0">
                                 {quiz?.options_type === "image" ? (
-<>
-<p>{`${ALPHABET[ind]}.`}</p>
+                                  <div id={`main-div-img-option-${ind}`} className="w-100">
+                                    <p>{`${ALPHABET[ind]}.`}</p>
 
-                                  <img
-                                    className="View_quiz_template_options_img"
-                                    id={`img-option-${ind}`}
-                                    src={op}
-                                    alt="op-img"
-                                    style={{
-                                      cursor: "pointer",
-                                    }}
-                                    onClick={() => {
-                                      handleClickedOption("img", ind);
-                                    }}
-                                  />
-                                  </>
+                                    <img
+                                      className="View_quiz_template_options_img"
+                                      id={`img-option-${ind}`}
+                                      src={op}
+                                      alt="op-img"
+                                      style={{
+                                        cursor: "pointer",
+                                      }}
+                                      onClick={() => {
+                                        handleClickedOption("img", ind);
+                                      }}
+                                    />
+                                  </div>
 
                                 ) : (
-                                  <>
-                          <p>{`${ALPHABET[ind]}.`}</p>         
-                                  
-                                  
-                                  <div
-                                    className="View_quiz_template_options_text"
-                                    id={`text-option-${ind}`}
-                                    style={{
-                                      cursor: "pointer"
-                                    }}
-                                    onClick={() => {
-                                      handleClickedOption("text", ind);
-                                    }}
-                                  >
-                                    {op}
+                                  <div id={`main-div-text-option-${ind}`} className="w-100">
+                                    <p>{`${ALPHABET[ind]}.`}</p>
+
+
+                                    <div
+                                      className="View_quiz_template_options_text"
+                                      id={`text-option-${ind}`}
+                                      style={{
+                                        cursor: "pointer"
+                                      }}
+                                      onClick={() => {
+                                        handleClickedOption("text", ind);
+                                      }}
+                                    >
+                                      {op}
+                                    </div>
                                   </div>
-                                  </>
                                 )}
                               </div>
                             ))}

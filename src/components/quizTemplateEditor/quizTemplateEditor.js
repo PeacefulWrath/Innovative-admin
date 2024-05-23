@@ -292,7 +292,7 @@ function QuizTemplateEditor() {
 
     updateData.append("quizDocId", editQuizDocId)
     updateData.append("paper_name", paperName)
-    updateData.append("banner", banner)
+    { banner && updateData.append("banner", banner) }
 
     let updatedDataToBackend = []
 
@@ -572,7 +572,7 @@ function QuizTemplateEditor() {
 
       <div className="row">
         {windowWidth > 768 && <Sidebar activeOption="quiz-template-editor" />}
-        <div className="col-md-10 p-4" style={{ height:'90vh',overflowY:'auto' }}>
+        <div className="col-md-10 p-4" style={{ height: '90vh', overflowY: 'auto' }}>
           <div className="d-flex">
 
 
@@ -676,6 +676,7 @@ function QuizTemplateEditor() {
         </Modal.Header>
         <Modal.Body>
           <div className="row gy-2">
+
             <div className="mb-2">
               <label className="pb-1">Paper Name</label>
               <input
@@ -717,6 +718,7 @@ function QuizTemplateEditor() {
                 }}
               />
             </div>
+
             <div className="mb-2">
               {dbQuizzes && dbQuizzes.length !== 0 && (<>
                 <label className="pb-1">Attached Quizzes</label>
@@ -868,6 +870,7 @@ function QuizTemplateEditor() {
                 }
               </>)}
             </div>
+
             <div className="mb-2">
               <div className="d-flex justify-content-between">
                 <label className="pb-1">Template Quizzes</label>
@@ -890,6 +893,7 @@ function QuizTemplateEditor() {
                 quizzesCnt.map((data, ind) => (
                   <>
                     <div className="d-flex mt-2">
+                      <p>{`Q${ind + 1}.`}&nbsp;</p>
                       <input
                         type="text"
                         id={`add-question-${ind}`}
@@ -1007,6 +1011,7 @@ function QuizTemplateEditor() {
                   </>
                 ))}
             </div>
+
           </div>
         </Modal.Body>
         <Modal.Footer>
